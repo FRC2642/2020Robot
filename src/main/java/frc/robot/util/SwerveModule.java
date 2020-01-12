@@ -42,6 +42,8 @@ public class SwerveModule {
     double targetVelocity;
     Rotation2d targetAngle;
     double targetMotorAngle;
+    double angleOffset;
+    double trueTargetAngle;
 
     /**
      * Constructs a SwerveModule with an assigned drive motor and angle motor
@@ -49,7 +51,7 @@ public class SwerveModule {
      * @param driveMotor Motor used to drive module wheel
      * @param angleMotor Motor used to rotate module wheel
      */
-    public SwerveModule(CANSparkMax driveMotor, CANSparkMax angleMotor){
+    public SwerveModule(CANSparkMax driveMotor, CANSparkMax angleMotor, double angleOffset){
         //creates reference to assigned motor
         this.driveMotor = driveMotor;
         this.angleMotor = angleMotor;
@@ -62,12 +64,18 @@ public class SwerveModule {
         drivePID = driveMotor.getPIDController();
         anglePID = angleMotor.getPIDController();
 
+        anglePID.setFeedbackDevice(angleEncoder);
+
         //sets PID constants
         setPIDTerms(drivePID, true);
         setPIDTerms(anglePID, false);
 
+        this.angleOffset = angleOffset;
+
         angleEncoder.setPositionConversionFactor(kAnglePositionConversionFactor);
         driveEncoder.setVelocityConversionFactor(kDriveVelocityConversionFactor);
+
+        
     }
 
     /**
@@ -78,6 +86,7 @@ public class SwerveModule {
      */
     public double getTargetVelocity(SwerveModuleState state){
         targetVelocity = state.speedMetersPerSecond;
+        //System.out.println("target velocity = " + targetVelocity);
         return targetVelocity;
     }
 
@@ -89,9 +98,11 @@ public class SwerveModule {
      */
     public Rotation2d getTargetAngle(SwerveModuleState state){
         targetAngle = state.angle;
-        //System.out.println(targetAngle);
+
+        targetMotorAngle = realignAndOffsetEncoder(targetAngle.getDegrees());
+        //System.out.println("targetAngle = " + targetMotorAngle);
+
         return targetAngle;
-  
     }
 
     /**
@@ -100,7 +111,7 @@ public class SwerveModule {
     * @param targetVelocity desired velocity of the module in meters/second
     */
     public void setModuleVelocity(double targetVelocity){
-     // System.out.println("velocity = " + targetVelocity);
+      //System.out.println("velocity = " + targetVelocity);
       drivePID.setReference(targetVelocity, ControlType.kVelocity);
     }
 
@@ -111,7 +122,23 @@ public class SwerveModule {
      */
     public void setModuleAngle(Rotation2d targetAngle){
 
-      anglePID.setReference(targetAngle.getDegrees(), ControlType.kPosition);
+      trueTargetAngle = targetAngle.getDegrees();
+      
+      trueTargetAngle = realignAndOffsetEncoder(trueTargetAngle);
+      
+      double error = trueTargetAngle - getAngleEncoderWithOffset();
+      
+      //inverts angle motor if rotating the opposite direction is more efficient 
+     /* if(Math.abs(error) > 180){
+        flipAngleMotorInversion();
+      }*/
+
+      anglePID.setReference(trueTargetAngle, ControlType.kPosition);
+    }
+
+    public double getModuleAngle(){
+     // System.out.println(trueTargetAngle);
+      return trueTargetAngle;
     }
 
      /**
@@ -135,6 +162,48 @@ public class SwerveModule {
     pid.setOutputRange(kMinOutput, kMaxOutput);
   }
 
+  public double realignAndOffsetEncoder(double encoderAngle){
+  
+    double realignedAngle = realignEncoder(encoderAngle);
+    //System.out.println("realignedAngle = " + realignedAngle);
+
+    realignedAngle = offsetEncoder(encoderAngle);
+    //System.out.println("offsetAngle = " + realignedAngle);
+
+    return realignedAngle;
+  }
+
+  public double realignEncoder(double encoderAngle){
+
+    double realignedAngle = encoderAngle;
+    if(realignedAngle < 0){
+      realignedAngle += 360;
+    }
+    return realignedAngle;
+
+  }
+
+  public double offsetEncoder(double encoderAngle){
+  
+    double realignedAngle = encoderAngle;
+    //System.out.println("offset = " + angleOffset);
+    realignedAngle = ((realignedAngle + angleOffset) % 360);
+    if(realignedAngle < 0){
+      realignedAngle += 360;
+    }
+
+    return realignedAngle;
+  }
+
+  public void flipAngleMotorInversion(){
+    if(angleMotor.getInverted()){
+      angleMotor.setInverted(false);
+    } else if(!angleMotor.getInverted()){
+      angleMotor.setInverted(true);
+    }
+    
+  }
+
   //DIAGNOSTIC METHODS 
 
   //encoder getters
@@ -148,6 +217,10 @@ public class SwerveModule {
 
   public double getAngleEncoder(){
     return angleEncoder.getPosition();
+  }
+
+  public double getAngleEncoderWithOffset(){
+    return offsetEncoder(getAngleEncoder());
   }
 
   public double getDriveEncoderPosition(){
@@ -181,16 +254,6 @@ public class SwerveModule {
   public void setAngleSetpoint(double xInput, double yInput){
     Rotation2d targetAngle = new Rotation2d(xInput, yInput);
     System.out.println(targetAngle);
-    double error = targetAngle.getDegrees() - getAngleEncoder();
-
-    if(error >= 180 || error <= 180){
-      
-    }
-
-    //half rotation logic = reverses direction of rotation
-
-    //quarter rotation logic = reverses direction of rotation and drive
-
 
     anglePID.setReference(targetAngle.getDegrees(), ControlType.kPosition);
   }

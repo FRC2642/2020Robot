@@ -27,6 +27,12 @@ public final class Constants {
     public static final int ID_BACK_RIGHT_DRIVE_MOTOR = 7;
     public static final int ID_BACK_RIGHT_ANGLE_MOTOR = 8;
 
+    //angle offsets
+    public static final double kFrontLeftAngleOffset = 157.0;
+    public static final double kFrontRightAngleOffset = 38.3;//90;//226.3;
+    public static final double kBackLeftAngleOffset = 130.6;//90;//134.4;
+    public static final double kBackRightAngleOffset = 57.1;//90;//242.5;
+
     //motor neutral deadband
     public static final double kMotorNeutralDeadband = .15;
 
@@ -39,7 +45,7 @@ public final class Constants {
     //swerve PID constants
     public static final double kMinOutput = -1.0;
     public static final double kMaxOutput = 1.0;
-    public static final double kMaxRPM = 5700;  //wip values
+    public static final double kMaxModuleRPM = 17.5;  //wip, MPS
     public static final double kMaxMPS = 17.5; //MPS
 
     //conversion factor for drive motor rpm to meters per second
@@ -52,13 +58,13 @@ public final class Constants {
     public static final double kDriveD = 0.0;
 
     //PIDF values for closed-loop position control for angle modules
-    public static final double kAngleP = 0.1;
-    public static final double kAngleI = 0.0;
+    public static final double kAngleP = .01;
+    public static final double kAngleI = 1e-8;
     public static final double kAngleD = 0.0;
     public static final double kAngleFF = 0.0;
 
     //conversion factors
-    public static final double kAnglePositionConversionFactor = 360.0 / 3.3; //degrees / volts
+    public static final double kAnglePositionConversionFactor = 359.0 / 3.3; //degrees / volts
     public static final double kDriveVelocityConversionFactor = kRPMToMPSConversionFactor;
 
     //controller ports 

@@ -49,7 +49,15 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    SmartDashboard.putNumber("frontLeftAngleEncoderPosition", m_robotContainer.drive.frontRightModule.getAngleEncoder());
+    /*SmartDashboard.putNumber("frontLeftAngleEncoderPosition", m_robotContainer.drive.frontLeftModule.getAngleEncoderWithOffset());
+    SmartDashboard.putNumber("frontRightAngleEncoderPosition", m_robotContainer.drive.frontRightModule.getAngleEncoderWithOffset());
+    SmartDashboard.putNumber("backLeftAngleEncoderPosition", m_robotContainer.drive.backLeftModule.getAngleEncoderWithOffset());
+    SmartDashboard.putNumber("backRightAngleEncoderPosition", m_robotContainer.drive.backRightModule.getAngleEncoderWithOffset());
+
+    /*SmartDashboard.putNumber("frontLeftAngleEncoderTarget", m_robotContainer.drive.frontLeftModule.getTargetAngle());
+    SmartDashboard.putNumber("frontRightAngleEncoderTarget", m_robotContainer.drive.frontRightModule.getTargetAngle());
+    SmartDashboard.putNumber("backLeftAngleEncoderTarget", m_robotContainer.drive.backLeftModule.getTargetAngle());
+    SmartDashboard.putNumber("backRightAngleEncoderTarget", m_robotContainer.drive.backRightModule.getTargetAngle());*/
   }
 
   /**

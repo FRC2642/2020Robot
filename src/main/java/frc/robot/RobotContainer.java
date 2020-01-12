@@ -36,14 +36,16 @@ public class RobotContainer {
 
     //basic drive command using left stick for strafe control and right stick for rotate control
 
-    /*drive.setDefaultCommand(
+    drive.setDefaultCommand(
       new RunCommand(
         () -> drive.drive(
-          -(driveController.getRawAxis(1)), 
-          driveController.getRawAxis(0), 
+          //0,0,0), drive)
+        
+          -(driveController.getRawAxis(1)) * .5, 
+          driveController.getRawAxis(0) * .5, 
           driveController.getRawAxis(4)), 
           drive)
-      );*/
+      );
 
     /*drive.setDefaultCommand(
       new RunCommand(
@@ -52,12 +54,12 @@ public class RobotContainer {
               drive)
     );*/
 
-    drive.setDefaultCommand(
+    /*drive.setDefaultCommand(
       new RunCommand(
         () -> drive.testAnglePIDLoop(drive.frontRightModule,
          (driveController.getRawAxis(0) * .5), (-driveController.getRawAxis(1)) * .5),
          drive)
-    );
+    );*/
     
       /*drive.setDefaultCommand(
         new RunCommand(
