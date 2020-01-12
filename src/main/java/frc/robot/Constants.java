@@ -64,6 +64,13 @@ public final class Constants {
     //controller ports 
     public static final int kDriveControllerPort = 0;
 
+    //intake motor ports
+    public static final int intakeMotor1Port = 1;
+    public static final int intakeMotor2Port = 2;
+
+    //intake limit switch port
+    public static final int intakeLimitSwitch = 4;
+
 
     /*
     //encoder distance constants
