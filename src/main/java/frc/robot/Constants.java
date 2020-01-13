@@ -54,7 +54,7 @@ public final class Constants {
     //PIDF values for closed-loop velocity control for drive modules
     public static final double kDriveFF = .5 / 15.989; //approx .03127
     public static final double kDriveP = 0.0;
-    public static final double kDriveI = kDriveFF / 100.0;
+    public static final double kDriveI = kDriveFF / 2000.0;
     public static final double kDriveD = 0.0;
 
     //PIDF values for closed-loop position control for angle modules

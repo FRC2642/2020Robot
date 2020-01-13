@@ -126,11 +126,12 @@ public class SwerveModule {
       
       trueTargetAngle = realignAndOffsetEncoder(trueTargetAngle);
       
-      double error = trueTargetAngle - getAngleEncoderWithOffset();
-      
-      //inverts angle motor if rotating the opposite direction is more efficient 
-     /* if(Math.abs(error) > 180){
-        flipAngleMotorInversion();
+      double error = trueTargetAngle - getAngleEncoder();
+      System.out.println("error = " + error);
+
+      /*boolean isInverted = false;
+      if(!isInverted){
+
       }*/
 
       anglePID.setReference(trueTargetAngle, ControlType.kPosition);
