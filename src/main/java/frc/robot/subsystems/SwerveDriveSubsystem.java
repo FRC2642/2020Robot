@@ -10,9 +10,12 @@ package frc.robot.subsystems;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
@@ -38,6 +41,11 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
   SwerveDriveKinematics kinematics;
 
+  public AHRS navx;
+
+  public boolean isDriveFieldCentric;
+  public boolean areWheelsLocked;
+
   /**
    * Creates a new SwerveDriveSubsystem.
    */
@@ -62,11 +70,31 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     backRightDriveMotor.restoreFactoryDefaults();
     backRightAngleMotor.restoreFactoryDefaults(); 
 
+    //sets default inversion settings for motors
+    frontLeftDriveMotor.setInverted(true);
+    frontLeftAngleMotor.setInverted(true);
+    frontRightDriveMotor.setInverted(true);
+    frontRightAngleMotor.setInverted(true);
+    backLeftDriveMotor.setInverted(false);
+    backLeftAngleMotor.setInverted(true);
+    backRightDriveMotor.setInverted(true);
+    backRightAngleMotor.setInverted(true); 
+
+    //sets current limits 
+    frontLeftDriveMotor.setSmartCurrentLimit(kCurrentLimit);
+    frontLeftAngleMotor.setSmartCurrentLimit(kCurrentLimit);
+    frontRightDriveMotor.setSmartCurrentLimit(kCurrentLimit);
+    frontRightAngleMotor.setSmartCurrentLimit(kCurrentLimit);
+    backLeftDriveMotor.setSmartCurrentLimit(kCurrentLimit);
+    backLeftAngleMotor.setSmartCurrentLimit(kCurrentLimit);
+    backRightDriveMotor.setSmartCurrentLimit(kCurrentLimit);
+    backRightAngleMotor.setSmartCurrentLimit(kCurrentLimit);
+
     //assigns drive and angle motors to their respective swerve modules
-    frontLeftModule = new SwerveModule(frontLeftDriveMotor, frontLeftAngleMotor);
-    frontRightModule = new SwerveModule(frontRightDriveMotor, frontRightAngleMotor);
-    backLeftModule = new SwerveModule(backLeftDriveMotor, backLeftAngleMotor);
-    backRightModule = new SwerveModule(backRightDriveMotor, backRightAngleMotor);
+    frontLeftModule = new SwerveModule(frontLeftDriveMotor, frontLeftAngleMotor, kFrontLeftAngleOffset);
+    frontRightModule = new SwerveModule(frontRightDriveMotor, frontRightAngleMotor, kFrontRightAngleOffset);
+    backLeftModule = new SwerveModule(backLeftDriveMotor, backLeftAngleMotor, kBackLeftAngleOffset);
+    backRightModule = new SwerveModule(backRightDriveMotor, backRightAngleMotor, kBackRightAngleOffset);
 
     //assigns swerve modules to an array 
     //this makes doing repetitive actions, such as updating states, much more convienent 
@@ -76,46 +104,108 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         modules.add(backLeftModule);
         modules.add(backRightModule);
 
-    //forward = postive x, left = positive y
-    Translation2d frontLeft = new Translation2d(kXDistanceFromCenter, kYDistanceFromCenter);
-    Translation2d frontRight = new Translation2d(kXDistanceFromCenter, -kYDistanceFromCenter);
-    Translation2d backLeft = new Translation2d(-kXDistanceFromCenter, kYDistanceFromCenter);
-    Translation2d backRight = new Translation2d(-kXDistanceFromCenter, -kYDistanceFromCenter);
+    //sets module distances from center of rotation
+    //forward = postive x, right = positive y
+    Translation2d frontLeft = new Translation2d(kXDistanceFromCenter, -kYDistanceFromCenter);
+    Translation2d frontRight = new Translation2d(kXDistanceFromCenter, kYDistanceFromCenter);
+    Translation2d backLeft = new Translation2d(-kXDistanceFromCenter, -kYDistanceFromCenter);
+    Translation2d backRight = new Translation2d(-kXDistanceFromCenter, kYDistanceFromCenter);
 
+    //assigns module distance to kinematic object
     kinematics = new SwerveDriveKinematics(frontLeft, frontRight, backLeft, backRight);
+
+    //instantiates navx
+    try{
+      navx = new AHRS();
+    } catch (RuntimeException ex) {
+      DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
+    }
+
+    //sets angle adjustment
+    navx.setAngleAdjustment(0);
+
+    //assigns values to togglables
+    isDriveFieldCentric = true;
+    areWheelsLocked = false;
+  }
+
+  //METHODS
+
+  //drive methods
+  /**
+   * Drives with either robot-centric or field-centric
+   * 
+   * @param rawXInput Forward velocity
+   * @param rawYInput Sideways velocity
+   * @param rawRotate Angular velocity
+   */
+  public void drive(double rawXInput, double rawYInput, double rawRotate){
+     //sets deadbands
+     double xInput = deadband(rawXInput);
+     double yInput = deadband(rawYInput);
+     double rotate = deadband(rawRotate);
+
+    //if there is no stick input
+    if(xInput == 0 && yInput == 0 && rotate == 0){
+        lockWheels();
+    } else {
+      if(isDriveFieldCentric){
+        fieldCentricDrive(xInput, yInput, rotate);
+      } else if(!isDriveFieldCentric){
+        robotCentricDrive(xInput, yInput, rotate);
+      }
+    }
   }
 
   /**
-   * Drives the robot using given x, y, and angular stick inputs 
+   * Drives the robot using given x, y, and angular stick inputs.
+   * See the front of the robot as forward.
    * 
-   * @param forwardStrafe Forward velocity
-   * @param sidewaysStrafe Sideways velocity
-   * @param rotate Angular velocity
+   * @param rawXInput Forward velocity
+   * @param rawYInput Sideways velocity
+   * @param rawRotate Angular velocity
    */
-  public void drive(double forwardStrafe, double sidewaysStrafe, double rotate){
-    //sets deadbands
-    if(forwardStrafe <= kMotorNeutralDeadband && forwardStrafe >= -kMotorNeutralDeadband){
-      forwardStrafe = 0;
-    }
-    if(sidewaysStrafe <= kMotorNeutralDeadband && sidewaysStrafe >= -kMotorNeutralDeadband){
-      sidewaysStrafe = 0;
-    }
-    if(rotate <= kMotorNeutralDeadband && rotate >= -kMotorNeutralDeadband){
-      rotate = 0;
-    }
+  public void robotCentricDrive(double xInput, double yInput, double rotate){
+   
     //sets target angle and velocity based on stick input
+    double xVelocity = xInput * kMaxMPS;
+    double yVelocity = yInput * kMaxMPS;
+    double rotateVelocity = rotate * kMaxModuleRPM;
     
-    double xVelocity = forwardStrafe ;//* kMaxMPS;
-    double yVelocity = sidewaysStrafe ;//* kMaxMPS;
-    double rotateVelocity = rotate ;//* kMaxRPM;
-    
-    //converts input targets to individual module states
+    //converts input targets to individual module states (robot-centric)
     ChassisSpeeds targetVelocity = new ChassisSpeeds(xVelocity, yVelocity, rotateVelocity);
     SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(targetVelocity);
 
-    //updates target velocity and angle for each swerve module
+    setModuleStates(moduleStates);
+  } 
+
+  /**
+   * Drives the robot using given x, y, and angular stick inputs.
+   * See the Navx gyro reading of 0 as forwardz
+   */
+  public void fieldCentricDrive(double xInput, double yInput, double rotate){
+    //sets target angle and velocity based on stick input
+    double xVelocity = xInput * kMaxMPS;
+    double yVelocity = yInput * kMaxMPS;
+    double rotateVelocity = rotate * kMaxModuleRPM;
+
+    //converts input targets to individual module states (field centric)
+    ChassisSpeeds targetVelocity = ChassisSpeeds.fromFieldRelativeSpeeds(
+        xVelocity, yVelocity, rotateVelocity, getRobotYawInRotation2d());
+    SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(targetVelocity);
+
+    setModuleStates(moduleStates);
+  }
+
+  /**
+   * Takes module state data and converts it into module velocities and angles
+   */
+  public void setModuleStates(SwerveModuleState[] moduleStates){
     for(SwerveModule module: modules){
       
+      //for testing indv modules, leave out unless running only one module
+      //SwerveModule module = backRightModule;
+
       int i = modules.indexOf(module);
 
       //sets module velocity using closed loop velocity control
@@ -124,15 +214,70 @@ public class SwerveDriveSubsystem extends SubsystemBase {
       //sets angle of module using closed loop position control
       module.setModuleAngle(module.getTargetAngle(moduleStates[i]));
     }
-  } 
+  }
 
   /**
    * Sets all drive input to 0
    */
   public void stop(){
-    drive(0, 0, 0);
+    robotCentricDrive(0, 0, 0);
   }
 
+  /**
+   * Sets wheels into locked position (most resistant to being pushed)
+   */
+  public void lockWheels(){
+    
+    ChassisSpeeds wheelLock = new ChassisSpeeds(0.0, 0.0, 1.0);
+    SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(wheelLock);
+
+    for(SwerveModule module: modules){
+
+      int i = modules.indexOf(module);
+      module.setModuleVelocity(0);
+      module.setModuleAngle(module.getTargetAngle(moduleStates[i]));
+    }
+  }
+
+  /**
+   * Toggles between field-centric drive and robot-centric drive
+   */
+  public void toggleIsDriveFieldCentric(){
+    isDriveFieldCentric = !isDriveFieldCentric;
+  }
+
+  public boolean getIsDriveFieldCentric(){
+    return isDriveFieldCentric;
+  }
+
+  public void toggleAreWheelsLocked(){
+    areWheelsLocked = !areWheelsLocked;
+  }
+
+  public boolean getAreWheelsLocked(){
+    return areWheelsLocked;
+  }
+
+  //navx methods 
+  public double getRobotYaw(){
+    return navx.getYaw();
+  }
+
+  public Rotation2d getRobotYawInRotation2d(){
+    double yaw = getRobotYaw();
+    return Rotation2d.fromDegrees(yaw);
+  }
+
+  public void zeroNavx(){
+    navx.zeroYaw();
+  }
+
+  /**
+   * Applies a deadband to raw joystick input
+   * 
+   * @param input raw joystick input
+   * @return deadbanded joystick input
+   */
   public double deadband(double input){
     double outMax = 1.0;
     double outMin = -1.0;
@@ -154,18 +299,24 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     if(input <= -kMotorNeutralDeadband){
       //System.out.println("below deadband");
-      //new slope for motor output                           //repositions constant based on deadband
+               //new slope for motor output                  //repositions constant based on deadband
       output = (outMin / (kMotorNeutralDeadband + inMin)) * (input + kMotorNeutralDeadband);
     }
     //System.out.println("output = " + output);
     return output;
   }
 
-  //DIAGNOSTIC 
+  /**
+   * DIAGNOSTIC 
+   */
+
   //motor test drive
   public void motorTest(SwerveModule module, double driveInput, double angleInput){
     module.testDriveMotor(driveInput);
     module.testAngleMotor(angleInput);
+
+    SmartDashboard.putNumber("driveStickInput", driveInput);
+    SmartDashboard.putNumber("angleStickInput", angleInput);
   }
 
   public void testAnglePIDLoop(SwerveModule module, double rawXInput, double rawYInput){
@@ -189,22 +340,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    //gives current encoder position for all 8 motors
-    /*SmartDashboard.putNumber("frontLeftDriveEncoder", frontLeftModule.getDriveEncoder());
-    SmartDashboard.putNumber("frontLeftAngleEncoder", frontLeftModule.getAngleEncoder());*/
-
-    SmartDashboard.putNumber("driveVelocity", frontRightModule.getDriveVelocity());
-    /*SmartDashboard.putNumber("front right angle", frontRightModule.getAngleEncoder());
-    SmartDashboard.putNumber("back left drive", backLeftModule.getDriveEncoder());
-    SmartDashboard.putNumber("back left angle", backLeftModule.getAngleEncoder());
-    SmartDashboard.putNumber("back right drive", backRightModule.getDriveEncoder());
-    SmartDashboard.putNumber("back right angle", backRightModule.getAngleEncoder());*/
-
-    //gives target velocity and angles
-    SmartDashboard.putNumber("targetVelocity", frontRightModule.getTargetVelocity());
-    SmartDashboard.putNumber("targetAngle", frontRightModule.getTargetAngle());
-
-    SmartDashboard.putNumber("drive output", frontRightModule.getDriveMotorOutput());
-    SmartDashboard.putNumber("angle output", frontRightModule.getAngleMotorOutput());
+    SmartDashboard.putNumber("naxv angle", getRobotYaw());
+    SmartDashboard.putBoolean("isDriveFieldCentric", getIsDriveFieldCentric());
+    SmartDashboard.putBoolean("areWheelsLocked", getAreWheelsLocked());
   }
 }

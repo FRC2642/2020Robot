@@ -11,8 +11,11 @@ import static frc.robot.Constants.kDriveControllerPort;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 
 /**
@@ -31,40 +34,25 @@ public class RobotContainer {
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    // Configure the button bindings
+    
     configureButtonBindings();
 
-    //basic drive command using left stick for strafe control and right stick for rotate control
-
-    /*drive.setDefaultCommand(
+    drive.setDefaultCommand(
       new RunCommand(
         () -> drive.drive(
-          -(driveController.getRawAxis(1)), 
-          driveController.getRawAxis(0), 
+          -(driveController.getRawAxis(1)) * .7, 
+          driveController.getRawAxis(0) * .7, 
           driveController.getRawAxis(4)), 
           drive)
-      );*/
+      );
 
+    //manually drives motors, leave out unless testing 
     /*drive.setDefaultCommand(
       new RunCommand(
         () -> drive.motorTest(drive.frontRightModule,
               -driveController.getRawAxis(1), -driveController.getRawAxis(5)),
               drive)
     );*/
-
-    drive.setDefaultCommand(
-      new RunCommand(
-        () -> drive.testAnglePIDLoop(drive.frontRightModule,
-         (driveController.getRawAxis(0) * .5), (-driveController.getRawAxis(1)) * .5),
-         drive)
-    );
-    
-      /*drive.setDefaultCommand(
-        new RunCommand(
-          () -> drive.testDrivePIDFLoop(drive.modules,
-           -driveController.getRawAxis(1)),
-           drive)
-      );*/
   }
 
   /**
@@ -74,8 +62,13 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    //instantiates drive toggle button
+    new JoystickButton(driveController, Button.kBack.value)
+      .whenPressed(new InstantCommand(drive::toggleIsDriveFieldCentric, drive));
+    //instantiates lock wheel toggle button
+    new JoystickButton(driveController, Button.kStart.value)
+      .whenPressed(new InstantCommand(drive::toggleAreWheelsLocked, drive));
   }
-
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -85,5 +78,4 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return null;
   }
-
 }
