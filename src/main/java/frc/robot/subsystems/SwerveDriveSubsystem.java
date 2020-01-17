@@ -10,9 +10,12 @@ package frc.robot.subsystems;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
@@ -38,7 +41,10 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
   SwerveDriveKinematics kinematics;
 
-  
+  public AHRS navx;
+
+  public boolean isDriveFieldCentric;
+  public boolean areWheelsLocked;
 
   /**
    * Creates a new SwerveDriveSubsystem.
@@ -64,6 +70,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     backRightDriveMotor.restoreFactoryDefaults();
     backRightAngleMotor.restoreFactoryDefaults(); 
 
+    //sets default inversion settings for motors
     frontLeftDriveMotor.setInverted(true);
     frontLeftAngleMotor.setInverted(true);
     frontRightDriveMotor.setInverted(true);
@@ -72,6 +79,16 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     backLeftAngleMotor.setInverted(true);
     backRightDriveMotor.setInverted(true);
     backRightAngleMotor.setInverted(true); 
+
+    //sets current limits 
+    frontLeftDriveMotor.setSmartCurrentLimit(kCurrentLimit);
+    frontLeftAngleMotor.setSmartCurrentLimit(kCurrentLimit);
+    frontRightDriveMotor.setSmartCurrentLimit(kCurrentLimit);
+    frontRightAngleMotor.setSmartCurrentLimit(kCurrentLimit);
+    backLeftDriveMotor.setSmartCurrentLimit(kCurrentLimit);
+    backLeftAngleMotor.setSmartCurrentLimit(kCurrentLimit);
+    backRightDriveMotor.setSmartCurrentLimit(kCurrentLimit);
+    backRightAngleMotor.setSmartCurrentLimit(kCurrentLimit);
 
     //assigns drive and angle motors to their respective swerve modules
     frontLeftModule = new SwerveModule(frontLeftDriveMotor, frontLeftAngleMotor, kFrontLeftAngleOffset);
@@ -87,44 +104,107 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         modules.add(backLeftModule);
         modules.add(backRightModule);
 
+    //sets module distances from center of rotation
     //forward = postive x, right = positive y
     Translation2d frontLeft = new Translation2d(kXDistanceFromCenter, -kYDistanceFromCenter);
     Translation2d frontRight = new Translation2d(kXDistanceFromCenter, kYDistanceFromCenter);
     Translation2d backLeft = new Translation2d(-kXDistanceFromCenter, -kYDistanceFromCenter);
     Translation2d backRight = new Translation2d(-kXDistanceFromCenter, kYDistanceFromCenter);
 
+    //assigns module distance to kinematic object
     kinematics = new SwerveDriveKinematics(frontLeft, frontRight, backLeft, backRight);
+
+    //instantiates navx
+    try{
+      navx = new AHRS();
+    } catch (RuntimeException ex) {
+      DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
+    }
+
+    //sets angle adjustment
+    navx.setAngleAdjustment(0);
+
+    //assigns values to togglables
+    isDriveFieldCentric = true;
+    areWheelsLocked = false;
   }
 
   //METHODS
 
+  //drive methods
   /**
-   * Drives the robot using given x, y, and angular stick inputs 
+   * Drives with either robot-centric or field-centric
    * 
    * @param rawXInput Forward velocity
    * @param rawYInput Sideways velocity
    * @param rawRotate Angular velocity
    */
   public void drive(double rawXInput, double rawYInput, double rawRotate){
-    //sets deadbands
-    double xInput = deadband(rawXInput);
-    double yInput = deadband(rawYInput);
-    double rotate = deadband(rawRotate);
+     //sets deadbands
+     double xInput = deadband(rawXInput);
+     double yInput = deadband(rawYInput);
+     double rotate = deadband(rawRotate);
+
+    //if there is no stick input
+    if(xInput == 0 && yInput == 0 && rotate == 0){
+        lockWheels();
+    } else {
+      if(isDriveFieldCentric){
+        fieldCentricDrive(xInput, yInput, rotate);
+      } else if(!isDriveFieldCentric){
+        robotCentricDrive(xInput, yInput, rotate);
+      }
+    }
+  }
+
+  /**
+   * Drives the robot using given x, y, and angular stick inputs.
+   * See the front of the robot as forward.
+   * 
+   * @param rawXInput Forward velocity
+   * @param rawYInput Sideways velocity
+   * @param rawRotate Angular velocity
+   */
+  public void robotCentricDrive(double xInput, double yInput, double rotate){
+   
     //sets target angle and velocity based on stick input
-    
     double xVelocity = xInput * kMaxMPS;
     double yVelocity = yInput * kMaxMPS;
     double rotateVelocity = rotate * kMaxModuleRPM;
     
-    //converts input targets to individual module states
+    //converts input targets to individual module states (robot-centric)
     ChassisSpeeds targetVelocity = new ChassisSpeeds(xVelocity, yVelocity, rotateVelocity);
     SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(targetVelocity);
 
-    //updates target velocity and angle for each swerve module
+    setModuleStates(moduleStates);
+  } 
+
+  /**
+   * Drives the robot using given x, y, and angular stick inputs.
+   * See the Navx gyro reading of 0 as forwardz
+   */
+  public void fieldCentricDrive(double xInput, double yInput, double rotate){
+    //sets target angle and velocity based on stick input
+    double xVelocity = xInput * kMaxMPS;
+    double yVelocity = yInput * kMaxMPS;
+    double rotateVelocity = rotate * kMaxModuleRPM;
+
+    //converts input targets to individual module states (field centric)
+    ChassisSpeeds targetVelocity = ChassisSpeeds.fromFieldRelativeSpeeds(
+        xVelocity, yVelocity, rotateVelocity, getRobotYawInRotation2d());
+    SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(targetVelocity);
+
+    setModuleStates(moduleStates);
+  }
+
+  /**
+   * Takes module state data and converts it into module velocities and angles
+   */
+  public void setModuleStates(SwerveModuleState[] moduleStates){
     for(SwerveModule module: modules){
       
-      //for testing indv modules, leave out
-      //SwerveModule module = frontLeftModule;
+      //for testing indv modules, leave out unless running only one module
+      //SwerveModule module = backRightModule;
 
       int i = modules.indexOf(module);
 
@@ -134,15 +214,70 @@ public class SwerveDriveSubsystem extends SubsystemBase {
       //sets angle of module using closed loop position control
       module.setModuleAngle(module.getTargetAngle(moduleStates[i]));
     }
-  } 
+  }
 
   /**
    * Sets all drive input to 0
    */
   public void stop(){
-    drive(0, 0, 0);
+    robotCentricDrive(0, 0, 0);
   }
 
+  /**
+   * Sets wheels into locked position (most resistant to being pushed)
+   */
+  public void lockWheels(){
+    
+    ChassisSpeeds wheelLock = new ChassisSpeeds(0.0, 0.0, 1.0);
+    SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(wheelLock);
+
+    for(SwerveModule module: modules){
+
+      int i = modules.indexOf(module);
+      module.setModuleVelocity(0);
+      module.setModuleAngle(module.getTargetAngle(moduleStates[i]));
+    }
+  }
+
+  /**
+   * Toggles between field-centric drive and robot-centric drive
+   */
+  public void toggleIsDriveFieldCentric(){
+    isDriveFieldCentric = !isDriveFieldCentric;
+  }
+
+  public boolean getIsDriveFieldCentric(){
+    return isDriveFieldCentric;
+  }
+
+  public void toggleAreWheelsLocked(){
+    areWheelsLocked = !areWheelsLocked;
+  }
+
+  public boolean getAreWheelsLocked(){
+    return areWheelsLocked;
+  }
+
+  //navx methods 
+  public double getRobotYaw(){
+    return navx.getYaw();
+  }
+
+  public Rotation2d getRobotYawInRotation2d(){
+    double yaw = getRobotYaw();
+    return Rotation2d.fromDegrees(yaw);
+  }
+
+  public void zeroNavx(){
+    navx.zeroYaw();
+  }
+
+  /**
+   * Applies a deadband to raw joystick input
+   * 
+   * @param input raw joystick input
+   * @return deadbanded joystick input
+   */
   public double deadband(double input){
     double outMax = 1.0;
     double outMin = -1.0;
@@ -171,7 +306,10 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     return output;
   }
 
-  //DIAGNOSTIC 
+  /**
+   * DIAGNOSTIC 
+   */
+
   //motor test drive
   public void motorTest(SwerveModule module, double driveInput, double angleInput){
     module.testDriveMotor(driveInput);
@@ -202,6 +340,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-
+    SmartDashboard.putNumber("naxv angle", getRobotYaw());
+    SmartDashboard.putBoolean("isDriveFieldCentric", getIsDriveFieldCentric());
+    SmartDashboard.putBoolean("areWheelsLocked", getAreWheelsLocked());
   }
 }
