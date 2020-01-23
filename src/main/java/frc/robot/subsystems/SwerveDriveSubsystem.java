@@ -145,7 +145,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     navx.setAngleAdjustment(0);
 
     //assigns values to togglables
-    isDriveFieldCentric = false;
+    isDriveFieldCentric = true;
   }
 
   /**
