@@ -40,6 +40,8 @@ public final class Constants {
     public static final int ID_BACK_RIGHT_DRIVE_MOTOR = 7;
     public static final int ID_BACK_RIGHT_ANGLE_MOTOR = 8;
 
+    //CAN IDs for Spinner Motor
+    public static final int ID_SPINNER_MOTOR = 9;
     /**
      * MOTOR CONSTANTS
      */
@@ -98,4 +100,5 @@ public final class Constants {
      */
     //controller ports 
     public static final int kDriveControllerPort = 0;
+    public static final int kAuxControllerPort = 1;
 }
