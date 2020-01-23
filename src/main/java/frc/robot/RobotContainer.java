@@ -40,9 +40,10 @@ public class RobotContainer {
     drive.setDefaultCommand(
       new RunCommand(
         () -> drive.drive(
-          -(driveController.getRawAxis(1)) * .7, 
+          //.5, 0, 0),
+            -(driveController.getRawAxis(1)) * .7, 
           driveController.getRawAxis(0) * .7, 
-          driveController.getRawAxis(4)), 
+          driveController.getRawAxis(4)),  
           drive)
       );
 
@@ -65,9 +66,6 @@ public class RobotContainer {
     //instantiates drive toggle button
     new JoystickButton(driveController, Button.kBack.value)
       .whenPressed(new InstantCommand(drive::toggleIsDriveFieldCentric, drive));
-    //instantiates lock wheel toggle button
-    new JoystickButton(driveController, Button.kStart.value)
-      .whenPressed(new InstantCommand(drive::toggleAreWheelsLocked, drive));
   }
 
   /**

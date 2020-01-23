@@ -44,13 +44,22 @@ public final class Constants {
      * MOTOR CONSTANTS
      */
     //angle offsets
-    public static final double kFrontLeftAngleOffset = 157.0;
-    public static final double kFrontRightAngleOffset = 38.3;//90;//226.3;
-    public static final double kBackLeftAngleOffset = 130.6;//90;//134.4;
-    public static final double kBackRightAngleOffset = 57.1;//90;//242.5;
+    public static final double kFrontLeftAngleOffset = 159.5;
+    public static final double kFrontRightAngleOffset = 45.3;
+    public static final double kBackLeftAngleOffset = 130.6;
+    public static final double kBackRightAngleOffset = 57.8;
+
+    //Dashboard reading offsets
+    public static final double kFrontLeftAngleDashboardOffset = 318.0;
+    public static final double kFrontRightAngleDashboardOffset = 89.6;
+    public static final double kBackLeftAngleDashboardOffset = 261.6;
+    public static final double kBackRightAngleDashboardOffset = 114.8;
 
     //current limit for Spark MAXs 
     public static final int kCurrentLimit = 30; //amps
+    
+    //soft encoder limit for angle Spark MAXs
+    public static final float kSoftEncoderLimit = (float) 18.05;
 
     //motor neutral deadband
     public static final double kMotorNeutralDeadband = .15;
@@ -71,8 +80,8 @@ public final class Constants {
     public static final double kDriveD = 0.0;
 
     //PIDF values for closed-loop position control for angle modules
-    public static final double kAngleP = .01;
-    public static final double kAngleI = 1e-8;
+    public static final double kAngleP = .02;
+    public static final double kAngleI = 0.0;
     public static final double kAngleD = 0.0;
     public static final double kAngleFF = 0.0;
 
@@ -89,7 +98,7 @@ public final class Constants {
     public static final double kAnglePositionConversionFactor = 359.0 / 3.3; //degrees / volts
     public static final double kRPMToMPSConversionFactor = (1.0 / 60) * (4 * Math.PI) * .0254;
     public static final double kDriveVelocityConversionFactor = kRPMToMPSConversionFactor;
-    public static final double kRelativeRotationsPerModuleRotation = 18.05; //relative rots
+    public static final double kRelativeRotationsPerModuleRotation = kSoftEncoderLimit; //relative rots
     public static final double kModuleDegreesToRelativeRotations 
                                = kRelativeRotationsPerModuleRotation / 360.0; //rots / degrees
 
