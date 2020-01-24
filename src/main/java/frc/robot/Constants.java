@@ -63,8 +63,17 @@ public final class Constants {
 
     //controller ports 
     public static final int kDriveControllerPort = 0;
-
-
+  public static final int kXboxControllerPort = 1;
+     //intake motors
+  public static int IntakeMotorPort1 = 15;
+  public static int IntakeMotorPort2 = 16;
+  //intake limit switch
+  public static int IntakeLimitSwitch = 9;
+  
+  //USB Camera
+  public static int usbCamera = 23;
+  
+  //
     /*
     //encoder distance constants
     public static final double kWheelRotationsPerMeterTraveled = 12.57; //wheel rotations
