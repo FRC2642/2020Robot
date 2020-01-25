@@ -134,6 +134,11 @@ public class SwerveModule {
 
   double error;
   public double getError(){return error;}
+  double rotError;
+  public double getRotError(){return rotError;}
+  double initTarget;
+  public double getInitTarget(){return initTarget;}
+  boolean reset = false;
   /**
    * Feeds a desired modular wheel angle into the closed-loop position controller
    * 
@@ -141,28 +146,42 @@ public class SwerveModule {
    */
   public void setModuleAngle(Rotation2d targetAngle){
 
+    if(!reset){
     double target = targetAngle.getDegrees();
     target *= kModuleDegreesToRelativeRotations;
-
     double current = getRelativeAngleEncoder();
 
+    initTarget = target;
+
+    //adjusts target to be in appropriate range of rotation based on current position
+    if(Math.abs(current) > kRelativeRotationsPerModuleRotation){
+      if(current > 0){
+        rotError = Math.floor(current / kRelativeRotationsPerModuleRotation);
+      } else if(current < 0){
+        rotError = Math.ceil(current / kRelativeRotationsPerModuleRotation);
+      }
+      target += (rotError * kRelativeRotationsPerModuleRotation);
+    }
     error = target - current;
 
-    //WIP logic
-    while(Math.abs(error) > kRelativeRotationsPerModuleRotation / 2){
-      if(error > 0){
-        target += (current > 0) ? -kRelativeRotationsPerModuleRotation : kRelativeRotationsPerModuleRotation;
-      } else if(error < 0){
-        target += (current > 0) ? kRelativeRotationsPerModuleRotation : -kRelativeRotationsPerModuleRotation;
+    //increases target by rotation if taking a inefficient path
+    if(Math.abs(error) > kRelativeRotationsPerModuleRotation / 2){
+      if(current > 0){
+        target += kRelativeRotationsPerModuleRotation;
+      } else if(current < 0){
+        target -= kRelativeRotationsPerModuleRotation;
       }
+      error = target - current;
     }
     trueTargetAngle = target;
 
-    anglePID.setReference(target, ControlType.kPosition);
-    /*trueTargetAngle = targetAngle.getDegrees();  
+    anglePID.setReference(target, ControlType.kPosition); 
+    } else {
+    trueTargetAngle = targetAngle.getDegrees();  
     trueTargetAngle = realignAndOffsetEncoder(trueTargetAngle);
 
-    anglePID.setReference(trueTargetAngle, ControlType.kPosition);*/
+    anglePID.setReference(trueTargetAngle, ControlType.kPosition);
+    }
     }
 
   /**

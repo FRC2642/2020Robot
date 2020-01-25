@@ -54,9 +54,14 @@ public class Robot extends TimedRobot {
     //SmartDashboard.putNumber("absolute", robotContainer.drive.frontLeftModule.getAbsoluteAngleEncoder());
     //SmartDashboard.putNumber("absolute with offset", robotContainer.drive.frontLeftModule.getAbsoluteAngleEncoderWithOffset());
     SmartDashboard.putNumber("modulePosition", robotContainer.drive.backRightModule.getModulePosition());
-    SmartDashboard.putNumber("current", robotContainer.drive.backRightModule.getRelativeAngleEncoder());
+    SmartDashboard.putNumber("currentFL", robotContainer.drive.frontLeftModule.getRelativeAngleEncoder());
+    SmartDashboard.putNumber("currentFR", robotContainer.drive.frontRightModule.getRelativeAngleEncoder());
+    SmartDashboard.putNumber("currentBL", robotContainer.drive.backLeftModule.getRelativeAngleEncoder());
+    SmartDashboard.putNumber("currentBR", robotContainer.drive.backRightModule.getRelativeAngleEncoder());
     SmartDashboard.putNumber("target", robotContainer.drive.backRightModule.getTrueTargetAngle());
-    SmartDashboard.putNumber("error", robotContainer.drive.backRightModule.getError());
+    SmartDashboard.putNumber("error br", robotContainer.drive.backRightModule.getError());
+    SmartDashboard.putNumber("rotError br", robotContainer.drive.backRightModule.getRotError());
+    SmartDashboard.putNumber("initTarget", robotContainer.drive.backRightModule.getInitTarget());
   }
 
   /**
