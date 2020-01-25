@@ -18,10 +18,10 @@ public class IntakeSubsystem extends SubsystemBase {
   // here. Call these from Commands.
  
   //intake motors
-  Spark intakeMotor1 = new Spark(IntakeMotorPort1);
-  Spark intakeMotor2 = new Spark(IntakeMotorPort2);
+  Spark intakeMotor1 = new Spark(kIntakeMotorPort1);
+  Spark intakeMotor2 = new Spark(kIntakeMotorPort2);
 
-  public DigitalInput intakeSwitch = new DigitalInput(IntakeLimitSwitch);
+  public DigitalInput intakeSwitch = new DigitalInput(kIntakeLimitSwitch);
   
   public IntakeSubsystem() {
     intakeMotor2.setInverted(true);
@@ -40,7 +40,7 @@ public class IntakeSubsystem extends SubsystemBase {
     	intakeMotor1.set(-0.6);
     	intakeMotor2.set(-0.6);
   }
-  public void IntakeOut(double d, double e) {
+  public void intakeOut(double d, double e) {
     intakeMotor1.set(0.6);
     intakeMotor2.set(0.6);
   }

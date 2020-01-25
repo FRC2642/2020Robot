@@ -65,13 +65,13 @@ public final class Constants {
     public static final int kDriveControllerPort = 0;
   public static final int kAuxXboxControllerPort = 1;
      //intake motors
-  public static int IntakeMotorPort1 = 15;
-  public static int IntakeMotorPort2 = 16;
+  public static int kIntakeMotorPort1 = 15;
+  public static int kIntakeMotorPort2 = 16;
   //intake limit switch
-  public static int IntakeLimitSwitch = 9;
+  public static int kIntakeLimitSwitch = 9;
   
   //USB Camera
-  public static int usbCamera = 23;
+  public static int kUsbCamera = 23;
   
   //
     /*

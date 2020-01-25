@@ -32,7 +32,7 @@ public class IntakeCommand extends CommandBase {
   // Called repeatedly when this Command is scheduled to run
   @Override
   public void execute() {
-     Robot.intake.IntakeOut(-RobotContainer.auxXbox.getRawAxis(3) * .7, -(RobotContainer.auxXbox.getRawAxis(2) * .48));
+     Robot.intake.intakeOut(-RobotContainer.auxXbox.getRawAxis(3) * .7, -(RobotContainer.auxXbox.getRawAxis(2) * .48));
   }
 
   // Make this return true when this Command no longer needs to run execute()
