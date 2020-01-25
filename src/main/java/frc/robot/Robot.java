@@ -32,7 +32,6 @@ public class Robot extends TimedRobot {
   public void robotInit() {
   
     robotContainer = new RobotContainer();
-    robotContainer.drive.zeroNavx();
   }
 
   /**
@@ -51,12 +50,7 @@ public class Robot extends TimedRobot {
      * place any SmartDashboard methods that should be running even when the robot is disabled here
      */
 
-    //SmartDashboard.putNumber("absolute", robotContainer.drive.frontLeftModule.getAbsoluteAngleEncoder());
-    //SmartDashboard.putNumber("absolute with offset", robotContainer.drive.frontLeftModule.getAbsoluteAngleEncoderWithOffset());
-    SmartDashboard.putNumber("modulePosition", robotContainer.drive.backRightModule.getModulePosition());
-    SmartDashboard.putNumber("current", robotContainer.drive.backRightModule.getRelativeAngleEncoder());
-    SmartDashboard.putNumber("target", robotContainer.drive.backRightModule.getTrueTargetAngle());
-    SmartDashboard.putNumber("error", robotContainer.drive.backRightModule.getError());
+    
   }
 
   /**

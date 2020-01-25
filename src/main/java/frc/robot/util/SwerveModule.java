@@ -7,19 +7,6 @@
 
 package frc.robot.util;
 
-import static frc.robot.Constants.kAngleD;
-import static frc.robot.Constants.kAngleFF;
-import static frc.robot.Constants.kAngleI;
-import static frc.robot.Constants.kAngleP;
-import static frc.robot.Constants.kAnglePositionConversionFactor;
-import static frc.robot.Constants.kDriveD;
-import static frc.robot.Constants.kDriveFF;
-import static frc.robot.Constants.kDriveI;
-import static frc.robot.Constants.kDriveP;
-import static frc.robot.Constants.kDriveVelocityConversionFactor;
-import static frc.robot.Constants.kMaxOutput;
-import static frc.robot.Constants.kMinOutput;
-
 import static frc.robot.Constants.*;
 
 import com.revrobotics.CANAnalog;
@@ -75,7 +62,7 @@ public class SwerveModule {
     drivePID = driveMotor.getPIDController();
     anglePID = angleMotor.getPIDController();
 
-    //assigns analog enconder to angle PID
+    //assigns angle encoder to PID
     //anglePID.setFeedbackDevice(absoluteAngleEncoder);
     anglePID.setFeedbackDevice(relativeAngleEncoder);
     
@@ -91,6 +78,7 @@ public class SwerveModule {
     absoluteAngleEncoder.setPositionConversionFactor(kAnglePositionConversionFactor); //voltage into degrees
     driveEncoder.setVelocityConversionFactor(kDriveVelocityConversionFactor); //rpm into MPS  
 
+    //disables soft limits on Spark MAXs
     angleMotor.enableSoftLimit(SoftLimitDirection.kForward, false);
     angleMotor.enableSoftLimit(SoftLimitDirection.kReverse, false);
   }
@@ -132,8 +120,6 @@ public class SwerveModule {
     drivePID.setReference(targetVelocity, ControlType.kVelocity);
   }
 
-  double error;
-  public double getError(){return error;}
   /**
    * Feeds a desired modular wheel angle into the closed-loop position controller
    * 
@@ -143,26 +129,38 @@ public class SwerveModule {
 
     double target = targetAngle.getDegrees();
     target *= kModuleDegreesToRelativeRotations;
-
     double current = getRelativeAngleEncoder();
 
-    error = target - current;
+    //adjusts target to be in appropriate range of rotation based on current position
+    if(Math.abs(current) > kRelativeRotationsPerModuleRotation){
+      double rotError = 0.0;
+      if(current > 0){
+        rotError = Math.floor(current / kRelativeRotationsPerModuleRotation);
+      } else if(current < 0){
+        rotError = Math.ceil(current / kRelativeRotationsPerModuleRotation);
+      }
+      target += (rotError * kRelativeRotationsPerModuleRotation);
+    }
+    
+    double error = target - current;
 
-    //WIP logic
-    while(Math.abs(error) > kRelativeRotationsPerModuleRotation / 2){
-      if(error > 0){
-        target += (current > 0) ? -kRelativeRotationsPerModuleRotation : kRelativeRotationsPerModuleRotation;
-      } else if(error < 0){
-        target += (current > 0) ? kRelativeRotationsPerModuleRotation : -kRelativeRotationsPerModuleRotation;
+    //increases target by rotation if taking a inefficient path
+    if(Math.abs(error) > kRelativeRotationsPerModuleRotation / 2){
+      if(current > 0){
+        target += kRelativeRotationsPerModuleRotation;
+      } else if(current < 0){
+        target -= kRelativeRotationsPerModuleRotation;
       }
     }
     trueTargetAngle = target;
 
-    anglePID.setReference(target, ControlType.kPosition);
-    /*trueTargetAngle = targetAngle.getDegrees();  
+    anglePID.setReference(target, ControlType.kPosition); 
+
+    //analog encoder code, leave out unless using analog encoder
+    /* trueTargetAngle = targetAngle.getDegrees();  
     trueTargetAngle = realignAndOffsetEncoder(trueTargetAngle);
 
-    anglePID.setReference(trueTargetAngle, ControlType.kPosition);*/
+    anglePID.setReference(trueTargetAngle, ControlType.kPosition); */
     }
 
   /**
@@ -239,15 +237,6 @@ public class SwerveModule {
 
   public void setEncoder(double position){
     relativeAngleEncoder.setPosition(position);
-  }
-
-  //unused
-  public void setRelativeOffset(){
-    double moduleAngle = getTrueTargetAngle();
-    if(moduleAngle > 180){
-      moduleAngle = moduleAngle - 360;
-    }
-    relativeOffset = moduleAngle * kModuleDegreesToRelativeRotations;
   }
 
   /**
@@ -327,6 +316,7 @@ public class SwerveModule {
     angleMotor.set(input);
   }
 
+  //uses absolute encoder
   public void setAngleSetpoint(double xInput, double yInput){
     Rotation2d targetAngle = new Rotation2d(xInput, yInput);
     System.out.println(targetAngle);
