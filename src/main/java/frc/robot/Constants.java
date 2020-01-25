@@ -39,9 +39,20 @@ public final class Constants {
     public static final int ID_BACK_LEFT_ANGLE_MOTOR = 6;
     public static final int ID_BACK_RIGHT_DRIVE_MOTOR = 7;
     public static final int ID_BACK_RIGHT_ANGLE_MOTOR = 8;
-
-    //CAN IDs for Spinner Motor
+    //CAN ID for Spinner Motor
     public static final int ID_SPINNER_MOTOR = 9;
+    //CAN ID for Mag Elevator
+    public static final int ID_ = 10;
+    //CAN IDs for Intake
+    public static final int ID_ = 11;
+    public static final int ID_ = 12;
+    //CAN IDs for Shooter
+    public static final int ID_ = 13;
+    public static final int ID_ = 14;
+    //CAN IDs for Climber
+    public static final int ID_ = 15;
+    //CAN IDs for Arm
+    public static final int ID_ = 16;
     /**
      * MOTOR CONSTANTS
      */
