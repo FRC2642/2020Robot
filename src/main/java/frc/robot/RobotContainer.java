@@ -8,8 +8,7 @@
 package frc.robot;
 
 import static frc.robot.Constants.kDriveControllerPort;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.commands.IntakeCommand;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -24,7 +23,7 @@ import frc.robot.subsystems.SwerveDriveSubsystem;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
-  XboxController xbox = new XboxController(Constants.kXboxControllerPort);
+  XboxController auxXbox = new XboxController(Constants.kAuxXboxControllerPort);
   XboxController driveController = new XboxController(kDriveControllerPort);
 
   /**
@@ -54,13 +53,6 @@ public class RobotContainer {
               -driveController.getRawAxis(1), -driveController.getRawAxis(5)),
               drive)
     );*/
-
-    drive.setDefaultCommand(
-      new RunCommand(
-        () -> drive.testAnglePIDLoop(drive.frontRightModule,
-         (driveController.getRawAxis(0) * .5), (-driveController.getRawAxis(1)) * .5),
-         drive)
-    );
     
       /*drive.setDefaultCommand(
         new RunCommand(
