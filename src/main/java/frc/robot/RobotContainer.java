@@ -23,7 +23,7 @@ import frc.robot.subsystems.SwerveDriveSubsystem;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
-  XboxController auxXbox = new XboxController(Constants.kAuxXboxControllerPort);
+  public static XboxController auxXbox = new XboxController(Constants.kAuxXboxControllerPort);
   XboxController driveController = new XboxController(kDriveControllerPort);
 
   /**

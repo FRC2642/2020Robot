@@ -40,7 +40,7 @@ public class IntakeSubsystem extends SubsystemBase {
     	intakeMotor1.set(-0.6);
     	intakeMotor2.set(-0.6);
   }
-  public void IntakeOut() {
+  public void IntakeOut(double d, double e) {
     intakeMotor1.set(0.6);
     intakeMotor2.set(0.6);
   }
