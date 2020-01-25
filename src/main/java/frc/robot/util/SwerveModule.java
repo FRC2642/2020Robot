@@ -254,6 +254,15 @@ public class SwerveModule {
     return trueTargetAngle;
   }
 
+  public double getSwerveModuleSpeed(){
+    return targetVelocity;
+  }
+
+  public Rotation2d getSwerveModuleAngle() {
+    return targetAngle;
+  }
+
+  
   /**
    * status information about motors
    */
@@ -284,4 +293,5 @@ public class SwerveModule {
 
     anglePID.setReference(targetAngle.getDegrees(), ControlType.kPosition);
   }
+
 }
