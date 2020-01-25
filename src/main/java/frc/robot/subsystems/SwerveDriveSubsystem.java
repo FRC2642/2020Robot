@@ -7,29 +7,6 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.ID_BACK_LEFT_ANGLE_MOTOR;
-import static frc.robot.Constants.ID_BACK_LEFT_DRIVE_MOTOR;
-import static frc.robot.Constants.ID_BACK_RIGHT_ANGLE_MOTOR;
-import static frc.robot.Constants.ID_BACK_RIGHT_DRIVE_MOTOR;
-import static frc.robot.Constants.ID_FRONT_LEFT_ANGLE_MOTOR;
-import static frc.robot.Constants.ID_FRONT_LEFT_DRIVE_MOTOR;
-import static frc.robot.Constants.ID_FRONT_RIGHT_ANGLE_MOTOR;
-import static frc.robot.Constants.ID_FRONT_RIGHT_DRIVE_MOTOR;
-import static frc.robot.Constants.kBackLeftAngleDashboardOffset;
-import static frc.robot.Constants.kBackLeftAngleOffset;
-import static frc.robot.Constants.kBackRightAngleDashboardOffset;
-import static frc.robot.Constants.kBackRightAngleOffset;
-import static frc.robot.Constants.kCurrentLimit;
-import static frc.robot.Constants.kFrontLeftAngleDashboardOffset;
-import static frc.robot.Constants.kFrontLeftAngleOffset;
-import static frc.robot.Constants.kFrontRightAngleDashboardOffset;
-import static frc.robot.Constants.kFrontRightAngleOffset;
-import static frc.robot.Constants.kMaxMPS;
-import static frc.robot.Constants.kMaxModuleRPM;
-import static frc.robot.Constants.kMotorNeutralDeadband;
-import static frc.robot.Constants.kXDistanceFromCenter;
-import static frc.robot.Constants.kYDistanceFromCenter;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.SwerveModule;
 
+import static frc.robot.Constants.*;
 
 public class SwerveDriveSubsystem extends SubsystemBase {
   CANSparkMax frontLeftDriveMotor, frontLeftAngleMotor;
@@ -110,14 +88,14 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     backRightDriveMotor.setSmartCurrentLimit(kCurrentLimit);
     backRightAngleMotor.setSmartCurrentLimit(kCurrentLimit);
 
-    //assigns drive and angle motors to their respective swerve modules
+    //assigns drive and angle motors to their respective swerve modules with offsets
     frontLeftModule = new SwerveModule(frontLeftDriveMotor, frontLeftAngleMotor, kFrontLeftAngleOffset, kFrontLeftAngleDashboardOffset);
     frontRightModule = new SwerveModule(frontRightDriveMotor, frontRightAngleMotor, kFrontRightAngleOffset, kFrontRightAngleDashboardOffset);
     backLeftModule = new SwerveModule(backLeftDriveMotor, backLeftAngleMotor, kBackLeftAngleOffset, kBackLeftAngleDashboardOffset);
     backRightModule = new SwerveModule(backRightDriveMotor, backRightAngleMotor, kBackRightAngleOffset, kBackRightAngleDashboardOffset);
 
     //assigns swerve modules to an array 
-    //this makes doing repetitive actions, such as updating states, much more convienent 
+    //this simplifies updating module states
     modules = new ArrayList<SwerveModule>();
         modules.add(frontLeftModule);
         modules.add(frontRightModule);
@@ -233,7 +211,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
       int i = modules.indexOf(module);
 
       //sets module velocity using closed loop velocity control
-      //module.setModuleVelocity(module.getTargetVelocity(moduleStates[i]));
+      module.setModuleVelocity(module.getTargetVelocity(moduleStates[i]));
       
       //sets angle of module using closed loop position control
       module.setModuleAngle(module.getTargetAngle(moduleStates[i]));
@@ -301,24 +279,19 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     double inMin = -1.0; 
 
     double output = 0.0;
-    //System.out.println("input = " + input);
+    
     if(input <= kMotorNeutralDeadband && input >= (-kMotorNeutralDeadband)){
-      //System.out.println("at 0");
       output = 0.0;
     }
-
     if(input >= kMotorNeutralDeadband){
-      //System.out.println("above deadband");
                 //new slope for motor output                 //repositions constant based on deadband
       output = (outMax / (inMax - kMotorNeutralDeadband)) * (input - kMotorNeutralDeadband);
     }
-
     if(input <= -kMotorNeutralDeadband){
-      //System.out.println("below deadband");
                //new slope for motor output                  //repositions constant based on deadband
       output = (outMin / (kMotorNeutralDeadband + inMin)) * (input + kMotorNeutralDeadband);
     }
-    //System.out.println("output = " + output);
+    
     return output;
   }
 
@@ -330,18 +303,16 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public void motorTest(SwerveModule module, double driveInput, double angleInput){
     module.testDriveMotor(driveInput);
     module.testAngleMotor(angleInput);
-
-    SmartDashboard.putNumber("driveStickInput", driveInput);
-    SmartDashboard.putNumber("angleStickInput", angleInput);
   }
 
+  //uses absolute encoder
   public void testAnglePIDLoop(SwerveModule module, double rawXInput, double rawYInput){
     //System.out.println("raw x = " + rawXInput);
     //System.out.println("raw y = " + rawYInput);
     double xInput = deadband(rawXInput);
     double yInput = deadband(rawYInput);
-    System.out.println("band x = " + xInput);
-    System.out.println("band y = " + yInput);
+    //System.out.println("band x = " + xInput);
+    //System.out.println("band y = " + yInput);
     module.setAngleSetpoint(xInput, yInput);
   }
 

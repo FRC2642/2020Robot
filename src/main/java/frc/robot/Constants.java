@@ -61,9 +61,6 @@ public final class Constants {
     //motor neutral deadband
     public static final double kMotorNeutralDeadband = .15;
 
-    //setpoint difference deadband
-    public static final double kSwerveSetpointDifferenceDeadband = .3; //motor rots
-
     /**
      * PID GAINS AND OTHER PID CONSTANTS
      */
@@ -71,7 +68,7 @@ public final class Constants {
     public static final double kMinOutput = -1.0;
     public static final double kMaxOutput = 1.0;
     public static final double kMaxModuleRPM = 17.5;  //wip, MPS
-    public static final double kMaxMPS = 17.5; //slowly bring up to 25 MPS
+    public static final double kMaxMPS = 17.5; //wip, slowly bring up to 25 MPS
                                                             
     //PIDF values for closed-loop velocity control for drive modules
     public static final double kDriveFF = .5 / 15.989; //approx .03127
@@ -80,9 +77,9 @@ public final class Constants {
     public static final double kDriveD = 0.0;
 
     //PIDF values for closed-loop position control for angle modules
-    public static final double kAngleP = .02;
-    public static final double kAngleI = 0.0;
-    public static final double kAngleD = 0.0;
+    public static final double kAngleP = .3;
+    public static final double kAngleI = 0.0005;
+    public static final double kAngleD = 0.04;
     public static final double kAngleFF = 0.0;
 
     /**
