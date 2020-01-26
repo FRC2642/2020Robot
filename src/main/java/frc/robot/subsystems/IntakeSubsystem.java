@@ -7,11 +7,13 @@
 
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.*;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import frc.robot.commands.IntakeCommand;
-import static frc.robot.Constants.*;
 
 public class IntakeSubsystem extends SubsystemBase {
   // Put methods for controlling this subsystem
@@ -37,12 +39,13 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
   public void intakeIn() {
-    	intakeMotor1.set(-0.6);
-    	intakeMotor2.set(-0.6);
+    	intakeMotor1.set(0.6);
+    	intakeMotor2.set(0.6);
   }
-  public void intakeOut(double d, double e) {
-    intakeMotor1.set(0.6);
-    intakeMotor2.set(0.6);
+  public void intakeOut() {
+    //these values can be changed
+    intakeMotor1.set(-RobotContainer.auxController.getRawAxis(3) * .7);
+    intakeMotor2.set(-RobotContainer.auxController.getRawAxis(2) * .7);
   }
   public void stop() {
     intakeMotor1.set(0.0);

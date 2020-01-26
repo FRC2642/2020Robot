@@ -63,7 +63,7 @@ public final class Constants {
 
     //controller ports 
     public static final int kDriveControllerPort = 0;
-  public static final int kAuxXboxControllerPort = 1;
+  public static final int kAuxControllerPort = 1;
      //intake motors
   public static int kIntakeMotorPort1 = 15;
   public static int kIntakeMotorPort2 = 16;

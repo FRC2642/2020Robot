@@ -32,7 +32,11 @@ public class IntakeCommand extends CommandBase {
   // Called repeatedly when this Command is scheduled to run
   @Override
   public void execute() {
-     Robot.intake.intakeOut(-RobotContainer.auxXbox.getRawAxis(3) * .7, -(RobotContainer.auxXbox.getRawAxis(2) * .48));
+    //getRawAxis axies values may need changing
+    if (RobotContainer.auxController.getRawAxis(3) > 0.6)
+      Robot.intake.intakeIn();
+    else if (RobotContainer.auxController.getRawAxis(3) < 0.6)
+     Robot.intake.intakeOut();
   }
 
   // Make this return true when this Command no longer needs to run execute()
