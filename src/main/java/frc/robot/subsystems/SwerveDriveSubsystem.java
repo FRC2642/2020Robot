@@ -7,6 +7,29 @@
 
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.ID_BACK_LEFT_ANGLE_MOTOR;
+import static frc.robot.Constants.ID_BACK_LEFT_DRIVE_MOTOR;
+import static frc.robot.Constants.ID_BACK_RIGHT_ANGLE_MOTOR;
+import static frc.robot.Constants.ID_BACK_RIGHT_DRIVE_MOTOR;
+import static frc.robot.Constants.ID_FRONT_LEFT_ANGLE_MOTOR;
+import static frc.robot.Constants.ID_FRONT_LEFT_DRIVE_MOTOR;
+import static frc.robot.Constants.ID_FRONT_RIGHT_ANGLE_MOTOR;
+import static frc.robot.Constants.ID_FRONT_RIGHT_DRIVE_MOTOR;
+import static frc.robot.Constants.kBackLeftAngleDashboardOffset;
+import static frc.robot.Constants.kBackLeftAngleOffset;
+import static frc.robot.Constants.kBackRightAngleDashboardOffset;
+import static frc.robot.Constants.kBackRightAngleOffset;
+import static frc.robot.Constants.kCurrentLimit;
+import static frc.robot.Constants.kFrontLeftAngleDashboardOffset;
+import static frc.robot.Constants.kFrontLeftAngleOffset;
+import static frc.robot.Constants.kFrontRightAngleDashboardOffset;
+import static frc.robot.Constants.kFrontRightAngleOffset;
+import static frc.robot.Constants.kMaxMPS;
+import static frc.robot.Constants.kMaxModuleRPM;
+import static frc.robot.Constants.kMotorNeutralDeadband;
+import static frc.robot.Constants.kXDistanceFromCenter;
+import static frc.robot.Constants.kYDistanceFromCenter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +49,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.SwerveModule;
 import static frc.robot.Constants.*;
+
 
 
 public class SwerveDriveSubsystem extends SubsystemBase {
@@ -49,6 +73,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public boolean isDriveFieldCentric;
   public boolean areWheelsLocked;
  
+
   /**
    * Creates a new SwerveDriveSubsystem.
    */
@@ -94,10 +119,10 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     backRightAngleMotor.setSmartCurrentLimit(kCurrentLimit);
 
     //assigns drive and angle motors to their respective swerve modules
-    frontLeftModule = new SwerveModule(frontLeftDriveMotor, frontLeftAngleMotor, kFrontLeftAngleOffset);
-    frontRightModule = new SwerveModule(frontRightDriveMotor, frontRightAngleMotor, kFrontRightAngleOffset);
-    backLeftModule = new SwerveModule(backLeftDriveMotor, backLeftAngleMotor, kBackLeftAngleOffset);
-    backRightModule = new SwerveModule(backRightDriveMotor, backRightAngleMotor, kBackRightAngleOffset);
+    frontLeftModule = new SwerveModule(frontLeftDriveMotor, frontLeftAngleMotor, kFrontLeftAngleOffset, kFrontLeftAngleDashboardOffset);
+    frontRightModule = new SwerveModule(frontRightDriveMotor, frontRightAngleMotor, kFrontRightAngleOffset, kFrontRightAngleDashboardOffset);
+    backLeftModule = new SwerveModule(backLeftDriveMotor, backLeftAngleMotor, kBackLeftAngleOffset, kBackLeftAngleDashboardOffset);
+    backRightModule = new SwerveModule(backRightDriveMotor, backRightAngleMotor, kBackRightAngleOffset, kBackRightAngleDashboardOffset);
 
     //assigns swerve modules to an array 
     //this makes doing repetitive actions, such as updating states, much more convienent 
@@ -117,10 +142,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     //assigns module distance to kinematic object
     kinematics = new SwerveDriveKinematics(frontLeft, frontRight, backLeft, backRight);
     
-    //creates odometry object from kinematics object; starting pose is 5 meters along the edge of the field
-    //and in the center of the field along the short end, and facing forward
-    //THIS IS NOT FINAL
-    odometry = new SwerveDriveOdometry(kinematics, getRobotYawInRotation2d(), new Pose2d(5.0, 13.5, new Rotation2d()));
+    //creates odometry object from kinematics object
+    odometry = new SwerveDriveOdometry(kinematics, getRobotYawInRotation2d());
     
 
     //instantiates navx
@@ -135,12 +158,16 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     //assigns values to togglables
     isDriveFieldCentric = true;
-    areWheelsLocked = false;
   }
 
-  //METHODS
+  /**
+   * METHODS
+   */
 
-  //drive methods
+  /**
+   * drive methods
+   */
+
   /**
    * Drives with either robot-centric or field-centric
    * 
@@ -212,13 +239,13 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public void setModuleStates(SwerveModuleState[] moduleStates){
     for(SwerveModule module: modules){
       
-      //for testing indv modules, leave out unless running only one module
+      //for testing indv modules; leave out unless running only one module
       //SwerveModule module = backRightModule;
 
       int i = modules.indexOf(module);
 
       //sets module velocity using closed loop velocity control
-      module.setModuleVelocity(module.getTargetVelocity(moduleStates[i]));
+      //module.setModuleVelocity(module.getTargetVelocity(moduleStates[i]));
       
       //sets angle of module using closed loop position control
       module.setModuleAngle(module.getTargetAngle(moduleStates[i]));
@@ -259,14 +286,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     return isDriveFieldCentric;
   }
 
-  public void toggleAreWheelsLocked(){
-    areWheelsLocked = !areWheelsLocked;
-  }
-
-  public boolean getAreWheelsLocked(){
-    return areWheelsLocked;
-  }
-
   //navx methods 
   public double getRobotYaw(){
     return navx.getYaw();
@@ -280,6 +299,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public void zeroNavx(){
     navx.zeroYaw();
   }
+  //gets the x and y coordinates of the robot's position on the field in meters
   public Pose2d getPose() {
     return odometry.getPoseMeters();
   }
@@ -356,11 +376,11 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     
     SmartDashboard.putNumber("naxv angle", getRobotYaw());
     SmartDashboard.putBoolean("isDriveFieldCentric", getIsDriveFieldCentric());
-    SmartDashboard.putBoolean("areWheelsLocked", getAreWheelsLocked());
+    //SmartDashboard.putBoolean("areWheelsLocked", getAreWheelsLocked());
     SmartDashboard.putString("positionOnField", odometry.getPoseMeters().toString());
 
-    odometry.update(getRobotYawInRotation2d(), moduleStates);
-
-}
+    //updates the robot's position on the field over time
+     odometry.update(getRobotYawInRotation2d(), moduleStates);
+  }
 
 }
