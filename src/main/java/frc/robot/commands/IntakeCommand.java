@@ -36,7 +36,8 @@ public class IntakeCommand extends CommandBase {
     if (RobotContainer.auxController.getRawAxis(3) > 0.6)
       Robot.intake.intakeIn();
     else if (RobotContainer.auxController.getRawAxis(3) < 0.6)
-     Robot.intake.intakeOut();
+    //ekatni is intake backwards, as shooting is the reverse of grabbing
+     Robot.ekatni.ekatniOut();
   }
 
   // Make this return true when this Command no longer needs to run execute()

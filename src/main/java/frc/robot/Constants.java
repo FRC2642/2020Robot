@@ -67,6 +67,8 @@ public final class Constants {
      //intake motors
   public static int kIntakeMotorPort1 = 15;
   public static int kIntakeMotorPort2 = 16;
+  public static int kEkatniMotorPort1 = 17;
+  public static int kEkatniMotorPort2 = 18;
   //intake limit switch
   public static int kIntakeLimitSwitch = 9;
   

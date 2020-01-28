@@ -12,7 +12,6 @@ import static frc.robot.Constants.*;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
 import frc.robot.commands.IntakeCommand;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -26,7 +25,6 @@ public class IntakeSubsystem extends SubsystemBase {
   public DigitalInput intakeSwitch = new DigitalInput(kIntakeLimitSwitch);
   
   public IntakeSubsystem() {
-    intakeMotor2.setInverted(true);
   }
   public void intake() {
   }
@@ -35,23 +33,29 @@ public class IntakeSubsystem extends SubsystemBase {
     // Set the default command for a subsystem here.
     // setDefaultCommand(new MySpecialCommand());
 
-    setDefaultCommand(new IntakeCommand());
+   setDefaultCommand(new IntakeCommand());
     }
-
+//grabs balls
   public void intakeIn() {
     	intakeMotor1.set(0.6);
-    	intakeMotor2.set(0.6);
+      intakeMotor2.set(0.6);
   }
+  //drops balls
   public void intakeOut() {
-    //these values can be changed
-    intakeMotor1.set(-RobotContainer.auxController.getRawAxis(3) * .7);
-    intakeMotor2.set(-RobotContainer.auxController.getRawAxis(2) * .7);
+    intakeMotor1.set(0.6);
+    intakeMotor2.set(0.6);
   }
+
   public void stop() {
     intakeMotor1.set(0.0);
     intakeMotor2.set(0.0);
   }
     public boolean getIntakeLimitSwitch(){
       return !intakeSwitch.get();
+    }
+
+    @Override
+    public void periodic() {
+      // This method will be called once per scheduler run
     }
 }
