@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.subsystems.ColorSpinner;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 
 /**
@@ -27,8 +28,10 @@ import frc.robot.subsystems.SwerveDriveSubsystem;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
+  public final ColorSpinner spinner = new ColorSpinner();
 
   XboxController driveController = new XboxController(kDriveControllerPort);
+  XboxController auxController = new XboxController(kAuxControllerPort);
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -54,6 +57,7 @@ public class RobotContainer {
               -driveController.getRawAxis(1), -driveController.getRawAxis(5)),
               drive)
     );*/
+    
   }
 
   /**
@@ -66,8 +70,15 @@ public class RobotContainer {
     //instantiates drive toggle button
     new JoystickButton(driveController, Button.kBack.value)
       .whenPressed(new InstantCommand(drive::toggleIsDriveFieldCentric, drive));
+    //toggles aiming mode
     new JoystickButton(driveController, Button.kStart.value)
       .whenPressed(new InstantCommand(drive::toggleIsAimingMode, drive));
+    //rotates colorspinner motor left/Counter Clockwise
+    new JoystickButton(auxController, Button.kX.value)
+      .whenHeld(new RunCommand(spinner::spinL, spinner));
+    //rotates colorspinner motor right/Clockwise
+    new JoystickButton(auxController, Button.kB.value)
+      .whenHeld(new RunCommand(spinner::spinR, spinner));
   }
 
   /**
