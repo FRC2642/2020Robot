@@ -17,8 +17,10 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -37,9 +39,10 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public SwerveModule backLeftModule;
   public SwerveModule backRightModule;
   public List<SwerveModule> modules;
+  public SwerveModuleState[] moduleStates;
 
   SwerveDriveKinematics kinematics;
-
+  SwerveDriveOdometry odometry;
   public AHRS navx;
 
   public boolean isDriveFieldCentric;
@@ -112,6 +115,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     //assigns module distance to kinematic object
     kinematics = new SwerveDriveKinematics(frontLeft, frontRight, backLeft, backRight);
 
+    odometry = new SwerveDriveOdometry(kinematics, getRobotYawInRotation2d());
     //instantiates navx
     try{
       navx = new AHRS();
@@ -176,7 +180,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     
     //converts input targets to individual module states (robot-centric)
     ChassisSpeeds targetVelocity = new ChassisSpeeds(xVelocity, yVelocity, rotateVelocity);
-    SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(targetVelocity);
+    moduleStates = kinematics.toSwerveModuleStates(targetVelocity);
 
     setModuleStates(moduleStates);
   } 
@@ -194,7 +198,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     //converts input targets to individual module states (field centric)
     ChassisSpeeds targetVelocity = ChassisSpeeds.fromFieldRelativeSpeeds(
         xVelocity, yVelocity, rotateVelocity, getRobotYawInRotation2d());
-    SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(targetVelocity);
+     moduleStates = kinematics.toSwerveModuleStates(targetVelocity);
 
     setModuleStates(moduleStates);
   }
@@ -231,7 +235,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public void lockWheels(){
     
     ChassisSpeeds wheelLock = new ChassisSpeeds(0.0, 0.0, 1.0);
-    SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(wheelLock);
+    moduleStates = kinematics.toSwerveModuleStates(wheelLock);
 
     for(SwerveModule module: modules){
 
@@ -264,6 +268,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
   public void zeroNavx(){
     navx.zeroYaw();
+  }
+  public Pose2d getPoseMeters(){
+    return odometry.getPoseMeters();
   }
 
   /**
@@ -329,5 +336,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("naxv angle", getRobotYaw());
     SmartDashboard.putBoolean("isDriveFieldCentric", getIsDriveFieldCentric());
+    SmartDashboard.putString("positionOnField", odometry.getPoseMeters().toString());
+    
+    odometry.update(getRobotYawInRotation2d(), moduleStates);
   }
 }
