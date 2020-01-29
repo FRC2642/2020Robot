@@ -116,7 +116,9 @@ public class SwerveModule {
    * @param targetVelocity desired velocity of the module in meters/second
    */
   public void setModuleVelocity(double targetVelocity){
+
     //System.out.println("velocity = " + targetVelocity);
+
     drivePID.setReference(targetVelocity, ControlType.kVelocity);
   }
 

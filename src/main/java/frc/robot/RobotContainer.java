@@ -44,7 +44,7 @@ public class RobotContainer {
       new RunCommand(
         () -> drive.drive(
           //.5, 0, 0),
-            -(driveController.getRawAxis(1)) * .7, 
+             -(driveController.getRawAxis(1)) * .7, 
           driveController.getRawAxis(0) * .7, 
           driveController.getRawAxis(4)),  
           drive)
@@ -70,6 +70,9 @@ public class RobotContainer {
     //instantiates drive toggle button
     new JoystickButton(driveController, Button.kBack.value)
       .whenPressed(new InstantCommand(drive::toggleIsDriveFieldCentric, drive));
+    //toggles aiming mode
+    new JoystickButton(driveController, Button.kStart.value)
+      .whenPressed(new InstantCommand(drive::toggleIsAimingMode, drive));
     //rotates colorspinner motor left/Counter Clockwise
     new JoystickButton(auxController, Button.kX.value)
       .whenHeld(new RunCommand(spinner::spinL, spinner));
