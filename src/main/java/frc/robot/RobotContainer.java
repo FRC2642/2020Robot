@@ -11,7 +11,6 @@ import static frc.robot.Constants.kDriveControllerPort;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.EkatniSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -59,14 +58,14 @@ configureButtonBindings();
               drive)
     );*/
     
-    intake.setDefaultCommand(new IntakeCommand(), intake);
+   intake.setDefaultCommand(new IntakeCommand(), intake);
 
-      drive.setDefaultCommand(
+     /* drive.setDefaultCommand(
         new RunCommand(
           () -> drive.testDrivePIDFLoop(drive.modules,
            -driveController.getRawAxis(1)),
            drive)
-      );
+      );*/
   }
 
   /**
