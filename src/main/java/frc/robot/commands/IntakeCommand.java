@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*/
+
 /* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
@@ -8,9 +8,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Robot;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.IntakeSubsystem;
 
 /**
  * An example command.  You can replace me with your own command.
@@ -18,11 +16,9 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class IntakeCommand extends CommandBase {
   public IntakeCommand() {
     // Use requires() here to declare subsystem dependencies
-    requires(Robot.intake);
   }
 
-  private void requires(IntakeSubsystem intake) {
-}
+ 
 
 // Called just before this Command runs the first time
   @Override
@@ -34,10 +30,10 @@ public class IntakeCommand extends CommandBase {
   public void execute() {
     //getRawAxis axies values may need changing
     if (RobotContainer.auxController.getRawAxis(3) > 0.6)
-      Robot.intake.intakeIn();
+      RobotContainer.intake.intakeIn();
     else if (RobotContainer.auxController.getRawAxis(3) < 0.6)
     //ekatni is intake backwards, as shooting is the reverse of grabbing
-     Robot.ekatni.ekatniOut();
+     RobotContainer.ekatni.ekatniOut();
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -48,7 +44,7 @@ public class IntakeCommand extends CommandBase {
 
   // Called once after isFinished returns true
    protected void end() {
-    Robot.intake.stop();
+    RobotContainer.intake.stop();
    }
 
   // Called when another command which requires one or more of the same

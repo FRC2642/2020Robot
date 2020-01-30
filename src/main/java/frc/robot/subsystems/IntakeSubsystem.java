@@ -40,11 +40,6 @@ public class IntakeSubsystem extends SubsystemBase {
     	intakeMotor1.set(0.6);
       intakeMotor2.set(0.6);
   }
-  //drops balls
-  public void intakeOut() {
-    intakeMotor1.set(0.6);
-    intakeMotor2.set(0.6);
-  }
 
   public void stop() {
     intakeMotor1.set(0.0);
@@ -58,4 +53,6 @@ public class IntakeSubsystem extends SubsystemBase {
     public void periodic() {
       // This method will be called once per scheduler run
     }
+	public void setDefaultCommand(IntakeCommand intakeCommand, IntakeSubsystem intake) {
+	}
 }

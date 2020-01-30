@@ -12,7 +12,6 @@ import static frc.robot.Constants.*;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.IntakeCommand;
 
 //ekatni is intake backwards, as shooting is the reverse of grabbing
 public class EkatniSubsystem extends SubsystemBase {
@@ -32,9 +31,6 @@ public class EkatniSubsystem extends SubsystemBase {
 
   }
 
- private void initDefaultCommand() {
-    setDefaultCommand(new IntakeCommand());
- }
   //sets speed for shooter
  public void ekatniOut() {
   ekatniMotor1.set(-0.6);

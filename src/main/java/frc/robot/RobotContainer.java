@@ -11,6 +11,10 @@ import static frc.robot.Constants.kDriveControllerPort;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.subsystems.EkatniSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -23,6 +27,9 @@ public class RobotContainer {
   public final SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
   public static XboxController auxController = new XboxController(Constants.kAuxControllerPort);
   XboxController driveController = new XboxController(kDriveControllerPort);
+  public static final IntakeSubsystem intake = new IntakeSubsystem();
+//ekatni is intake backwards, as shooting is the reverse of grabbing
+public static final EkatniSubsystem ekatni = new EkatniSubsystem();
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -52,12 +59,14 @@ configureButtonBindings();
               drive)
     );*/
     
-      /*drive.setDefaultCommand(
+    intake.setDefaultCommand(new IntakeCommand(), intake);
+
+      drive.setDefaultCommand(
         new RunCommand(
           () -> drive.testDrivePIDFLoop(drive.modules,
            -driveController.getRawAxis(1)),
            drive)
-      );*/
+      );
   }
 
   /**
