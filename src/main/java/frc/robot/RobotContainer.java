@@ -7,13 +7,19 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.kDriveControllerPort;
+import static frc.robot.Constants.*;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.EkatniSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.subsystems.ColorSpinner;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -24,48 +30,41 @@ import frc.robot.subsystems.SwerveDriveSubsystem;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
-  public static XboxController auxController = new XboxController(Constants.kAuxControllerPort);
-  XboxController driveController = new XboxController(kDriveControllerPort);
   public static final IntakeSubsystem intake = new IntakeSubsystem();
-//ekatni is intake backwards, as shooting is the reverse of grabbing
-public static final EkatniSubsystem ekatni = new EkatniSubsystem();
+  //ekatni is intake backwards, as shooting is the reverse of grabbing
+  //get rid of this -__- -dylan
+  public static final EkatniSubsystem ekatni = new EkatniSubsystem();
+  public final ColorSpinner spinner = new ColorSpinner();
+
+  XboxController driveController = new XboxController(kDriveControllerPort);
+  XboxController auxController = new XboxController(kAuxControllerPort);
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    // Configure the button bindings
-configureButtonBindings();
+   
+    configureButtonBindings();
 
-
-  
-    
-    //basic drive command using left stick for strafe control and right stick for rotate control
-
-    /*drive.setDefaultCommand(
+    drive.setDefaultCommand(
       new RunCommand(
         () -> drive.drive(
-          -(driveController.getRawAxis(1)), 
-          driveController.getRawAxis(0), 
-          driveController.getRawAxis(4)), 
+          //.5, 0, 0),
+             -(driveController.getRawAxis(1)) * .7, 
+          driveController.getRawAxis(0) * .7, 
+          driveController.getRawAxis(4)),  
           drive)
-      );*/
+      );
 
+    intake.setDefaultCommand(new IntakeCommand(), intake);
+    
+    //manually drives motors, leave out unless testing 
     /*drive.setDefaultCommand(
       new RunCommand(
         () -> drive.motorTest(drive.frontRightModule,
               -driveController.getRawAxis(1), -driveController.getRawAxis(5)),
               drive)
-    );*/
-    
-   intake.setDefaultCommand(new IntakeCommand(), intake);
-
-     /* drive.setDefaultCommand(
-        new RunCommand(
-          () -> drive.testDrivePIDFLoop(drive.modules,
-           -driveController.getRawAxis(1)),
-           drive)
-      );*/
+    );*/ 
   }
 
   /**
@@ -75,8 +74,19 @@ configureButtonBindings();
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    //instantiates drive toggle button
+    new JoystickButton(driveController, Button.kBack.value)
+      .whenPressed(new InstantCommand(drive::toggleIsDriveFieldCentric, drive));
+    //toggles aiming mode
+    new JoystickButton(driveController, Button.kStart.value)
+      .whenPressed(new InstantCommand(drive::toggleIsAimingMode, drive));
+    //rotates colorspinner motor left/Counter Clockwise
+    new JoystickButton(auxController, Button.kX.value)
+      .whenHeld(new RunCommand(spinner::spinL, spinner));
+    //rotates colorspinner motor right/Clockwise
+    new JoystickButton(auxController, Button.kB.value)
+      .whenHeld(new RunCommand(spinner::spinR, spinner));
   }
-
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -86,5 +96,4 @@ configureButtonBindings();
   public Command getAutonomousCommand() {
     return null;
   }
-
 }
