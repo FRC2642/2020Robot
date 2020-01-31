@@ -118,4 +118,21 @@ public final class Constants {
     //controller ports 
     public static final int kDriveControllerPort = 0;
     public static final int kAuxControllerPort = 1;
+  
+  /**
+  * These are TEMPORARY until we figure what actual motor controllers we're using
+  * At that point, we will remove these and assign CAN IDs
+  */
+     //intake motors
+  public static int kIntakeMotorPort1 = 15;
+  public static int kIntakeMotorPort2 = 16;
+  public static int kEkatniMotorPort1 = 17;
+  public static int kEkatniMotorPort2 = 18;
+  //intake limit switch
+  public static int kIntakeLimitSwitch = 9;
+  
+  //USB Camera
+  public static int kUsbCamera = 23;
+
+
 }

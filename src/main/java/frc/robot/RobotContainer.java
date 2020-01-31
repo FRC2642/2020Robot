@@ -13,12 +13,14 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.subsystems.EkatniSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.ColorSpinner;
 import frc.robot.subsystems.SwerveDriveSubsystem;
-
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -28,6 +30,10 @@ import frc.robot.subsystems.SwerveDriveSubsystem;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
+  public static final IntakeSubsystem intake = new IntakeSubsystem();
+  //ekatni is intake backwards, as shooting is the reverse of grabbing
+  //get rid of this -__- -dylan
+  public static final EkatniSubsystem ekatni = new EkatniSubsystem();
   public final ColorSpinner spinner = new ColorSpinner();
 
   XboxController driveController = new XboxController(kDriveControllerPort);
@@ -37,7 +43,7 @@ public class RobotContainer {
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    
+   
     configureButtonBindings();
 
     drive.setDefaultCommand(
@@ -50,14 +56,15 @@ public class RobotContainer {
           drive)
       );
 
+    intake.setDefaultCommand(new IntakeCommand(), intake);
+    
     //manually drives motors, leave out unless testing 
     /*drive.setDefaultCommand(
       new RunCommand(
         () -> drive.motorTest(drive.frontRightModule,
               -driveController.getRawAxis(1), -driveController.getRawAxis(5)),
               drive)
-    );*/
-    
+    );*/ 
   }
 
   /**
