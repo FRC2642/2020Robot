@@ -80,9 +80,6 @@ public final class Constants {
     //current limit for Spark MAXs 
     public static final int kCurrentLimit = 30; //amps
     
-    //soft encoder limit for angle Spark MAXs
-    public static final float kSoftEncoderLimit = (float) 18.05;
-
     //motor neutral deadband
     public static final double kMotorNeutralDeadband = .15;
 
@@ -93,7 +90,7 @@ public final class Constants {
     public static final double kMinOutput = -1.0;
     public static final double kMaxOutput = 1.0;
     public static final double kMaxModuleRPM = 17.5;  //wip, MPS
-    public static final double kMaxMPS = 17.5; //slowly bring up to 25 MPS
+    public static final double kMaxMPS = 17.5; //wip, slowly bring up to 25 MPS
                                                             
     //PIDF values for closed-loop velocity control for drive modules
     public static final double kDriveFF = .5 / 15.989; //approx .03127
@@ -102,9 +99,9 @@ public final class Constants {
     public static final double kDriveD = 0.0;
 
     //PIDF values for closed-loop position control for angle modules
-    public static final double kAngleP = .02;
-    public static final double kAngleI = 0.0;
-    public static final double kAngleD = 0.0;
+    public static final double kAngleP = .3;
+    public static final double kAngleI = 0.0005;
+    public static final double kAngleD = 0.04;
     public static final double kAngleFF = 0.0;
 
     /**
@@ -120,7 +117,7 @@ public final class Constants {
     public static final double kAnglePositionConversionFactor = 359.0 / 3.3; //degrees / volts
     public static final double kRPMToMPSConversionFactor = (1.0 / 60) * (4 * Math.PI) * .0254;
     public static final double kDriveVelocityConversionFactor = kRPMToMPSConversionFactor;
-    public static final double kRelativeRotationsPerModuleRotation = kSoftEncoderLimit; //relative rots
+    public static final double kRelativeRotationsPerModuleRotation = 18.05; //relative rots
     public static final double kModuleDegreesToRelativeRotations 
                                = kRelativeRotationsPerModuleRotation / 360.0; //rots / degrees
 
@@ -130,4 +127,21 @@ public final class Constants {
     //controller ports 
     public static final int kDriveControllerPort = 0;
     public static final int kAuxControllerPort = 1;
+  
+  /**
+  * These are TEMPORARY until we figure what actual motor controllers we're using
+  * At that point, we will remove these and assign CAN IDs
+  */
+     //intake motors
+  public static int kIntakeMotorPort1 = 15;
+  public static int kIntakeMotorPort2 = 16;
+  public static int kEkatniMotorPort1 = 17;
+  public static int kEkatniMotorPort2 = 18;
+  //intake limit switch
+  public static int kIntakeLimitSwitch = 9;
+  
+  //USB Camera
+  public static int kUsbCamera = 23;
+
+
 }
