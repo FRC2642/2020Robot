@@ -11,12 +11,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.Solenoid;
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 
 
 public class MagazineSubsystem extends SubsystemBase {
  
-  public TalonSRX magazineBelt = new TalonSRX(Constants.ID_MAG_BELT_MOTOR);
+  public CANSparkMax magazineBelt = new CANSparkMax(Constants.ID_MAG_BELT_MOTOR);
   public Solenoid magazineLeftPis = new Solenoid(Constants.kLeftMagazinePis);
   public Solenoid magazineRightPis = new Solenoid(Constants.kRightMagazinePis);
   
