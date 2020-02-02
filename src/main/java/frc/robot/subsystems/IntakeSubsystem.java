@@ -28,7 +28,6 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor.setSmartCurrentLimit(kCurrentLimit);
   }
 
-  public DigitalInput intakeSwitch = new DigitalInput(kIntakeLimitSwitch);
   
   public void intake() {
   }
@@ -47,14 +46,9 @@ public class IntakeSubsystem extends SubsystemBase {
   public void stop() {
 
   }
-    public boolean getIntakeLimitSwitch(){
-      return !intakeSwitch.get();
-    }
-
+    
     @Override
     public void periodic() {
       // This method will be called once per scheduler run
     }
-	public void setDefaultCommand(final IntakeCommand intakeCommand, final IntakeSubsystem intake) {
-	}
 }

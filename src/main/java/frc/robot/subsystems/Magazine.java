@@ -14,7 +14,6 @@ public class Magazine extends SubsystemBase {
    * Creates a new Magazine.
    */
   public Magazine() {
-
   }
 
   @Override
