@@ -41,7 +41,7 @@ public final class Constants {
     public static final int ID_BACK_RIGHT_ANGLE_MOTOR = 8;
     //CAN ID for Spinner Motor
     public static final int ID_SPINNER_MOTOR = 9;
-    //CAN ID for Mag Elevator
+    //CAN ID for Mag Belt
     public static final int ID_MAG_BELT_MOTOR = 10;
     //CAN IDs for Intake
     public static final int ID_RIGHT_INTAKE_MOTOR = 11;

@@ -18,12 +18,17 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class MagazineSubsystem extends SubsystemBase {
  
-  public CANSparkMax magazineBelt = new CANSparkMax(Constants.ID_MAG_BELT_MOTOR);
+  CANSparkMax magazineBelt = new CANSparkMax(Constants.ID_MAG_BELT_MOTOR);
+
   public Solenoid magazineLeftPis = new Solenoid(Constants.kLeftMagazinePis);
   public Solenoid magazineRightPis = new Solenoid(Constants.kRightMagazinePis);
   
   public MagazineSubsystem() {
-
+    magazineBelt = new CANSparkMax(ID_MAG_BELT_MOTOR, MotorType.kBrushless);
+    magazineBelt.restoreFactoryDefaults();
+    magazineBelt.setInverted(false);
+    magazineBelt.setSmartCurrentLimit(kCurrentLimit);
+    
   }
   //Magazine Conveyor 
   public void magBeltForward(){
