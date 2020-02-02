@@ -10,22 +10,36 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.*;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 //ekatni is intake backwards, as shooting is the reverse of grabbing
 public class EkatniSubsystem extends SubsystemBase {
+
   /**
    * Creates a new EkatniSubsystem.
    */
 
-//declares shooter motors
-  Spark ekatniMotor1 = new Spark(kIntakeMotorPort1);
-  Spark ekatniMotor2 = new Spark(kIntakeMotorPort2);
+  CANSparkMax leftShooterMotor;
+  CANSparkMax righShooterMotor;
 
   public DigitalInput intakeSwitch = new DigitalInput(kIntakeLimitSwitch);
 
   public EkatniSubsystem() {
+    //declare motors
+    leftShooterMotor = new CANSparkMax(ID_LEFT_SHOOTER_MOTOR, MotorType.kBrushless);
+    righShooterMotor = new CANSparkMax(ID_RIGHT_SHOOTER_MOTOR, MotorType.kBrushless);
+    //reset motor
+    leftShooterMotor.restoreFactoryDefaults();
+    righShooterMotor.restoreFactoryDefaults();
+    //set to not inverted
+    leftShooterMotor.setInverted(false);
+    righShooterMotor.setInverted(false);
+    //set current limit
+    leftShooterMotor.setSmartCurrentLimit(kCurrentLimit);
+    righShooterMotor.setSmartCurrentLimit(kCurrentLimit);
   }
   public void ekatni() {
 
@@ -33,12 +47,10 @@ public class EkatniSubsystem extends SubsystemBase {
 
   //sets speed for shooter
  public void ekatniOut() {
-  ekatniMotor1.set(-0.6);
-  ekatniMotor2.set(-0.6);
+
 }
 public void stop() {
-  ekatniMotor1.set(0.0);
-  ekatniMotor2.set(0.0);
+
 }
 
  

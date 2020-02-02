@@ -10,22 +10,26 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.*;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.Spark;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.IntakeCommand;
 
 public class IntakeSubsystem extends SubsystemBase {
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
- 
-  //intake motors
-  Spark intakeMotor1 = new Spark(kIntakeMotorPort1);
-  Spark intakeMotor2 = new Spark(kIntakeMotorPort2);
+  // neo motor
+  CANSparkMax intakeMotor;
+
+  public IntakeSubsystem(){
+    //defines neoMotor
+    intakeMotor = new CANSparkMax(ID_RIGHT_SHOOTER_MOTOR, MotorType.kBrushless);
+    intakeMotor.restoreFactoryDefaults();
+    intakeMotor.setInverted(false);
+    intakeMotor.setSmartCurrentLimit(kCurrentLimit);
+  }
 
   public DigitalInput intakeSwitch = new DigitalInput(kIntakeLimitSwitch);
   
-  public IntakeSubsystem() {
-  }
   public void intake() {
   }
 
@@ -37,13 +41,11 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 //grabs balls
   public void intakeIn() {
-    	intakeMotor1.set(0.6);
-      intakeMotor2.set(0.6);
+
   }
 
   public void stop() {
-    intakeMotor1.set(0.0);
-    intakeMotor2.set(0.0);
+
   }
     public boolean getIntakeLimitSwitch(){
       return !intakeSwitch.get();
@@ -53,6 +55,6 @@ public class IntakeSubsystem extends SubsystemBase {
     public void periodic() {
       // This method will be called once per scheduler run
     }
-	public void setDefaultCommand(IntakeCommand intakeCommand, IntakeSubsystem intake) {
+	public void setDefaultCommand(final IntakeCommand intakeCommand, final IntakeSubsystem intake) {
 	}
 }
