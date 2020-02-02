@@ -12,6 +12,7 @@ import static frc.robot.Constants.*;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.EkatniSubsystem;
@@ -19,8 +20,9 @@ import frc.robot.subsystems.IntakeSubsystem;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.subsystems.ColorSpinner;
+import frc.robot.subsystems.ColorSpinnerSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
+import frc.robot.subsystems.MagazineSubsystem;
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -34,10 +36,11 @@ public class RobotContainer {
   //ekatni is intake backwards, as shooting is the reverse of grabbing
   //get rid of this -__- -dylan
   public static final EkatniSubsystem ekatni = new EkatniSubsystem();
-  public final ColorSpinner spinner = new ColorSpinner();
+  public final ColorSpinnerSubsystem spinner = new ColorSpinnerSubsystem();
+  public final MagazineSubsystem magazine = new MagazineSubsystem();
 
-  XboxController driveController = new XboxController(kDriveControllerPort);
-  XboxController auxController = new XboxController(kAuxControllerPort);
+  public static XboxController driveController = new XboxController(kDriveControllerPort);
+  public static XboxController auxController = new XboxController(kAuxControllerPort);
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -86,6 +89,12 @@ public class RobotContainer {
     //rotates colorspinner motor right/Clockwise
     new JoystickButton(auxController, Button.kB.value)
       .whenHeld(new RunCommand(spinner::spinR, spinner));
+    //magazine belt goes forward
+    new JoystickButton(auxController, Axis.kRightTrigger.value)
+      .whenHeld(new RunCommand(magazine::magBeltForward, magazine));
+    //magazine belt goes backward
+      new JoystickButton(auxController, Button.kBumperRight.value)
+        .whenPressed(new RunCommand(magazine::magBeltBackward, magazine));
   }
 
   /**

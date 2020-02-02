@@ -107,7 +107,6 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
     UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
     //sets resolution of camera
     camera.setResolution(640, 480);}
-  }
 
   /**
    * This function is called every robot packet, no matter the mode. Use this for items like
