@@ -26,6 +26,16 @@ public final class Constants {
     public static final int ID_BACK_LEFT_ANGLE_MOTOR = 6;
     public static final int ID_BACK_RIGHT_DRIVE_MOTOR = 7;
     public static final int ID_BACK_RIGHT_ANGLE_MOTOR = 8;
+    public static final int ID_MAG_TILT_MOTOR = 9;
+    //sonar
+    public static final int kMagazineSonarInput = 19;
+    public static final int kMagazineSonarOutput = 20;
+    /**
+     * PNEUMATICS
+     */ 
+    //Magazine Pistons (temp values)
+    public static final int kLeftMagazinePis = 17;
+    public static final int kRightMagazinePis = 18;
 
     //motor neutral deadband
     public static final double kMotorNeutralDeadband = .15;
@@ -64,6 +74,9 @@ public final class Constants {
     //controller ports 
     public static final int kDriveControllerPort = 0;
   public static final int kAuxControllerPort = 1;
+  
+  //sonar port
+  public static final int kSonarPort = 0;
      //intake motors
   public static int kIntakeMotorPort1 = 15;
   public static int kIntakeMotorPort2 = 16;

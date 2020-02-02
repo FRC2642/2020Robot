@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.EkatniSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.MagazineSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -29,7 +30,7 @@ public class RobotContainer {
   public static final IntakeSubsystem intake = new IntakeSubsystem();
 //ekatni is intake backwards, as shooting is the reverse of grabbing
 public static final EkatniSubsystem ekatni = new EkatniSubsystem();
-
+public static final MagazineSubsystem magazine = new MagazineSubsystem();
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
