@@ -7,7 +7,8 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.*;
+import static frc.robot.Constants.kAuxControllerPort;
+import static frc.robot.Constants.kDriveControllerPort;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -17,11 +18,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.subsystems.ColorSpinnerSubsystem;
 import frc.robot.subsystems.EkatniSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.MagazineSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
-import frc.robot.subsystems.ColorSpinner;
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -35,7 +36,7 @@ public class RobotContainer {
 //ekatni is intake backwards, as shooting is the reverse of grabbing
 public static final EkatniSubsystem ekatni = new EkatniSubsystem();
 public static final MagazineSubsystem magazine = new MagazineSubsystem();
-public final ColorSpinner spinner = new ColorSpinner();
+public final ColorSpinnerSubsystem spinner = new ColorSpinnerSubsystem();
 
   XboxController driveController = new XboxController(kDriveControllerPort);
   public static XboxController auxController = new XboxController(kAuxControllerPort);
@@ -81,10 +82,10 @@ public final ColorSpinner spinner = new ColorSpinner();
     //toggles aiming mode
     new JoystickButton(driveController, Button.kStart.value)
       .whenPressed(new InstantCommand(drive::toggleIsAimingMode, drive));
-    //rotates colorspinner motor left/Counter Clockwise
+    //rotates ColorSpinner motor left/Counter Clockwise
     new JoystickButton(auxController, Button.kX.value)
       .whenHeld(new RunCommand(spinner::spinL, spinner));
-    //rotates colorspinner motor right/Clockwise
+    //rotates ColorSpinner motor right/Clockwise
     new JoystickButton(auxController, Button.kB.value)
       .whenHeld(new RunCommand(spinner::spinR, spinner));
   }

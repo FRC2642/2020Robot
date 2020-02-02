@@ -7,12 +7,12 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class ColorSpinner extends SubsystemBase {
+public class ColorSpinnerSubsystem extends SubsystemBase {
   //(Charles- remember to comment)
 
   public TalonSRX spinnerMotor = new TalonSRX(Constants.ID_SPINNER_MOTOR);
 
-  public ColorSpinner() {
+  public ColorSpinnerSubsystem() {
 
   }
 //Set speed for Color Spinner direction.
