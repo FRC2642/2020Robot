@@ -17,11 +17,11 @@ public class ColorSpinner extends SubsystemBase {
 //Set speed for Color Spinner direction.
 //spins colorspinner motor Counter Clockwise
   public void spinL(){
-    spinnerMotor.set(ControlMode.PercentOutput,-0.6);
+    spinnerMotor.set(ControlMode.PercentOutput,-0.4);
   }
 //spins colorspinner motor Clockwise
   public void spinR(){
-    spinnerMotor.set(ControlMode.PercentOutput,0.6);
+    spinnerMotor.set(ControlMode.PercentOutput,0.4);
   }
 
   public void stop(){
