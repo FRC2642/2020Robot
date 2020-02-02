@@ -12,11 +12,13 @@ import static frc.robot.Constants.*;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.subsystems.ColorSpinner;
+import frc.robot.subsystems.ColorSpinnerSubsystem;
+import frc.robot.subsystems.MagazineSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 
 /**
@@ -28,7 +30,8 @@ import frc.robot.subsystems.SwerveDriveSubsystem;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
-  public final ColorSpinner spinner = new ColorSpinner();
+  public final ColorSpinnerSubsystem spinner = new ColorSpinnerSubsystem();
+  public final MagazineSubsystem magazine = new MagazineSubsystem();
 
   XboxController driveController = new XboxController(kDriveControllerPort);
   XboxController auxController = new XboxController(kAuxControllerPort);
@@ -76,6 +79,10 @@ public class RobotContainer {
     //rotates colorspinner motor right/Clockwise
     new JoystickButton(auxController, Button.kB.value)
       .whenHeld(new RunCommand(spinner::spinR, spinner));
+
+    new JoystickButton(auxController, Axis.kRightTrigger.value)
+      .whenHeld(new RunCommand(magazine::magBeltForward, magazine));
+      
   }
 
   /**
