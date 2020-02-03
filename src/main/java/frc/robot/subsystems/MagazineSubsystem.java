@@ -7,29 +7,38 @@
 
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.*;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.Solenoid;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 
-
 public class MagazineSubsystem extends SubsystemBase {
- 
-  public CANSparkMax magazineBelt = new CANSparkMax(Constants.ID_MAG_BELT_MOTOR);
+  //(Charles- remember to comment)
+  CANSparkMax magBeltMotor;
   public Solenoid magazineLeftPis = new Solenoid(Constants.kLeftMagazinePis);
   public Solenoid magazineRightPis = new Solenoid(Constants.kRightMagazinePis);
-  
-  public MagazineSubsystem() {
+  public TalonSRX magBelt = new TalonSRX(Constants.ID_MAG_BELT_MOTOR);
 
+  public MagazineSubsystem() {
+  magBeltMotor = new CANSparkMax(ID_MAG_BELT_MOTOR, MotorType.kBrushless);
+  magBeltMotor.restoreFactoryDefaults();
+  magBeltMotor.setInverted(false);
+  magBeltMotor.setSmartCurrentLimit(kCurrentLimit);
   }
+
   //Magazine Conveyor 
   public void magBeltForward(){
-    magazineBelt.set(ControlMode.PercentOutput,-0.6);}
+    magBelt.set(ControlMode.PercentOutput,-0.6);
+  }
   public void magBeltBackward(){
-    magazineBelt.set(ControlMode.PercentOutput,0.2);}
+    magBelt.set(ControlMode.PercentOutput,0.2);
+  }
+
   //Magazine "Left" and "Right" Belt Lift Pistons
   public void magDisengage(){
     magazineLeftPis.set(true);

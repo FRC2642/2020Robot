@@ -15,16 +15,11 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
 
   public TalonSRX spinnerMotor = new TalonSRX(Constants.ID_SPINNER_MOTOR);
 
-<<<<<<< HEAD:src/main/java/frc/robot/subsystems/ColorSpinner.java
-  public ColorSpinner() {
+  public ColorSpinnerSubsystem() {
   colorSpinnerMotor = new CANSparkMax(ID_SPINNER_MOTOR, MotorType.kBrushless);
   colorSpinnerMotor.restoreFactoryDefaults();
   colorSpinnerMotor.setInverted(false);
   colorSpinnerMotor.setSmartCurrentLimit(kCurrentLimit);
-=======
-  public ColorSpinnerSubsystem() {
-
->>>>>>> charzko:src/main/java/frc/robot/subsystems/ColorSpinnerSubsystem.java
   }
 //Set speed for Color Spinner direction.
 //spins colorspinner motor Counter Clockwise
