@@ -7,17 +7,35 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot.commands;
-import frc.robot.RobotContainer;
-import frc.robot.Constants.*;
+
+import frc.robot.Constants;
+import frc.robot.subsystems.MagazineSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj.Ultrasonic;
 
 public class MagazineCommand extends CommandBase {
-  /**
-   * Creates a new MagazineCommand.
-   */
+
+    Ultrasonic ultra = new Ultrasonic(Constants.kMagazineSonarOutput, Constants.kMagazineSonarInput);
+
+  int ballCount = 0;
+  boolean hasBallEntered = false;
   public MagazineCommand() {
-    // Use addRequirements() here to declare subsystem dependencies.
+  //sets sonar to send constant pulse
+  ultra.setAutomaticMode(true);
+  //gets the sonar's range in inches
+  double range = ultra.getRangeInches();
+  //determines if ball has passed sonar, sets boolean accordingly
+  if(range <= 6) {
+    hasBallEntered = true;
+  } else {
+    hasBallEntered = false;
   }
+  //if ball has passed, adds one to ball count accumulator, and moves mast
+  if (hasBallEntered = true) {
+    ballCount++;
+    MagazineSubsystem.Move();
+  } else {
+  }  }
 
   // Called when the command is initially scheduled.
   @Override
