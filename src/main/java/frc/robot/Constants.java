@@ -51,6 +51,8 @@ public final class Constants {
     public static final int kRightMagazinePis = 18;
     //CAN ID for Spinner Motor
     public static final int ID_SPINNER_MOTOR = 9;
+    //CAN ID for Mag Belt
+    public static final int ID_MAG_BELT_MOTOR = 10;
     //CAN IDs for Intake
     public static final int ID_RIGHT_INTAKE_MOTOR = 11;
     public static final int ID_LEFT_INTAKE_MOTOR = 12;
@@ -64,6 +66,15 @@ public final class Constants {
     /**
      * MOTOR CONSTANTS
      */
+
+    /**
+     * PNEUMATICS
+     */ 
+    //Magazine Pistons (temp values)
+    public static final int kLeftMagazinePis = 17;
+    public static final int kRightMagazinePis = 18;
+
+
     //angle offsets
     public static final double kFrontLeftAngleOffset = 159.5;
     public static final double kFrontRightAngleOffset = 45.3;

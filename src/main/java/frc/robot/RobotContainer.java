@@ -13,6 +13,7 @@ import static frc.robot.Constants.kDriveControllerPort;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -23,6 +24,7 @@ import frc.robot.subsystems.EkatniSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.MagazineSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
+import frc.robot.subsystems.MagazineSubsystem;
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -38,7 +40,7 @@ public static final EkatniSubsystem ekatni = new EkatniSubsystem();
 public static final MagazineSubsystem magazine = new MagazineSubsystem();
 public final ColorSpinnerSubsystem spinner = new ColorSpinnerSubsystem();
 
-  XboxController driveController = new XboxController(kDriveControllerPort);
+  public static XboxController driveController = new XboxController(kDriveControllerPort);
   public static XboxController auxController = new XboxController(kAuxControllerPort);
 
   /**
@@ -88,6 +90,12 @@ public final ColorSpinnerSubsystem spinner = new ColorSpinnerSubsystem();
     //rotates ColorSpinner motor right/Clockwise
     new JoystickButton(auxController, Button.kB.value)
       .whenHeld(new RunCommand(spinner::spinR, spinner));
+    //magazine belt goes forward
+    new JoystickButton(auxController, Axis.kRightTrigger.value)
+      .whenHeld(new RunCommand(magazine::magBeltForward, magazine));
+    //magazine belt goes backward
+      new JoystickButton(auxController, Button.kBumperRight.value)
+        .whenPressed(new RunCommand(magazine::magBeltBackward, magazine));
   }
 
   /**
