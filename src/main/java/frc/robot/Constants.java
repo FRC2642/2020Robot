@@ -70,9 +70,6 @@ public final class Constants {
     /**
      * PNEUMATICS
      */ 
-    //Magazine Pistons (temp values)
-    public static final int kLeftMagazinePis = 17;
-    public static final int kRightMagazinePis = 18;
 
 
     //angle offsets
