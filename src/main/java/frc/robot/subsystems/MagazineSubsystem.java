@@ -44,9 +44,6 @@ public class MagazineSubsystem extends SubsystemBase {
     magazineLeftPis.set(false);
     magazineRightPis.set(false);
   }
-public static void Move() {
- // magazineNeo.turnOn
-}
 
   @Override
   public void periodic() {

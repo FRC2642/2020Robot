@@ -9,7 +9,6 @@
 package frc.robot.commands;
 
 import frc.robot.Constants;
-import frc.robot.subsystems.MagazineSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj.Ultrasonic;
 
@@ -33,7 +32,6 @@ public class MagazineCommand extends CommandBase {
   //if ball has passed, adds one to ball count accumulator, and moves mast
   if (hasBallEntered = true) {
     ballCount++;
-    MagazineSubsystem.Move();
   } else {
   }  }
 
