@@ -12,12 +12,12 @@ import com.revrobotics.CANSparkMax;
 import static frc.robot.Constants.*;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Climber extends SubsystemBase {
+public class ClimberSubsystem extends SubsystemBase {
 /**
  * Add your docs here.
  */
 CANSparkMax climberMotor;
-    public Climber() {
+    public ClimberSubsystem() {
         climberMotor = new CANSparkMax(ID_CLIMBER_MOTOR, MotorType.kBrushless);
         climberMotor.restoreFactoryDefaults();
         climberMotor.setInverted(false);

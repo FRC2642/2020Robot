@@ -9,13 +9,15 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.IntakeSubsystem;
 
 /**
  * An example command.  You can replace me with your own command.
  */
 public class IntakeCommand extends CommandBase {
-  public IntakeCommand() {
-    // Use requires() here to declare subsystem dependencies
+
+  public IntakeCommand(IntakeSubsystem intake) {
+    addRequirements(intake);
   }
 
  
