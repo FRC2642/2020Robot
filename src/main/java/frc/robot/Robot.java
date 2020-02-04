@@ -49,7 +49,6 @@ import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -106,7 +105,8 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
     //takes a picture with the camera
     UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
     //sets resolution of camera
-    camera.setResolution(640, 480);}
+    camera.setResolution(640, 480);
+  }
 
   /**
    * This function is called every robot packet, no matter the mode. Use this for items like

@@ -39,6 +39,16 @@ public final class Constants {
     public static final int ID_BACK_LEFT_ANGLE_MOTOR = 6;
     public static final int ID_BACK_RIGHT_DRIVE_MOTOR = 7;
     public static final int ID_BACK_RIGHT_ANGLE_MOTOR = 8;
+    public static final int ID_MAG_TILT_MOTOR = 9;
+    //sonar
+    public static final int kMagazineSonarInput = 19;
+    public static final int kMagazineSonarOutput = 20;
+    /**
+     * PNEUMATICS
+     */ 
+    //Magazine Pistons (temp values)
+    public static final int kLeftMagazinePis = 17;
+    public static final int kRightMagazinePis = 18;
     //CAN ID for Spinner Motor
     public static final int ID_SPINNER_MOTOR = 9;
     //CAN ID for Mag Belt
@@ -126,12 +136,10 @@ public final class Constants {
      */
     //controller ports 
     public static final int kDriveControllerPort = 0;
-    public static final int kAuxControllerPort = 1;
+  public static final int kAuxControllerPort = 1;
   
-  /**
-  * These are TEMPORARY until we figure what actual motor controllers we're using
-  * At that point, we will remove these and assign CAN IDs
-  */
+  //sonar port
+  public static final int kSonarPort = 0;
      //intake motors
   public static int kIntakeMotorPort1 = 15;
   public static int kIntakeMotorPort2 = 16;

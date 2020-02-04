@@ -47,8 +47,6 @@ public class MagazineSubsystem extends SubsystemBase {
     magazineLeftPis.set(false);
     magazineRightPis.set(false);}
 
-  
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
