@@ -29,7 +29,7 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
         // The ProfiledPIDController used by the subsystem
         new ProfiledPIDController(0, 0, 0,
             // The motion profile constraints
-            new TrapezoidProfile.Constraints(0, 0)));
+        new TrapezoidProfile.Constraints(0, 0)));
   }
 
   public void armLift() {
