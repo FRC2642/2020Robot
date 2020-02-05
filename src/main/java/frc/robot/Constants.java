@@ -142,7 +142,7 @@ public final class Constants {
   public static int kEkatniMotorPort2 = 18;
   //intake limit switch
   public static int kIntakeLimitSwitch = 9;
-  
+  public static int kArmLimitSwitch = 10;
   //USB Camera
   public static int kUsbCamera = 23;
 

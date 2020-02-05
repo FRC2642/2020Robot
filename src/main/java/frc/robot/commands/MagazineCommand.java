@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.Ultrasonic;
 
 public class MagazineCommand extends CommandBase {
 
-    Ultrasonic ultra = new Ultrasonic(Constants.kMagazineSonarOutput, Constants.kMagazineSonarInput);
+  Ultrasonic ultra = new Ultrasonic(Constants.kMagazineSonarOutput, Constants.kMagazineSonarInput);
 
   int ballCount = 0;
   boolean hasBallEntered = false;

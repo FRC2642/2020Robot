@@ -47,8 +47,6 @@ public class RobotContainer {
    */
   public RobotContainer() {
    
-    configureButtonBindings();
-
     drive.setDefaultCommand(
       new RunCommand(
         () -> drive.drive(
@@ -99,7 +97,7 @@ public class RobotContainer {
     //magazine belt goes backward
       new JoystickButton(auxController, Button.kBumperRight.value)
         .whenPressed(new RunCommand(magazine::magBeltBackward, magazine));
-  }
+      }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
