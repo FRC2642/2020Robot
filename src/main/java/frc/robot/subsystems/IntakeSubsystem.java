@@ -11,28 +11,33 @@ import static frc.robot.Constants.*;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
   // neo motor
   CANSparkMax intakeMotor;
+  //piston
+  public Solenoid intakePiston;
 
   public IntakeSubsystem(){
     //defines neoMotor
     intakeMotor = new CANSparkMax(ID_RIGHT_SHOOTER_MOTOR, MotorType.kBrushless);
+    intakePiston = new Solenoid(kIntakePiston);
     intakeMotor.restoreFactoryDefaults();
     intakeMotor.setInverted(false);
     intakeMotor.setSmartCurrentLimit(kCurrentLimit);
   }
 
-//grabs balls
+//intakes balls
   public void intakeIn() {
-
+  intakeMotor.set(.6);
+  intakePiston.set(true);
   }
-
+//stops
   public void stop() {
-
+intakeMotor.set(0);
+intakePiston.set(false);
   }
     
     @Override

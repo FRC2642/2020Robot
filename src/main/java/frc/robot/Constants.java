@@ -68,10 +68,11 @@ public final class Constants {
     //Magazine Pistons (temp values)
     public static final int kLeftMagazinePis = 17;
     public static final int kRightMagazinePis = 18;
+    //Intake piston (temp values)
+    public static final int kIntakePiston = 19;
+    //color spinner piston (temp values)
+    public static final int kColorSpinnerPiston = 20;
 
-    //mag belt speed
-    public static final double kMagBeltSpeed = 15;
-    
     //angle offsets
     public static final double kFrontLeftAngleOffset = 159.5;
     public static final double kFrontRightAngleOffset = 45.3;
@@ -89,6 +90,9 @@ public final class Constants {
     
     //motor neutral deadband
     public static final double kMotorNeutralDeadband = .15;
+  
+    //mag belt speed
+    public static final double kMagBeltSpeed = 15;
 
     /**
      * PID GAINS AND OTHER PID CONSTANTS
