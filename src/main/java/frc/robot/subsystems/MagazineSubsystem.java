@@ -22,11 +22,12 @@ public class MagazineSubsystem extends SubsystemBase {
   
   CANSparkMax magBeltMotor;
   CANEncoder magEncoder;
+  CANPIDController magPID;
+
   public Solenoid magazineLeftPis = new Solenoid(Constants.kLeftMagazinePis);
   public Solenoid magazineRightPis = new Solenoid(Constants.kRightMagazinePis);
+
   Ultrasonic ultra = new Ultrasonic(Constants.kMagazineSonarOutput, Constants.kMagazineSonarInput);
-  public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
-  private CANPIDController mag_PIDController;
 
   int ballCount = 0;
   boolean hasBallEntered = false;
@@ -39,10 +40,11 @@ public class MagazineSubsystem extends SubsystemBase {
   magBeltMotor.setSmartCurrentLimit(kCurrentLimit);
 
   //Magazine PID Controller
-  mag_PIDController = magBeltMotor.getPIDController();
-
+  magPID = magBeltMotor.getPIDController();
   //Magazine Motor Encoder
   magEncoder = magBeltMotor.getEncoder();
+
+  magPID.setFeedbackDevice(magEncoder);
 
   //Lifts Magazine belt on startup
   magazineLeftPis.set(true);
@@ -51,10 +53,12 @@ public class MagazineSubsystem extends SubsystemBase {
   //Sets sonar to constant pulse
   ultra.setAutomaticMode(true);
   }
+
   //Magazine Conveyor 
   public void setBeltVelocity(double targetVelocity){
-    mag_PIDController.setReference(targetVelocity, ControlType.kVelocity);
+    magPID.setReference(targetVelocity, ControlType.kVelocity);
   }
+
   public void magBeltOn(){
     setBeltVelocity(kMagBeltSpeed);
   }
@@ -72,6 +76,7 @@ public class MagazineSubsystem extends SubsystemBase {
 
   //Gets the sonar's range in inches
   double range = ultra.getRangeInches();
+
   if(range <= 6) {
     hasBallEntered = true;
   } else {

@@ -128,6 +128,12 @@ public final class Constants {
     public static final double kShooterI = 0.0005;
     public static final double kShooterD = 0.04;
 
+    //PIDF values for closed-loop position control for the arm tilt motor
+    public static final double kTiltFF = 0.0;
+    public static final double kTiltP = .3;
+    public static final double kTiltI = 0.0005;
+    public static final double kTiltD = 0.04;
+
     //PIDF values for closed-loop position control for the climbing motor
     public static final double kClimbFF = 0.0;
     public static final double kClimbP = .3;

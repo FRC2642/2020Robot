@@ -7,11 +7,11 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.*;
+import static frc.robot.Constants.kAuxControllerPort;
+import static frc.robot.Constants.kDriveControllerPort;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -19,9 +19,9 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.ColorSpinnerSubsystem;
-import frc.robot.subsystems.EkatniSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.MagazineSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -33,7 +33,7 @@ public class RobotContainer {
 
   public static final SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
   public static final IntakeSubsystem intake = new IntakeSubsystem();
-  public static final EkatniSubsystem ekatni = new EkatniSubsystem(); //ekatni is intake backwards, as shooting is the reverse of grabbing
+  public static final ShooterSubsystem ekatni = new ShooterSubsystem(); //ekatni is intake backwards, as shooting is the reverse of grabbing
   public static final MagazineSubsystem magazine = new MagazineSubsystem();
   public static final ColorSpinnerSubsystem spinner = new ColorSpinnerSubsystem();
 
