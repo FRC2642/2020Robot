@@ -9,6 +9,8 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.kArmLimitSwitch;
 
+import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -16,6 +18,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
+import frc.robot.Robot;
 
 public class ArmSubsystem extends ProfiledPIDSubsystem {
   static TalonSRX armMotor;
@@ -29,19 +32,39 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
         // The ProfiledPIDController used by the subsystem
         new ProfiledPIDController(0, 0, 0,
             // The motion profile constraints
-        new TrapezoidProfile.Constraints(0, 0)));
+            new TrapezoidProfile.Constraints(0, 0)));
+
+    armMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 2);
   }
 
-  public void armLift() {
+  public ErrorCode getEncoderValue() {
+    return armMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 2);
 
+  }
+  public void armLift() {
+    //20, 40, and 60 are example numbers
+
+    /*if (getDistanceToWall() > 20 && getDistanceToWall() < 40) {
+      setGoal(value);
+    } else if (getDistanceToWall() > 40 && getDistanceToWall() < 60) {
+      setGoal(difValue)
+    } ...
+    */
   }
 
   public void armDown() {
-    if (getArmSwitch()) {
+        if (getArmSwitch()) {
       ArmSubsystem.armStop();
     } else {
+      setGoal(0);
     }
   }
+
+  public void armClimbPos() {
+    
+    setGoal(90);
+
+    }
 
   public static void armStop() {
     armMotor.set(ControlMode.PercentOutput, 0);
