@@ -20,6 +20,9 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.util.Units;
 
+import static frc.robot.util.GeneralUtil.*;
+import frc.robot.util.GeneralUtil.PIDProfile;
+
 /**
  * This class assigns motors to a given swerve module on the robot (eg frontLeft, etc)
  * and uses information from an instance of a SwerveModuleState object to set the modular wheel angle
@@ -68,8 +71,8 @@ public class SwerveModule {
     anglePID.setFeedbackDevice(relativeAngleEncoder);
     
     //sets PID constants
-    setPIDTerms(drivePID, true);
-    setPIDTerms(anglePID, false);
+    setPIDTerms(drivePID, PIDProfile.DRIVE);
+    setPIDTerms(anglePID, PIDProfile.ANGLE);
 
     //assigns absolute encoder offset values
     this.absoluteOffset = angleOffset;
@@ -165,27 +168,6 @@ public class SwerveModule {
 
     anglePID.setReference(trueTargetAngle, ControlType.kPosition); */
     }
-
-  /**
-   * Sets PID terms for swerve module controllers
-   * 
-   * @param pid the PID controller to set values for
-   * @param drive is module a drive module (if false, angle module)
-   */
-  public void setPIDTerms(CANPIDController pid, boolean isDrive){
-    if(isDrive){
-      pid.setP(kDriveP);
-      pid.setI(kDriveI);
-      pid.setD(kDriveD);
-      pid.setFF(kDriveFF);
-    } else {
-      pid.setP(kAngleP);
-      pid.setI(kAngleI);
-      pid.setD(kAngleD);
-      pid.setFF(kAngleFF);
-    }
-    pid.setOutputRange(kMinOutput, kMaxOutput);
-  }
 
   /**
    * Realigns a target angle in the -180 to 180 degree range into the 0 to 360 degree range
