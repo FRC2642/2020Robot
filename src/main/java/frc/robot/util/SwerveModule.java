@@ -18,6 +18,7 @@ import com.revrobotics.CANSparkMax.SoftLimitDirection;
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.util.Units;
 
 /**
  * This class assigns motors to a given swerve module on the robot (eg frontLeft, etc)
@@ -250,7 +251,9 @@ public class SwerveModule {
    */
 
   public double getDriveVelocity(){
-    return driveEncoder.getVelocity();
+    double vel = driveEncoder.getVelocity() * kRPMToMPSConversionFactor;
+    vel *= kMaxSpeedConversionFactor;
+    return Units.metersToFeet(vel);
   }
 
   public double getAbsoluteAngleEncoder(){
