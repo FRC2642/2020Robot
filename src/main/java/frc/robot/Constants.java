@@ -68,6 +68,8 @@ public final class Constants {
     //Magazine Pistons (temp values)
     public static final int kLeftMagazinePis = 17;
     public static final int kRightMagazinePis = 18;
+    //Intake piston (temp values)
+    public static final int kIntakePiston = 19;
 
 
     //angle offsets
