@@ -54,8 +54,8 @@ public final class Constants {
     //CAN IDs for Shooter
     public static final int ID_RIGHT_SHOOTER_MOTOR = 13;
     public static final int ID_LEFT_SHOOTER_MOTOR = 14;
-    //CAN IDs for Climber
-    public static final int ID_CLIMBER_MOTOR = 15;
+    //CAN IDs for Hanger
+    public static final int ID_HANGER_MOTOR = 15;
     //CAN IDs for Arm
     public static final int ID_ARM_MOTOR = 16;
     /**
@@ -135,16 +135,17 @@ public final class Constants {
   
   //sonar port
   public static final int kSonarPort = 0;
-     //intake motors
+  //intake motors
   public static int kIntakeMotorPort1 = 15;
   public static int kIntakeMotorPort2 = 16;
   public static int kEkatniMotorPort1 = 17;
   public static int kEkatniMotorPort2 = 18;
   //intake limit switch
   public static int kIntakeLimitSwitch = 9;
-  
   //USB Camera
   public static int kUsbCamera = 23;
+  //hanger limit switch
+  public static final int khangerLowerLimitSwitch = 0;
 
 
 }
