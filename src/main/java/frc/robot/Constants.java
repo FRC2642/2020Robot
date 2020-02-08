@@ -70,7 +70,8 @@ public final class Constants {
     public static final int kRightMagazinePis = 18;
     //Intake piston (temp values)
     public static final int kIntakePiston = 19;
-
+    //color spinner piston (temp values)
+    public static final int kColorSpinnerPiston = 20;
 
     //angle offsets
     public static final double kFrontLeftAngleOffset = 159.5;
