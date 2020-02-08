@@ -51,7 +51,6 @@ public class MagazineSubsystem extends SubsystemBase {
   //Sets sonar to constant pulse
   ultra.setAutomaticMode(true);
   }
-
   //Magazine Conveyor 
   public void setBeltVelocity(double targetVelocity){
     mag_PIDController.setReference(targetVelocity, ControlType.kVelocity);
