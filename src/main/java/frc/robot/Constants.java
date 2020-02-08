@@ -105,10 +105,28 @@ public final class Constants {
     public static final double kDriveD = 0.0;
 
     //PIDF values for closed-loop position control for angle modules
+    public static final double kAngleFF = 0.0;
     public static final double kAngleP = .3;
     public static final double kAngleI = 0.0005;
     public static final double kAngleD = 0.04;
-    public static final double kAngleFF = 0.0;
+
+    //PIDF values for closed-loop velocity control for the magazine belt
+    public static final double kMagFF = 0.0;
+    public static final double kMagP = .3;
+    public static final double kMagI = 0.0005;
+    public static final double kMagD = 0.04;
+
+    //PIDF values for closed-loop velocity control for the shooter wheels
+    public static final double kShooterFF = 0.0;
+    public static final double kShooterP = .3;
+    public static final double kShooterI = 0.0005;
+    public static final double kShooterD = 0.04;
+
+    //PIDF values for closed-loop position control for the climbing motor
+    public static final double kClimbFF = 0.0;
+    public static final double kClimbP = .3;
+    public static final double kClimbI = 0.0005;
+    public static final double kClimbD = 0.04;
 
     /**
      * ROBOT CONSTANTS, CONVERSION FACTORS, ETC

@@ -28,6 +28,7 @@ import frc.robot.util.SwerveModule;
 
 import static frc.robot.Constants.*;
 import static edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics.normalizeWheelSpeeds;
+import static frc.robot.util.GeneralUtil.*;
 
 public class SwerveDriveSubsystem extends SubsystemBase {
   CANSparkMax frontLeftDriveMotor, frontLeftAngleMotor;
@@ -338,35 +339,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   }
   public Pose2d getPoseMeters(){
     return odometry.getPoseMeters();
-  }
-
-  /**
-   * Applies a deadband to raw joystick input
-   * 
-   * @param input raw joystick input
-   * @return deadbanded joystick input
-   */
-  public double deadband(double input){
-    double outMax = 1.0;
-    double outMin = -1.0;
-    double inMax = 1.0;
-    double inMin = -1.0; 
-
-    double output = 0.0;
-    
-    if(input <= kMotorNeutralDeadband && input >= (-kMotorNeutralDeadband)){
-      output = 0.0;
-    }
-    if(input >= kMotorNeutralDeadband){
-                //new slope for motor output                 //repositions constant based on deadband
-      output = (outMax / (inMax - kMotorNeutralDeadband)) * (input - kMotorNeutralDeadband);
-    }
-    if(input <= -kMotorNeutralDeadband){
-               //new slope for motor output                  //repositions constant based on deadband
-      output = (outMin / (kMotorNeutralDeadband + inMin)) * (input + kMotorNeutralDeadband);
-    }
-    
-    return output;
   }
 
   /**
