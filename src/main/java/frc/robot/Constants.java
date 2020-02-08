@@ -100,8 +100,9 @@ public final class Constants {
     //swerve PID constants
     public static final double kMinOutput = -1.0;
     public static final double kMaxOutput = 1.0;
-    public static final double kMaxModuleRPM = 17.5;  //wip, MPS
-    public static final double kMaxMPS = 17.5; //wip, slowly bring up to 25 MPS
+    public static final double kMaxSpeedConversionFactor = 8.0;
+    public static final double kMaxModuleRPM = 12.0 * kMaxSpeedConversionFactor; //desired module rotation speed * gear ratio conversion
+    public static final double kMaxMPS = 12.0 * kMaxSpeedConversionFactor; //desired movement speed * gear ratio conversion
                                                             
     //PIDF values for closed-loop velocity control for drive modules
     public static final double kDriveFF = .5 / 15.989; //approx .03127
@@ -137,18 +138,11 @@ public final class Constants {
      */
     //controller ports 
     public static final int kDriveControllerPort = 0;
-  public static final int kAuxControllerPort = 1;
+    public static final int kAuxControllerPort = 1;
   
   //sonar port
   public static final int kSonarPort = 0;
-     //intake motors
-  public static int kIntakeMotorPort1 = 15;
-  public static int kIntakeMotorPort2 = 16;
-  public static int kEkatniMotorPort1 = 17;
-  public static int kEkatniMotorPort2 = 18;
-  //intake limit switch
-  public static int kIntakeLimitSwitch = 9;
-  
+
   //USB Camera
   public static int kUsbCamera = 23;
 

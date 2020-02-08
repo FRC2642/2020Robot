@@ -9,9 +9,9 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.*;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 //ekatni is intake backwards, as shooting is the reverse of grabbing
@@ -23,8 +23,6 @@ public class EkatniSubsystem extends SubsystemBase {
 
   CANSparkMax leftShooterMotor;
   CANSparkMax righShooterMotor;
-
-  public DigitalInput intakeSwitch = new DigitalInput(kIntakeLimitSwitch);
 
   public EkatniSubsystem() {
     //declare motors

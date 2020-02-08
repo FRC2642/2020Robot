@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.SwerveModule;
 
 import static frc.robot.Constants.*;
+import static edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics.normalizeWheelSpeeds;
 
 public class SwerveDriveSubsystem extends SubsystemBase {
   CANSparkMax frontLeftDriveMotor, frontLeftAngleMotor;
@@ -117,6 +118,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     kinematics = new SwerveDriveKinematics(frontLeft, frontRight, backLeft, backRight);
 
     odometry = new SwerveDriveOdometry(kinematics, getRobotYawInRotation2d());
+
     //instantiates navx
     try{
       navx = new AHRS();
@@ -148,10 +150,14 @@ public class SwerveDriveSubsystem extends SubsystemBase {
    * @param rawRotate Angular velocity
    */
   public void drive(double rawXInput, double rawYInput, double rawRotate){
-     //sets deadbands
-     double xInput = deadband(rawXInput);
-     double yInput = deadband(rawYInput);
-     double rotate = deadband(rawRotate);
+    //sets deadbands
+    double xInput = deadband(rawXInput);
+    double yInput = deadband(rawYInput);
+    double rotate = deadband(rawRotate);
+
+    xInput *= Math.abs(xInput);
+    yInput *= Math.abs(yInput);
+    rotate *= Math.abs(rotate);
 
     //if there is no stick input
     if(xInput == 0 && yInput == 0 && rotate == 0){
@@ -186,6 +192,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     //converts input targets to individual module states (robot-centric)
     ChassisSpeeds targetVelocity = new ChassisSpeeds(xVelocity, yVelocity, rotateVelocity);
     moduleStates = kinematics.toSwerveModuleStates(targetVelocity);
+    normalizeWheelSpeeds(moduleStates, kMaxMPS);
 
     setModuleStates(moduleStates);
   } 
@@ -204,6 +211,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     ChassisSpeeds targetVelocity = ChassisSpeeds.fromFieldRelativeSpeeds(
         xVelocity, yVelocity, rotateVelocity, getRobotYawInRotation2d());
      moduleStates = kinematics.toSwerveModuleStates(targetVelocity);
+     normalizeWheelSpeeds(moduleStates, kMaxMPS);
 
     setModuleStates(moduleStates);
   }
@@ -217,7 +225,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     //converts input targets to individual module states (aiming mode)
     ChassisSpeeds targetVelocity = new ChassisSpeeds(xVelocity, yVelocity, rotateVelocity);
-    SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(targetVelocity, centerOfRotation);
+    moduleStates = kinematics.toSwerveModuleStates(targetVelocity, centerOfRotation);
+    normalizeWheelSpeeds(moduleStates, kMaxMPS);
 
     setModuleStates(moduleStates);
   }
@@ -253,7 +262,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
    */
   public void lockWheels(){
     
-
     frontLeftModule.setModuleVelocity(0);
     frontRightModule.setModuleVelocity(0);
     backLeftModule.setModuleVelocity(0);
@@ -295,12 +303,27 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   }
 
   //navx methods 
+  double lastHeading = 0;
   public double getRobotYaw(){
-    return navx.getYaw();
+    double heading = lastHeading;
+    try {
+      heading = navx.getYaw();
+    } catch (NullPointerException e){
+      System.out.println(e);
+    }
+    lastHeading = heading;
+    return heading;
   }
 
+  double lastYaw = 0;
   public Rotation2d getRobotYawInRotation2d(){
-    double yaw = getRobotYaw();
+    double yaw = lastYaw; 
+    try{
+    yaw = getRobotYaw();
+    } catch (NullPointerException e){
+      System.out.println(e);
+    }
+    lastYaw = yaw;
     return Rotation2d.fromDegrees(yaw);
   }
 
@@ -383,7 +406,11 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("isAimingMode", getIsAimingMode());
     SmartDashboard.putString("positionOnField", odometry.getPoseMeters().toString());
     
+    try{
     odometry.update(getRobotYawInRotation2d(), moduleStates);
+    } catch(RuntimeException e){ 
+    }
 
+    SmartDashboard.putNumber("driveVelocity", frontLeftModule.getDriveVelocity());
   }
 }
