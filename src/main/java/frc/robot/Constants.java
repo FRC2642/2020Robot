@@ -90,6 +90,9 @@ public final class Constants {
     
     //motor neutral deadband
     public static final double kMotorNeutralDeadband = .15;
+  
+    //mag belt speed
+    public static final double kMagBeltSpeed = 15;
 
     /**
      * PID GAINS AND OTHER PID CONSTANTS

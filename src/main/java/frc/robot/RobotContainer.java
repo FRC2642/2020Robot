@@ -93,12 +93,9 @@ public class RobotContainer {
     //rotates ColorSpinner motor right/Clockwise
     new JoystickButton(auxController, Button.kB.value)
       .whenHeld(new RunCommand(spinner::spinR, spinner));
-    //magazine belt goes forward
-    new JoystickButton(auxController, Axis.kRightTrigger.value)
-      .whenHeld(new RunCommand(magazine::magBeltForward, magazine));
-    //magazine belt goes backward
-      new JoystickButton(auxController, Button.kBumperRight.value)
-        .whenPressed(new RunCommand(magazine::magBeltBackward, magazine));
+    //magazine belt
+    new JoystickButton(driveController, Button.kA.value)
+        .whenHeld(new RunCommand(magazine::magBeltOn, magazine));
   }
 
   /**
