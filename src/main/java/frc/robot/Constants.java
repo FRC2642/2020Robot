@@ -69,7 +69,9 @@ public final class Constants {
     public static final int kLeftMagazinePis = 17;
     public static final int kRightMagazinePis = 18;
 
-
+    //mag belt speed
+    public static final double kMagBeltSpeed = 15;
+    
     //angle offsets
     public static final double kFrontLeftAngleOffset = 159.5;
     public static final double kFrontRightAngleOffset = 45.3;
