@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants.  This class should not be used for any other purpose.  All constants should be
@@ -99,6 +101,7 @@ public final class Constants {
     public static final double kModuleDegreesToRelativeRotations 
                                = kRelativeRotationsPerModuleRotation / 360.0; //rots / degrees
     public static final double kMaxSpeedConversionFactor = 8.0;
+    public static final double kMaxAcceleration = 1.2192;
 
     /**
      * ROBOT CONSTANTS
@@ -177,4 +180,20 @@ public final class Constants {
     //controller ports 
     public static final int kDriveControllerPort = 0;
     public static final int kAuxControllerPort = 1;
+
+
+    //PID Controllers for auto command
+    public static final double kPXController = .3;
+    public static final double kPYController = .4;
+    public static final double kPThetaController = .5;
+
+    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
+    public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
+ 
+
+     //Constraint for the motion profilied robot angle controller
+     public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
+     new TrapezoidProfile.Constraints(kMaxAngularSpeedRadiansPerSecond,
+       kMaxAngularSpeedRadiansPerSecondSquared);
 }
+
