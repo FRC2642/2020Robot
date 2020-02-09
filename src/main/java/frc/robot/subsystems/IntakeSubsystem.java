@@ -15,33 +15,33 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
-  // neo motor
+  
   CANSparkMax intakeMotor;
-  //piston
   public Solenoid intakePiston;
 
   public IntakeSubsystem(){
-    //defines neoMotor
-    intakeMotor = new CANSparkMax(ID_RIGHT_SHOOTER_MOTOR, MotorType.kBrushless);
-    intakePiston = new Solenoid(kIntakePiston);
+    intakeMotor = new CANSparkMax(ID_INTAKE_MOTOR, MotorType.kBrushless);
     intakeMotor.restoreFactoryDefaults();
     intakeMotor.setInverted(false);
     intakeMotor.setSmartCurrentLimit(kCurrentLimit);
+
+    intakePiston = new Solenoid(kIntakePistonPort);
   }
 
-//intakes balls
+  //extends and runs intake
   public void intakeIn() {
-  intakeMotor.set(.6);
-  intakePiston.set(true);
+    intakeMotor.set(.6);
+    intakePiston.set(false);
   }
-//stops
+
+  //stops intake
   public void stop() {
-intakeMotor.set(0);
-intakePiston.set(false);
+    intakeMotor.set(0);
+    intakePiston.set(true);
   }
     
-    @Override
-    public void periodic() {
-      // This method will be called once per scheduler run
-    }
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+  }
 }

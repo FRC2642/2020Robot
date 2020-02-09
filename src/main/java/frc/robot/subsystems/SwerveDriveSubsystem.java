@@ -28,6 +28,7 @@ import frc.robot.util.SwerveModule;
 
 import static frc.robot.Constants.*;
 import static edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics.normalizeWheelSpeeds;
+import static frc.robot.util.GeneralUtil.*;
 
 public class SwerveDriveSubsystem extends SubsystemBase {
   CANSparkMax frontLeftDriveMotor, frontLeftAngleMotor;
@@ -102,10 +103,10 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     //assigns swerve modules to an array 
     //this simplifies updating module states
     modules = new ArrayList<SwerveModule>();
-        modules.add(frontLeftModule);
-        modules.add(frontRightModule);
-        modules.add(backLeftModule);
-        modules.add(backRightModule);
+      modules.add(frontLeftModule);
+      modules.add(frontRightModule);
+      modules.add(backLeftModule);
+      modules.add(backRightModule);
 
     //sets module distances from center of rotation
     //forward = postive x, right = positive y
@@ -155,6 +156,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     double yInput = deadband(rawYInput);
     double rotate = deadband(rawRotate);
 
+    //sqaures joystick input
     xInput *= Math.abs(xInput);
     yInput *= Math.abs(yInput);
     rotate *= Math.abs(rotate);
@@ -262,12 +264,14 @@ public class SwerveDriveSubsystem extends SubsystemBase {
    */
   public void lockWheels(){
     
+    //stops wheels
     frontLeftModule.setModuleVelocity(0);
     frontRightModule.setModuleVelocity(0);
     backLeftModule.setModuleVelocity(0);
     backRightModule.setModuleVelocity(0);
 
-    frontLeftModule.setModuleAngle(toRotation2d(-45.0));
+    //sets wheels in the locked orientation
+    frontLeftModule.setModuleAngle(toRotation2d(-45.0));   
     frontRightModule.setModuleAngle(toRotation2d(45.0));
     backLeftModule.setModuleAngle(toRotation2d(45.0));
     backRightModule.setModuleAngle(toRotation2d(-45.0));
@@ -336,37 +340,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public void zeroNavx(){
     navx.zeroYaw();
   }
+
   public Pose2d getPoseMeters(){
     return odometry.getPoseMeters();
-  }
-
-  /**
-   * Applies a deadband to raw joystick input
-   * 
-   * @param input raw joystick input
-   * @return deadbanded joystick input
-   */
-  public double deadband(double input){
-    double outMax = 1.0;
-    double outMin = -1.0;
-    double inMax = 1.0;
-    double inMin = -1.0; 
-
-    double output = 0.0;
-    
-    if(input <= kMotorNeutralDeadband && input >= (-kMotorNeutralDeadband)){
-      output = 0.0;
-    }
-    if(input >= kMotorNeutralDeadband){
-                //new slope for motor output                 //repositions constant based on deadband
-      output = (outMax / (inMax - kMotorNeutralDeadband)) * (input - kMotorNeutralDeadband);
-    }
-    if(input <= -kMotorNeutralDeadband){
-               //new slope for motor output                  //repositions constant based on deadband
-      output = (outMin / (kMotorNeutralDeadband + inMin)) * (input + kMotorNeutralDeadband);
-    }
-    
-    return output;
   }
 
   /**
@@ -377,17 +353,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public void motorTest(SwerveModule module, double driveInput, double angleInput){
     module.testDriveMotor(driveInput);
     module.testAngleMotor(angleInput);
-  }
-
-  //uses absolute encoder
-  public void testAnglePIDLoop(SwerveModule module, double rawXInput, double rawYInput){
-    //System.out.println("raw x = " + rawXInput);
-    //System.out.println("raw y = " + rawYInput);
-    double xInput = deadband(rawXInput);
-    double yInput = deadband(rawYInput);
-    //System.out.println("band x = " + xInput);
-    //System.out.println("band y = " + yInput);
-    module.setAngleSetpoint(xInput, yInput);
   }
 
   public void testDrivePIDFLoop(List<SwerveModule> modules, double driveInput){

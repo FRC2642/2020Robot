@@ -14,26 +14,16 @@ import edu.wpi.first.wpilibj.Ultrasonic;
 
 public class MagazineCommand extends CommandBase {
 
-    Ultrasonic ultra = new Ultrasonic(Constants.kMagazineSonarOutput, Constants.kMagazineSonarInput);
+  Ultrasonic ultra = new Ultrasonic(Constants.kMagazineSonarOutput, Constants.kMagazineSonarInput);
 
   int ballCount = 0;
   boolean hasBallEntered = false;
+  
   public MagazineCommand() {
+
   //sets sonar to send constant pulse
   ultra.setAutomaticMode(true);
-  //gets the sonar's range in inches
-  double range = ultra.getRangeInches();
-  //determines if ball has passed sonar, sets boolean accordingly
-  if(range <= 6) {
-    hasBallEntered = true;
-  } else {
-    hasBallEntered = false;
   }
-  //if ball has passed, adds one to ball count accumulator, and moves mast
-  if (hasBallEntered = true) {
-    ballCount++;
-  } else {
-  }  }
 
   // Called when the command is initially scheduled.
   @Override
