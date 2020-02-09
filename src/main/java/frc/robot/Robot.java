@@ -161,7 +161,6 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
   public void autonomousPeriodic() {
 
     // cosine of the angle to tape
-    double angleCos;
     // constantly updates distance to wall
     synchronized (visionLock) {
       // if the pipeline hasn't been confirmed to run, it won't run.
@@ -172,10 +171,10 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
          */
         double y = this.angleToTape;
         double x = this.distanceToTape;
-        y = Math.toRadians(y);
-
-        angleCos = Math.cos(y);
-        distanceToWall = angleCos * x;
+        
+          //tape is 6ft 9 1/4in or 81 1/4in off the ground
+        distanceToWall = Math.sqrt((x * x) - 6601.5625);
+       
 
       } else {
         System.out.println("Pipeline hasn't run yet, cannot find distance!");

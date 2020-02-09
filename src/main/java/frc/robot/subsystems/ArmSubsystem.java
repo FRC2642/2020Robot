@@ -62,7 +62,7 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
     }
   }
 
-  public void armClimbPos() {
+  public void armClimbPos() { 
     
     setGoal(90);
 

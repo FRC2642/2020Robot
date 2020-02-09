@@ -7,12 +7,16 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.*;
+import static frc.robot.Constants.ID_LEFT_SHOOTER_MOTOR;
+import static frc.robot.Constants.ID_RIGHT_SHOOTER_MOTOR;
+import static frc.robot.Constants.kArmAngleConversionFactor;
+import static frc.robot.Constants.kCurrentLimit;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -40,7 +44,17 @@ public class ShooterSubsystem extends SubsystemBase {
 
   //sets speed for shooter
   public void shoot() {
-  }
+ //20, 30, 40, and 60 are example numbers, can and will be changed
+ double distance = Robot.getDistanceToWall();
+ distance = distance * kArmAngleConversionFactor;
+ if (distance > 20 && distance < 40) {
+   leftShooterMotor.set(20);
+   righShooterMotor.set(20);
+ } else if (distance > 40 && distance < 60) {
+  leftShooterMotor.set(30);
+  righShooterMotor.set(30);
+ } //add more criterias
+}
 
   public void stop() {
   }
