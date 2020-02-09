@@ -9,13 +9,13 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.*;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 //ekatni is intake backwards, as shooting is the reverse of grabbing
-public class EkatniSubsystem extends SubsystemBase {
+public class ShooterSubsystem extends SubsystemBase {
 
   /**
    * Creates a new EkatniSubsystem.
@@ -24,9 +24,7 @@ public class EkatniSubsystem extends SubsystemBase {
   CANSparkMax leftShooterMotor;
   CANSparkMax righShooterMotor;
 
-  public DigitalInput intakeSwitch = new DigitalInput(kIntakeLimitSwitch);
-
-  public EkatniSubsystem() {
+  public ShooterSubsystem() {
     //declare motors
     leftShooterMotor = new CANSparkMax(ID_LEFT_SHOOTER_MOTOR, MotorType.kBrushless);
     righShooterMotor = new CANSparkMax(ID_RIGHT_SHOOTER_MOTOR, MotorType.kBrushless);
@@ -40,19 +38,13 @@ public class EkatniSubsystem extends SubsystemBase {
     leftShooterMotor.setSmartCurrentLimit(kCurrentLimit);
     righShooterMotor.setSmartCurrentLimit(kCurrentLimit);
   }
-  public void ekatni() {
-
-  }
 
   //sets speed for shooter
- public void ekatniOut() {
+  public void shoot() {
+  }
 
-}
-public void stop() {
-
-}
-
- 
+  public void stop() {
+  }
 
   @Override
   public void periodic() {
