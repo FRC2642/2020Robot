@@ -34,7 +34,11 @@ import frc.robot.util.SwerveModule;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 
-public class SwerveDriveSubsystem extends SubsystemBase implements Supplier<Pose2d>, Consumer<SwerveModuleState[]>{
+import static frc.robot.Constants.*;
+import static edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics.normalizeWheelSpeeds;
+import static frc.robot.util.GeneralUtil.*;
+
+public class SwerveDriveSubsystem extends SubsystemBase {
   CANSparkMax frontLeftDriveMotor, frontLeftAngleMotor;
   CANSparkMax frontRightDriveMotor, frontRightAngleMotor;
   CANSparkMax backLeftDriveMotor, backLeftAngleMotor;
@@ -109,10 +113,10 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Supplier<Pose
     //assigns swerve modules to an array 
     //this simplifies updating module states
     modules = new ArrayList<SwerveModule>();
-        modules.add(frontLeftModule);
-        modules.add(frontRightModule);
-        modules.add(backLeftModule);
-        modules.add(backRightModule);
+      modules.add(frontLeftModule);
+      modules.add(frontRightModule);
+      modules.add(backLeftModule);
+      modules.add(backRightModule);
 
     //sets module distances from center of rotation
     //forward = postive x, right = positive y
@@ -126,6 +130,7 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Supplier<Pose
     
     //creates odometry object from kinematics object
     odometry = new SwerveDriveOdometry(kinematics, getRobotYawInRotation2d());
+<<<<<<< HEAD
     
     TrajectoryConfig config = new TrajectoryConfig(Constants.kMaxMPS, 
     Constants.kMaxAcceleration)
@@ -142,6 +147,10 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Supplier<Pose
       );
     
   //instantiates navx
+=======
+
+    //instantiates navx
+>>>>>>> temp
     try{
       navx = new AHRS();
     } catch (RuntimeException ex) {
@@ -174,10 +183,15 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Supplier<Pose
    * @param rawRotate Angular velocity
    */
   public void drive(double rawXInput, double rawYInput, double rawRotate){
-     //sets deadbands
-     double xInput = deadband(rawXInput);
-     double yInput = deadband(rawYInput);
-     double rotate = deadband(rawRotate);
+    //sets deadbands
+    double xInput = deadband(rawXInput);
+    double yInput = deadband(rawYInput);
+    double rotate = deadband(rawRotate);
+
+    //sqaures joystick input
+    xInput *= Math.abs(xInput);
+    yInput *= Math.abs(yInput);
+    rotate *= Math.abs(rotate);
 
     //if there is no stick input
     if(xInput == 0 && yInput == 0 && rotate == 0){
@@ -212,6 +226,7 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Supplier<Pose
     //converts input targets to individual module states (robot-centric)
     ChassisSpeeds targetVelocity = new ChassisSpeeds(xVelocity, yVelocity, rotateVelocity);
     moduleStates = kinematics.toSwerveModuleStates(targetVelocity);
+    normalizeWheelSpeeds(moduleStates, kMaxMPS);
 
     setModuleStates(moduleStates);
   } 
@@ -230,6 +245,7 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Supplier<Pose
     ChassisSpeeds targetVelocity = ChassisSpeeds.fromFieldRelativeSpeeds(
         xVelocity, yVelocity, rotateVelocity, getRobotYawInRotation2d());
      moduleStates = kinematics.toSwerveModuleStates(targetVelocity);
+     normalizeWheelSpeeds(moduleStates, kMaxMPS);
 
     setModuleStates(moduleStates);
   }
@@ -243,7 +259,8 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Supplier<Pose
 
     //converts input targets to individual module states (aiming mode)
     ChassisSpeeds targetVelocity = new ChassisSpeeds(xVelocity, yVelocity, rotateVelocity);
-    SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(targetVelocity, centerOfRotation);
+    moduleStates = kinematics.toSwerveModuleStates(targetVelocity, centerOfRotation);
+    normalizeWheelSpeeds(moduleStates, kMaxMPS);
 
     setModuleStates(moduleStates);
   }
@@ -279,13 +296,14 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Supplier<Pose
    */
   public void lockWheels(){
     
-
+    //stops wheels
     frontLeftModule.setModuleVelocity(0);
     frontRightModule.setModuleVelocity(0);
     backLeftModule.setModuleVelocity(0);
     backRightModule.setModuleVelocity(0);
 
-    frontLeftModule.setModuleAngle(toRotation2d(-45.0));
+    //sets wheels in the locked orientation
+    frontLeftModule.setModuleAngle(toRotation2d(-45.0));   
     frontRightModule.setModuleAngle(toRotation2d(45.0));
     backLeftModule.setModuleAngle(toRotation2d(45.0));
     backRightModule.setModuleAngle(toRotation2d(-45.0));
@@ -321,12 +339,27 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Supplier<Pose
   }
 
   //navx methods 
+  double lastHeading = 0;
   public double getRobotYaw(){
-    return navx.getYaw();
+    double heading = lastHeading;
+    try {
+      heading = navx.getYaw();
+    } catch (NullPointerException e){
+      System.out.println(e);
+    }
+    lastHeading = heading;
+    return heading;
   }
 
+  double lastYaw = 0;
   public Rotation2d getRobotYawInRotation2d(){
-    double yaw = getRobotYaw();
+    double yaw = lastYaw; 
+    try{
+    yaw = getRobotYaw();
+    } catch (NullPointerException e){
+      System.out.println(e);
+    }
+    lastYaw = yaw;
     return Rotation2d.fromDegrees(yaw);
   }
 
@@ -339,8 +372,12 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Supplier<Pose
   public void zeroNavx(){
     navx.zeroYaw();
   }
+<<<<<<< HEAD
   
   //gives xy position of robot on field in meters
+=======
+
+>>>>>>> temp
   public Pose2d getPoseMeters(){
     return odometry.getPoseMeters();
   }
@@ -351,35 +388,6 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Supplier<Pose
       
   //}
   /**
-   * Applies a deadband to raw joystick input
-   * 
-   * @param input raw joystick input
-   * @return deadbanded joystick input
-   */
-  public double deadband(double input){
-    double outMax = 1.0;
-    double outMin = -1.0;
-    double inMax = 1.0;
-    double inMin = -1.0; 
-
-    double output = 0.0;
-    
-    if(input <= kMotorNeutralDeadband && input >= (-kMotorNeutralDeadband)){
-      output = 0.0;
-    }
-    if(input >= kMotorNeutralDeadband){
-                //new slope for motor output                 //repositions constant based on deadband
-      output = (outMax / (inMax - kMotorNeutralDeadband)) * (input - kMotorNeutralDeadband);
-    }
-    if(input <= -kMotorNeutralDeadband){
-               //new slope for motor output                  //repositions constant based on deadband
-      output = (outMin / (kMotorNeutralDeadband + inMin)) * (input + kMotorNeutralDeadband);
-    }
-    
-    return output;
-  }
-
-  /**
    * DIAGNOSTIC 
    */
 
@@ -387,17 +395,6 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Supplier<Pose
   public void motorTest(SwerveModule module, double driveInput, double angleInput){
     module.testDriveMotor(driveInput);
     module.testAngleMotor(angleInput);
-  }
-
-  //uses absolute encoder
-  public void testAnglePIDLoop(SwerveModule module, double rawXInput, double rawYInput){
-    //System.out.println("raw x = " + rawXInput);
-    //System.out.println("raw y = " + rawYInput);
-    double xInput = deadband(rawXInput);
-    double yInput = deadband(rawYInput);
-    //System.out.println("band x = " + xInput);
-    //System.out.println("band y = " + yInput);
-    module.setAngleSetpoint(xInput, yInput);
   }
 
   public void testDrivePIDFLoop(List<SwerveModule> modules, double driveInput){
@@ -418,8 +415,12 @@ public class SwerveDriveSubsystem extends SubsystemBase implements Supplier<Pose
     SmartDashboard.putString("positionOnField", odometry.getPoseMeters().toString());
   
     
+    try{
     odometry.update(getRobotYawInRotation2d(), moduleStates);
+    } catch(RuntimeException e){ 
+    }
 
+    SmartDashboard.putNumber("driveVelocity", frontLeftModule.getDriveVelocity());
   }
 
   @Override
