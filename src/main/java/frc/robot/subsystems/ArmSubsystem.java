@@ -7,18 +7,17 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.kArmLimitSwitch;
+import static frc.robot.Constants.*;
 
-import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
-import frc.robot.Robot;
 
 public class ArmSubsystem extends ProfiledPIDSubsystem {
   static TalonSRX armMotor;

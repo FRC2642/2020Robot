@@ -44,19 +44,20 @@ public final class Constants {
     public static final int ID_BACK_RIGHT_DRIVE_MOTOR = 7;
     public static final int ID_BACK_RIGHT_ANGLE_MOTOR = 8;
     //CAN ID for mag tilt motor
-    public static final int ID_MAG_TILT_MOTOR = 9;
+    public static final int ID_MAG_TILT_MOTOR = 11;
     //CAN ID for Spinner Motor
     public static final int ID_SPINNER_MOTOR = 10;
     //CAN ID for Mag Belt
-    public static final int ID_MAG_BELT_MOTOR = 11;
+    public static final int ID_MAG_BELT_MOTOR = 13;
     //CAN IDs for Intake
     public static final int ID_INTAKE_MOTOR = 12;
-    //public static final int ID_LEFT_INTAKE_MOTOR = 13;     this should be something else
     //CAN IDs for Shooter
-    public static final int ID_RIGHT_SHOOTER_MOTOR = 14;
+    public static final int ID_RIGHT_SHOOTER_MOTOR = 16;
     public static final int ID_LEFT_SHOOTER_MOTOR = 15;
     //CAN IDs for Hanger
-    public static final int ID_CLIMBER_MOTOR = 16;
+    public static final int ID_CLIMBER_MOTOR = 14;
+    //CAN ID for climb bar motor
+    public static final int ID_CLIMB_BAR_MOTOR = 9;
 
       /**
        * SOLENOID PORTS
@@ -80,6 +81,7 @@ public final class Constants {
        */
     //hanger limit switch
     public static final int khangerLowerLimitSwitch = 0;
+    public static final int kArmLimitSwitch = 1;
 
       /**
        * USB
