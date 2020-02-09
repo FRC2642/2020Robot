@@ -129,46 +129,41 @@ public final class Constants {
     public static final double kMotorNeutralDeadband = .15;
     //mag belt speed
     public static final double kMagBeltSpeed = 15;
+    //swerve max speeds
+    public static final double kMaxModuleRPM = 12.0 * kMaxSpeedConversionFactor; //desired module rotation speed * gear ratio conversion
+    public static final double kMaxMPS = 12.0 * kMaxSpeedConversionFactor; //desired movement speed * gear ratio conversion
 
     /**
      * PID GAINS AND OTHER PID CONSTANTS
      */
-    //swerve PID constants
+    //PID constants
     public static final double kMinOutput = -1.0;
-    public static final double kMaxOutput = 1.0;
-    public static final double kMaxModuleRPM = 12.0 * kMaxSpeedConversionFactor; //desired module rotation speed * gear ratio conversion
-    public static final double kMaxMPS = 12.0 * kMaxSpeedConversionFactor; //desired movement speed * gear ratio conversion
-                                                            
+    public static final double kMaxOutput = 1.0;                                           
     //PIDF values for closed-loop velocity control for drive modules
     public static final double kDriveFF = .5 / 15.989; //approx .03127
     public static final double kDriveP = 0.0;
     public static final double kDriveI = kDriveFF / 2000.0;
     public static final double kDriveD = 0.0;
-
     //PIDF values for closed-loop position control for angle modules
     public static final double kAngleFF = 0.0;
     public static final double kAngleP = .3;
     public static final double kAngleI = 0.0005;
     public static final double kAngleD = 0.04;
-
     //PIDF values for closed-loop velocity control for the magazine belt
     public static final double kMagFF = 0.0;
     public static final double kMagP = .3;
     public static final double kMagI = 0.0005;
     public static final double kMagD = 0.04;
-
     //PIDF values for closed-loop position control for the arm tilt motor
     public static final double kTiltFF = 0.0;
     public static final double kTiltP = .3;
     public static final double kTiltI = 0.0005;
     public static final double kTiltD = 0.04;
-
     //PIDF values for closed-loop velocity control for the shooter wheels
     public static final double kShooterFF = 0.0;
     public static final double kShooterP = .3;
     public static final double kShooterI = 0.0005;
     public static final double kShooterD = 0.04;
-
     //PIDF values for closed-loop position control for the climbing motor
     public static final double kClimbFF = 0.0;
     public static final double kClimbP = .3;
