@@ -106,7 +106,6 @@ public final class Constants {
     public static final double kRobotWidth = 0.6858;    //meters
     public static final double kXDistanceFromCenter = kRobotLength / 2;
     public static final double kYDistanceFromCenter = kRobotWidth / 2;
-
     //absolute encoder offsets (swerve)
     public static final double kFrontLeftAngleOffset = 159.5;
     public static final double kFrontRightAngleOffset = 45.3;

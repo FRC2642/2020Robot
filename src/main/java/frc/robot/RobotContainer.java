@@ -49,8 +49,6 @@ public class RobotContainer {
    */
   public RobotContainer() {
    
-    configureButtonBindings();
-
     drive.setDefaultCommand(
       new RunCommand(
         () -> drive.drive(
