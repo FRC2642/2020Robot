@@ -71,8 +71,8 @@ public class SwerveModule {
     anglePID.setFeedbackDevice(relativeAngleEncoder);
     
     //sets PID constants
-    setPIDTerms(drivePID, PIDProfile.DRIVE);
-    setPIDTerms(anglePID, PIDProfile.ANGLE);
+    setPIDGains(drivePID, PIDProfile.DRIVE);
+    setPIDGains(anglePID, PIDProfile.ANGLE);
 
     //assigns absolute encoder offset values
     this.absoluteOffset = angleOffset;

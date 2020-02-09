@@ -17,34 +17,39 @@ import frc.robot.Constants;
 /**
  * Add your docs here.
  */
-public class HangerSubsystem extends SubsystemBase {
+public class ClimberSubsystem extends SubsystemBase {
   
-  public DigitalInput khangerLowerLimitSwitch = new DigitalInput(Constants.khangerLowerLimitSwitch);  
-  private CANEncoder hangerEncoder;
-  public CANSparkMax hangerMotor;
+  public DigitalInput climberLowerLimitSwitch = new DigitalInput(Constants.khangerLowerLimitSwitch);  
+  private CANEncoder climberEncoder;
+  public CANSparkMax climberMotor;
 
-  public void hangerSubsystem(){
-    hangerMotor = new CANSparkMax(ID_HANGER_MOTOR, MotorType.kBrushless);
-    hangerMotor.restoreFactoryDefaults(); // set motor to defaults
-    hangerMotor.setInverted(false); // makes sure the motor is not inverted
-    hangerMotor.setSmartCurrentLimit(kCurrentLimit); // sets limit on motor
-    hangerMotor.getEncoder();
+  public ClimberSubsystem(){
+    climberMotor = new CANSparkMax(ID_CLIMBER_MOTOR, MotorType.kBrushless);
+    climberMotor.restoreFactoryDefaults(); // set motor to defaults
+    climberMotor.setInverted(false); // makes sure the motor is not inverted
+    climberMotor.setSmartCurrentLimit(kCurrentLimit); // sets limit on motor
+
+    climberEncoder = climberMotor.getEncoder();
   }
   
-  public void hangerUp(){
-    hangerMotor.set(-.5);
+  public void climberUp(){
+    climberMotor.set(-.5);
   }
 
-  public void hangerDown(){
-    hangerMotor.set(.5);
+  public void climberDown(){
+    climberMotor.set(.5);
   }
 
   public void stop(){
-    hangerMotor.set(0);
+    climberMotor.set(0);
   }
 
   public boolean getLowerLimitSwitch(){
-    return khangerLowerLimitSwitch.get();
+    return climberLowerLimitSwitch.get();
+  }
+
+  public double getEncoder(){
+    return climberEncoder.getPosition();
   }
 
 }
