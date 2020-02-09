@@ -40,14 +40,11 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   //sets speed for shooter
- public void shoot() {
+  public void shoot() {
+  }
 
-}
-public void stop() {
-
-}
-
- 
+  public void stop() {
+  }
 
   @Override
   public void periodic() {

@@ -3,7 +3,7 @@
 package frc.robot.subsystems;
 
 import static frc.robot.Constants.ID_SPINNER_MOTOR;
-import static frc.robot.Constants.kColorSpinnerPiston;
+import static frc.robot.Constants.kColorSpinnerPistonPort;
 import static frc.robot.Constants.kCurrentLimit;
 
 import com.revrobotics.CANSparkMax;
@@ -20,12 +20,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ColorSpinnerSubsystem extends SubsystemBase {
 
-  //declares motor and piston
   CANSparkMax colorSpinnerMotor;
   public Solenoid colorSpinerPiston;
+  public ColorSensorV3 m_colorSensor;
 
-  final I2C.Port i2cPort = I2C.Port.kOnboard;
-  final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
+  //creates final RGB values for colors
   final ColorMatch m_colorMatcher = new ColorMatch();
   final Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
   final Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
@@ -38,17 +37,19 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
   
 
   public ColorSpinnerSubsystem() {
-  colorSpinnerMotor = new CANSparkMax(ID_SPINNER_MOTOR, MotorType.kBrushless);
-  colorSpinnerMotor.restoreFactoryDefaults();
-  colorSpinnerMotor.setInverted(false);
-  colorSpinnerMotor.setSmartCurrentLimit(kCurrentLimit);
+    colorSpinnerMotor = new CANSparkMax(ID_SPINNER_MOTOR, MotorType.kBrushless);
+    colorSpinnerMotor.restoreFactoryDefaults();
+    colorSpinnerMotor.setInverted(false);
+    colorSpinnerMotor.setSmartCurrentLimit(kCurrentLimit);
 
-  colorSpinerPiston = new Solenoid(kColorSpinnerPiston);
+    colorSpinerPiston = new Solenoid(kColorSpinnerPistonPort);
 
-  m_colorMatcher.addColorMatch(kBlueTarget);
-  m_colorMatcher.addColorMatch(kGreenTarget);
-  m_colorMatcher.addColorMatch(kRedTarget);
-  m_colorMatcher.addColorMatch(kYellowTarget);  
+    m_colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
+
+    m_colorMatcher.addColorMatch(kBlueTarget);
+    m_colorMatcher.addColorMatch(kGreenTarget);
+    m_colorMatcher.addColorMatch(kRedTarget);
+    m_colorMatcher.addColorMatch(kYellowTarget);  
   }
 
 //Set speed for Color Spinner direction.

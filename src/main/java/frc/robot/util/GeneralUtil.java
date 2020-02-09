@@ -36,42 +36,47 @@ public class GeneralUtil {
   }
 
    /**
-   * Sets PID terms for swerve module controllers
+   * Sets PID gains for Spark max controllers
    * 
    * @param pid the PID controller to set values for
-   * @param drive is module a drive module (if false, angle module)
+   * @param profile what gains profile to use
    */
-  public static void setPIDTerms(CANPIDController pid, PIDProfile profile){
+  public static void setPIDGains(CANPIDController pid, PIDProfile profile){
     switch(profile) {
       case DRIVE: 
+        pid.setFF(kDriveFF);
         pid.setP(kDriveP);
         pid.setI(kDriveI);
         pid.setD(kDriveD);
-        pid.setFF(kDriveFF);
         break; 
       case ANGLE:
+        pid.setFF(kAngleFF);
         pid.setP(kAngleP);
         pid.setI(kAngleI);
-        pid.setD(kAngleD);
-        pid.setFF(kAngleFF);
+        pid.setD(kAngleD);  
         break;
       case MAGAZINE:
+        pid.setFF(kMagFF);
         pid.setP(kMagP);
         pid.setI(kMagI);
         pid.setD(kMagD);
-        pid.setFF(kMagFF);
         break;
+      case TILT:
+        pid.setFF(kTiltFF);
+        pid.setP(kTiltP);
+        pid.setI(kTiltI);
+        pid.setD(kTiltD);
       case SHOOTER:
+        pid.setFF(kShooterFF);
         pid.setP(kShooterP);
         pid.setI(kShooterI);
         pid.setD(kShooterD);
-        pid.setFF(kShooterFF);
         break;
       case CLIMB:
+        pid.setFF(kClimbFF);
         pid.setP(kClimbP);
         pid.setI(kClimbI);
         pid.setD(kClimbD);
-        pid.setFF(kClimbFF);
         break;
       
     }
@@ -82,6 +87,7 @@ public class GeneralUtil {
         DRIVE,
         ANGLE,
         MAGAZINE,
+        TILT,
         SHOOTER,
         CLIMB;
   }

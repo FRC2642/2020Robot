@@ -24,7 +24,7 @@ public class ClimberSubsystem extends SubsystemBase {
   public CANSparkMax climberMotor;
 
   public ClimberSubsystem(){
-    climberMotor = new CANSparkMax(ID_HANGER_MOTOR, MotorType.kBrushless);
+    climberMotor = new CANSparkMax(ID_CLIMBER_MOTOR, MotorType.kBrushless);
     climberMotor.restoreFactoryDefaults(); // set motor to defaults
     climberMotor.setInverted(false); // makes sure the motor is not inverted
     climberMotor.setSmartCurrentLimit(kCurrentLimit); // sets limit on motor
@@ -32,11 +32,11 @@ public class ClimberSubsystem extends SubsystemBase {
     climberEncoder = climberMotor.getEncoder();
   }
   
-  public void hangerUp(){
+  public void climberUp(){
     climberMotor.set(-.5);
   }
 
-  public void hangerDown(){
+  public void climberDown(){
     climberMotor.set(.5);
   }
 
@@ -46,6 +46,10 @@ public class ClimberSubsystem extends SubsystemBase {
 
   public boolean getLowerLimitSwitch(){
     return climberLowerLimitSwitch.get();
+  }
+
+  public double getEncoder(){
+    return climberEncoder.getPosition();
   }
 
 }

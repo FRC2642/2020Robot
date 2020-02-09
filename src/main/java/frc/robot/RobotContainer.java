@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ColorSpinnerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.MagazineSubsystem;
@@ -33,9 +34,10 @@ public class RobotContainer {
 
   public static final SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
   public static final IntakeSubsystem intake = new IntakeSubsystem();
-  public static final ShooterSubsystem ekatni = new ShooterSubsystem(); //ekatni is intake backwards, as shooting is the reverse of grabbing
   public static final MagazineSubsystem magazine = new MagazineSubsystem();
+  public static final ShooterSubsystem shooter = new ShooterSubsystem(); 
   public static final ColorSpinnerSubsystem spinner = new ColorSpinnerSubsystem();
+  public static final ClimberSubsystem climb = new ClimberSubsystem();
 
   public final Command intakeCommand = new IntakeCommand(intake);
 
@@ -85,7 +87,7 @@ public class RobotContainer {
      * Everything below here requires reworking.
      */
     //toggles aiming mode
-    new JoystickButton(driveController, Button.kStart.value)
+    /* new JoystickButton(driveController, Button.kStart.value)
       .whenPressed(new InstantCommand(drive::toggleIsAimingMode, drive));
     //rotates ColorSpinner motor left/Counter Clockwise
     new JoystickButton(auxController, Button.kX.value)
@@ -95,7 +97,7 @@ public class RobotContainer {
       .whenHeld(new RunCommand(spinner::spinR, spinner));
     //magazine belt
     new JoystickButton(driveController, Button.kA.value)
-        .whenHeld(new RunCommand(magazine::magBeltOn, magazine));
+        .whenHeld(new RunCommand(magazine::magBeltOn, magazine)); */
   }
 
   /**

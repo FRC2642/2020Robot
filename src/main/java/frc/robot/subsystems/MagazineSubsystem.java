@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import static frc.robot.Constants.*;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -24,34 +25,32 @@ public class MagazineSubsystem extends SubsystemBase {
   CANEncoder magEncoder;
   CANPIDController magPID;
 
-  public Solenoid magazineLeftPis = new Solenoid(Constants.kLeftMagazinePis);
-  public Solenoid magazineRightPis = new Solenoid(Constants.kRightMagazinePis);
+  public Solenoid magPis = new Solenoid(kMagazinePistonPort);
 
-  Ultrasonic ultra = new Ultrasonic(Constants.kMagazineSonarOutput, Constants.kMagazineSonarInput);
+  Ultrasonic ultra = new Ultrasonic(kMagazineSonarOutput, kMagazineSonarInput);
 
   int ballCount = 0;
   boolean hasBallEntered = false;
 
   public MagazineSubsystem() {
-  //Magazine Neo Information
-  magBeltMotor = new CANSparkMax(ID_MAG_BELT_MOTOR, MotorType.kBrushless);
-  magBeltMotor.restoreFactoryDefaults();
-  magBeltMotor.setInverted(false);
-  magBeltMotor.setSmartCurrentLimit(kCurrentLimit);
+    //Magazine Neo Information
+    magBeltMotor = new CANSparkMax(ID_MAG_BELT_MOTOR, MotorType.kBrushless);
+    magBeltMotor.restoreFactoryDefaults();
+    magBeltMotor.setInverted(false);
+    magBeltMotor.setSmartCurrentLimit(kCurrentLimit);
 
-  //Magazine PID Controller
-  magPID = magBeltMotor.getPIDController();
-  //Magazine Motor Encoder
-  magEncoder = magBeltMotor.getEncoder();
+    //Magazine PID Controller
+    magPID = magBeltMotor.getPIDController();
+    //Magazine Motor Encoder
+    magEncoder = magBeltMotor.getEncoder();
 
-  magPID.setFeedbackDevice(magEncoder);
+    magPID.setFeedbackDevice(magEncoder);
 
-  //Lifts Magazine belt on startup
-  magazineLeftPis.set(true);
-  magazineRightPis.set(true);
+    //Lifts Magazine belt on startup
+    magPis.set(true);
 
-  //Sets sonar to constant pulse
-  ultra.setAutomaticMode(true);
+    //Sets sonar to constant pulse
+    ultra.setAutomaticMode(true);
   }
 
   //Magazine Conveyor 
@@ -65,11 +64,11 @@ public class MagazineSubsystem extends SubsystemBase {
 
   //Magazine "Left" and "Right" Belt Lift Pistons
   public void magDisengage(){
-    magazineLeftPis.set(true);
-    magazineRightPis.set(true);}
+    magPis.set(true);
+  }
   public void magEngage(){
-    magazineLeftPis.set(false);
-    magazineRightPis.set(false);}
+    magPis.set(false);
+  }
 
   //Ultrasonic Sonar Ball Counter
   public void senseBall(){
@@ -77,17 +76,18 @@ public class MagazineSubsystem extends SubsystemBase {
   //Gets the sonar's range in inches
   double range = ultra.getRangeInches();
 
-  if(range <= 6) {
-    hasBallEntered = true;
-  } else {
-    hasBallEntered = false;
-  }
-  if (hasBallEntered = true) {
-    ballCount++;
-  } else {
-  }   }
+    if(range <= 6) {
+      hasBallEntered = true;
+    } else {
+      hasBallEntered = false;
+    }
 
-  
+    if (hasBallEntered = true) {
+      ballCount++;
+    } else {
+
+    }   
+  }
 
   @Override
   public void periodic() {
