@@ -183,9 +183,9 @@ public final class Constants {
 
 
     //PID Controllers for auto command
-    public static final double kPXController = 1;
-    public static final double kPYController = 1;
-    public static final double kPThetaController = 1;
+    public static final double kPXController = .3;
+    public static final double kPYController = .4;
+    public static final double kPThetaController = .5;
 
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
