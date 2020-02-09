@@ -24,9 +24,7 @@ public class MagazineSubsystem extends SubsystemBase {
   CANSparkMax magBeltMotor;
   CANEncoder magEncoder;
   CANPIDController magPID;
-
   public Solenoid magPis = new Solenoid(kMagazinePistonPort);
-
   Ultrasonic ultra = new Ultrasonic(kMagazineSonarOutput, kMagazineSonarInput);
 
   int ballCount = 0;

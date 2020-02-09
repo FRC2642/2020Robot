@@ -14,11 +14,10 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-//ekatni is intake backwards, as shooting is the reverse of grabbing
 public class ShooterSubsystem extends SubsystemBase {
 
   /**
-   * Creates a new EkatniSubsystem.
+   * Creates a new ShooterSubsystem.
    */
 
   CANSparkMax leftShooterMotor;

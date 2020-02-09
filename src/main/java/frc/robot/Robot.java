@@ -151,24 +151,25 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
 
 
   
-  double distanceToWall;
   /**
    * This function is called periodically during autonomous.
    * 
    */
-  @Override 
+  static double distanceToWall;
+
+  @Override
   public void autonomousPeriodic() {
 
-    //cosine of the angle to tape
+    // cosine of the angle to tape
     double angleCos;
-
-    //constantly updates distance to wall
+    // constantly updates distance to wall
     synchronized (visionLock) {
-      //if the pipeline hasn't been confirmed to run, it won't run.
+      // if the pipeline hasn't been confirmed to run, it won't run.
       if (pipelineRan) {
-        /*if the pipeline ran, it'll get the values for angle
-          and distance, and then do math and find the distance
-          from the camera to the wall */
+        /*
+         * if the pipeline ran, it'll get the values for angle and distance, and then do
+         * math and find the distance from the camera to the wall
+         */
         double y = this.angleToTape;
         double x = this.distanceToTape;
         y = Math.toRadians(y);
@@ -182,8 +183,8 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
     }
   }
 
-  //output for distanceToWall
-  public double getDistanceToWall() {
+  // output for distanceToWall
+  public static double getDistanceToWall() {
     return distanceToWall;
   }
 
