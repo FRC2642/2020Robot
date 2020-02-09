@@ -9,12 +9,10 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.*;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import com.revrobotics.CANSparkMax;
-import edu.wpi.first.wpilibj.Spark;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.IntakeCommand;
 
 public class IntakeSubsystem extends SubsystemBase {
   // neo motor
@@ -28,16 +26,6 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor.setSmartCurrentLimit(kCurrentLimit);
   }
 
-  
-  public void intake() {
-  }
-
-  public void initDefaultCommand() {
-    // Set the default command for a subsystem here.
-    // setDefaultCommand(new MySpecialCommand());
-
-   setDefaultCommand(new IntakeCommand());
-    }
 //grabs balls
   public void intakeIn() {
 
@@ -51,8 +39,4 @@ public class IntakeSubsystem extends SubsystemBase {
     public void periodic() {
       // This method will be called once per scheduler run
     }
-
-
-	public void setDefaultCommand(IntakeCommand intakeCommand, IntakeSubsystem intake) {
-	}
 }

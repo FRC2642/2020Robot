@@ -43,12 +43,7 @@ public final class Constants {
     //sonar
     public static final int kMagazineSonarInput = 19;
     public static final int kMagazineSonarOutput = 20;
-    /**
-     * PNEUMATICS
-     */ 
-    //Magazine Pistons (temp values)
-    public static final int kLeftMagazinePis = 17;
-    public static final int kRightMagazinePis = 18;
+    
     //CAN ID for Spinner Motor
     public static final int ID_SPINNER_MOTOR = 9;
     //CAN ID for Mag Belt
@@ -144,7 +139,7 @@ public final class Constants {
   public static int kEkatniMotorPort2 = 18;
   //intake limit switch
   public static int kIntakeLimitSwitch = 9;
-  
+  public static int kArmLimitSwitch = 10;
   //USB Camera
   public static int kUsbCamera = 23;
 
