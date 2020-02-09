@@ -66,12 +66,12 @@ public final class Constants {
      * PNEUMATICS
      */ 
     //Magazine Pistons (temp values)
-    public static final int kLeftMagazinePis = 17;
-    public static final int kRightMagazinePis = 18;
+    public static final int kLeftMagazinePis = 0;
+    public static final int kRightMagazinePis = 1;
     //Intake piston (temp values)
-    public static final int kIntakePiston = 19;
+    public static final int kIntakePiston = 2;
     //color spinner piston (temp values)
-    public static final int kColorSpinnerPiston = 20;
+    public static final int kColorSpinnerPiston = 3;
 
     //angle offsets
     public static final double kFrontLeftAngleOffset = 159.5;
