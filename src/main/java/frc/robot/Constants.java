@@ -39,19 +39,38 @@ public final class Constants {
     public static final int ID_BACK_LEFT_ANGLE_MOTOR = 6;
     public static final int ID_BACK_RIGHT_DRIVE_MOTOR = 7;
     public static final int ID_BACK_RIGHT_ANGLE_MOTOR = 8;
-
+    //CAN ID for Spinner Motor
+    public static final int ID_SPINNER_MOTOR = 9;
+    //CAN ID for Mag Elevator
+    public static final int ID_MAG_TILT_MOTOR = 10;
+    //CAN IDs for Intake
+    public static final int ID_RIGHT_INTAKE_MOTOR = 11;
+    public static final int ID_LEFT_INTAKE_MOTOR = 12;
+    //CAN IDs for Shooter
+    public static final int ID_RIGHT_SHOOTER_MOTOR = 13;
+    public static final int ID_LEFT_SHOOTER_MOTOR = 14;
+    //CAN IDs for Climber
+    public static final int ID_CLIMBER_MOTOR = 15;
+    //CAN IDs for Arm
+    public static final int ID_ARM_MOTOR = 16;
     /**
      * MOTOR CONSTANTS
      */
     //angle offsets
-    public static final double kFrontLeftAngleOffset = 157.0;
-    public static final double kFrontRightAngleOffset = 38.3;//90;//226.3;
-    public static final double kBackLeftAngleOffset = 130.6;//90;//134.4;
-    public static final double kBackRightAngleOffset = 57.1;//90;//242.5;
+    public static final double kFrontLeftAngleOffset = 159.5;
+    public static final double kFrontRightAngleOffset = 45.3;
+    public static final double kBackLeftAngleOffset = 130.6;
+    public static final double kBackRightAngleOffset = 57.8;
+
+    //Dashboard reading offsets
+    public static final double kFrontLeftAngleDashboardOffset = 318.0;
+    public static final double kFrontRightAngleDashboardOffset = 89.6;
+    public static final double kBackLeftAngleDashboardOffset = 261.6;
+    public static final double kBackRightAngleDashboardOffset = 114.8;
 
     //current limit for Spark MAXs 
     public static final int kCurrentLimit = 30; //amps
-
+    
     //motor neutral deadband
     public static final double kMotorNeutralDeadband = .15;
 
@@ -62,7 +81,7 @@ public final class Constants {
     public static final double kMinOutput = -1.0;
     public static final double kMaxOutput = 1.0;
     public static final double kMaxModuleRPM = 17.5;  //wip, MPS
-    public static final double kMaxMPS = 17.5; //slowly bring up to 25 MPS
+    public static final double kMaxMPS = 17.5; //wip, slowly bring up to 25 MPS
                                                             
     //PIDF values for closed-loop velocity control for drive modules
     public static final double kDriveFF = .5 / 15.989; //approx .03127
@@ -71,9 +90,9 @@ public final class Constants {
     public static final double kDriveD = 0.0;
 
     //PIDF values for closed-loop position control for angle modules
-    public static final double kAngleP = .01;
-    public static final double kAngleI = 1e-8;
-    public static final double kAngleD = 0.0;
+    public static final double kAngleP = .3;
+    public static final double kAngleI = 0.0005;
+    public static final double kAngleD = 0.04;
     public static final double kAngleFF = 0.0;
 
     /**
@@ -98,4 +117,22 @@ public final class Constants {
      */
     //controller ports 
     public static final int kDriveControllerPort = 0;
+    public static final int kAuxControllerPort = 1;
+  
+  /**
+  * These are TEMPORARY until we figure what actual motor controllers we're using
+  * At that point, we will remove these and assign CAN IDs
+  */
+     //intake motors
+  public static int kIntakeMotorPort1 = 15;
+  public static int kIntakeMotorPort2 = 16;
+  public static int kEkatniMotorPort1 = 17;
+  public static int kEkatniMotorPort2 = 18;
+  //intake limit switch
+  public static int kIntakeLimitSwitch = 9;
+  
+  //USB Camera
+  public static int kUsbCamera = 23;
+
+
 }
