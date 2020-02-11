@@ -6,13 +6,17 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot.subsystems;
+
 import com.revrobotics.CANEncoder;
+import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import static frc.robot.Constants.*;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import static frc.robot.util.GeneralUtil.*;
 
 /**
  * Add your docs here.
@@ -22,6 +26,7 @@ public class ClimberSubsystem extends SubsystemBase {
   public DigitalInput climberLowerLimitSwitch = new DigitalInput(Constants.khangerLowerLimitSwitch);  
   private CANEncoder climberEncoder;
   public CANSparkMax climberMotor;
+  public CANPIDController climberPID;
 
   public ClimberSubsystem(){
     climberMotor = new CANSparkMax(ID_CLIMBER_MOTOR, MotorType.kBrushless);
@@ -30,28 +35,14 @@ public class ClimberSubsystem extends SubsystemBase {
     climberMotor.setSmartCurrentLimit(kCurrentLimit); // sets limit on motor
 
     climberEncoder = climberMotor.getEncoder();
-  }
-  
-  public void climberUp(){
-    climberMotor.set(-.5);
+
+    climberPID = climberMotor.getPIDController();
+    climberPID.setFeedbackDevice(climberEncoder);
+    
   }
 
-  public void climberDown(){
-    climberMotor.set(.5);
-  }
-
-  public void stop(){
-    climberMotor.set(0);
-  }
-
-  public void g(){
-    if (getLowerLimitSwitch() || ){
-      stop();
-    }
-  }
-  
-  public boolean getLowerLimitSwitch(){
-    return climberLowerLimitSwitch.get();
+  public void climberMove(double setPoint){
+    climberPID.setReference(setPoint, ControlType.kPosition);
   }
 
   public double getEncoder(){
