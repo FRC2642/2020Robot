@@ -11,21 +11,28 @@ import static frc.robot.Constants.ID_LEFT_SHOOTER_MOTOR;
 import static frc.robot.Constants.ID_RIGHT_SHOOTER_MOTOR;
 import static frc.robot.Constants.kArmAngleConversionFactor;
 import static frc.robot.Constants.kCurrentLimit;
-
+import static frc.robot.Constants.*;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
+import com.revrobotics.CANEncoder;
+import com.revrobotics.CANPIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 
 public class ShooterSubsystem extends SubsystemBase {
-
+  
   /**
    * Creates a new ShooterSubsystem.
    */
 
   CANSparkMax leftShooterMotor;
   CANSparkMax righShooterMotor;
+  //declare PIDs
+  CANEncoder lShooterEncoder;
+  CANEncoder rShooterEncoder;
+  CANPIDController lShooterPID;
+  CANPIDController rShooterPID;
 
   public ShooterSubsystem() {
     //declare motors
@@ -40,6 +47,16 @@ public class ShooterSubsystem extends SubsystemBase {
     //set current limit
     leftShooterMotor.setSmartCurrentLimit(kCurrentLimit);
     righShooterMotor.setSmartCurrentLimit(kCurrentLimit);
+    //PID
+    lShooterPID = leftShooterMotor.getPIDController();
+    rShooterPID = righShooterMotor.getPIDController();
+    lShooterEncoder = leftShooterMotor.getEncoder();
+    rShooterEncoder = righShooterMotor.getEncoder();
+    lShooterPID.setFeedbackDevice(lShooterEncoder);
+    rShooterPID.setFeedbackDevice(rShooterEncoder);
+    rShooterPID.setOutputRange(kMinOutput, kMaxOutput);
+    lShooterPID.setOutputRange(kMinOutput, kMaxOutput);
+
   }
 
   //sets speed for shooter
@@ -57,6 +74,11 @@ public class ShooterSubsystem extends SubsystemBase {
 }
 
   public void stop() {
+  }
+  
+  public void setShooterSpeed(double targetVelocity){
+    lShooterPID.setReference(targetVelocity, ControlType.kVelocity);
+    rShooterPID.setReference(targetVelocity, ControlType.kVelocity);  
   }
 
   @Override
