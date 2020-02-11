@@ -16,6 +16,11 @@
  for the strength of our robot as a whole.
  Please don't break.
 
+ I pray for ekatni (intake backwards)
+ for it's identity has been lost
+ never to be seen again.
+ I love you <3
+
  We pray to the control systems, and National Instruments,
  for if we do not we will surely perish
  as the RoboRio may not work.
