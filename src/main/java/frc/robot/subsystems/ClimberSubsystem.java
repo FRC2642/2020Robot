@@ -44,6 +44,12 @@ public class ClimberSubsystem extends SubsystemBase {
     climberMotor.set(0);
   }
 
+  public void g(){
+    if (getLowerLimitSwitch() || ){
+      stop();
+    }
+  }
+  
   public boolean getLowerLimitSwitch(){
     return climberLowerLimitSwitch.get();
   }
