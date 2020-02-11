@@ -44,6 +44,7 @@
 */
 
 package frc.robot;
+
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.cameraserver.CameraServer;
@@ -51,6 +52,7 @@ import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.util.JevoisDriver;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -73,6 +75,10 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
   // The object to synchronize on to make sure the vision thread doesn't
   // write to variables the main thread is using.
   public final Object visionLock = new Object();
+
+  //Jevois driver
+  JevoisDriver jevoisCam;
+
 
   // The pipeline outputs we want
   public boolean pipelineRan = false; // lets us know when the pipeline has actually run
@@ -102,6 +108,9 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
     UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
     //sets resolution of camera
     camera.setResolution(640, 480);
+
+    jevoisCam = new JevoisDriver();
+
   }
 
   /**
