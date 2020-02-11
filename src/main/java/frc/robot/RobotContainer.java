@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import static frc.robot.Constants.kAuxControllerPort;
 import static frc.robot.Constants.kDriveControllerPort;
 
 import edu.wpi.first.wpilibj.GenericHID;
@@ -15,9 +16,17 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.ColorSpinnerSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.MagazineSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
-
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -25,34 +34,60 @@ import frc.robot.subsystems.SwerveDriveSubsystem;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  public final SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
 
-  XboxController driveController = new XboxController(kDriveControllerPort);
+  public static final SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
+  public static final IntakeSubsystem intake = new IntakeSubsystem();
+  public static final MagazineSubsystem magazine = new MagazineSubsystem();
+  public static final ShooterSubsystem shooter = new ShooterSubsystem(); 
+  public static final ColorSpinnerSubsystem spinner = new ColorSpinnerSubsystem();
+  public static final ClimberSubsystem climb = new ClimberSubsystem();
+
+  public final Command intakeCommand = new IntakeCommand(intake);
+  
+  SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+    drive.exampleTrajectory,
+    drive::getPoseMeters, 
+    drive.kinematics,
+
+    //Position controllers
+    new PIDController(Constants.kPXController, 0, 0),
+    new PIDController(Constants.kPYController, 0, 0),
+    new ProfiledPIDController(Constants.kPThetaController, 0, 0,
+                              Constants.kThetaControllerConstraints),
+
+    drive::setModuleStates,
+
+    drive
+
+);
+
+  public static XboxController driveController = new XboxController(kDriveControllerPort);
+  public static XboxController auxController = new XboxController(kAuxControllerPort);
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    
-    configureButtonBindings();
-
+   
     drive.setDefaultCommand(
       new RunCommand(
         () -> drive.drive(
-          -(driveController.getRawAxis(1)) * .7, 
+          //.5, 0, 0),
+             -(driveController.getRawAxis(1)) * .7, 
           driveController.getRawAxis(0) * .7, 
-          driveController.getRawAxis(4)), 
+          driveController.getRawAxis(4)),  
           drive)
       );
 
+    intake.setDefaultCommand(intakeCommand);
+    
     //manually drives motors, leave out unless testing 
     /*drive.setDefaultCommand(
       new RunCommand(
         () -> drive.motorTest(drive.frontRightModule,
               -driveController.getRawAxis(1), -driveController.getRawAxis(5)),
               drive)
-    );*/
+    );*/ 
   }
 
   /**
@@ -65,9 +100,22 @@ public class RobotContainer {
     //instantiates drive toggle button
     new JoystickButton(driveController, Button.kBack.value)
       .whenPressed(new InstantCommand(drive::toggleIsDriveFieldCentric, drive));
-    //instantiates lock wheel toggle button
-    new JoystickButton(driveController, Button.kStart.value)
-      .whenPressed(new InstantCommand(drive::toggleAreWheelsLocked, drive));
+
+    /**
+     * Everything below here requires reworking.
+     */
+    //toggles aiming mode
+    /* new JoystickButton(driveController, Button.kStart.value)
+      .whenPressed(new InstantCommand(drive::toggleIsAimingMode, drive));
+    //rotates ColorSpinner motor left/Counter Clockwise
+    new JoystickButton(auxController, Button.kX.value)
+      .whenHeld(new RunCommand(spinner::spinL, spinner));
+    //rotates ColorSpinner motor right/Clockwise
+    new JoystickButton(auxController, Button.kB.value)
+      .whenHeld(new RunCommand(spinner::spinR, spinner));
+    //magazine belt
+    new JoystickButton(driveController, Button.kA.value)
+        .whenHeld(new RunCommand(magazine::magBeltOn, magazine)); */
   }
 
   /**
@@ -76,6 +124,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return null;
+    return swerveControllerCommand.andThen(() -> drive.drive(0, 0, 0));
   }
 }
