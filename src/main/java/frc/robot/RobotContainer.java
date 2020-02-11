@@ -36,15 +36,15 @@ import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 public class RobotContainer {
 
   public static final SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
-  public static final IntakeSubsystem intake = new IntakeSubsystem();
-  public static final MagazineSubsystem magazine = new MagazineSubsystem();
-  public static final ShooterSubsystem shooter = new ShooterSubsystem(); 
-  public static final ColorSpinnerSubsystem spinner = new ColorSpinnerSubsystem();
-  public static final ClimberSubsystem climb = new ClimberSubsystem();
+  //public static final IntakeSubsystem intake = new IntakeSubsystem();
+  //public static final MagazineSubsystem magazine = new MagazineSubsystem();
+  //public static final ShooterSubsystem shooter = new ShooterSubsystem(); 
+  //public static final ColorSpinnerSubsystem spinner = new ColorSpinnerSubsystem();
+  //public static final ClimberSubsystem climb = new ClimberSubsystem();
 
-  public final Command intakeCommand = new IntakeCommand(intake);
+  //public final Command intakeCommand = new IntakeCommand(intake);
   
-  SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+  /*SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
     drive.exampleTrajectory,
     drive::getPoseMeters, 
     drive.kinematics,
@@ -59,7 +59,7 @@ public class RobotContainer {
 
     drive
 
-);
+);*/
 
   public static XboxController driveController = new XboxController(kDriveControllerPort);
   public static XboxController auxController = new XboxController(kAuxControllerPort);
@@ -79,7 +79,7 @@ public class RobotContainer {
           drive)
       );
 
-    intake.setDefaultCommand(intakeCommand);
+    //intake.setDefaultCommand(intakeCommand);
     
     //manually drives motors, leave out unless testing 
     /*drive.setDefaultCommand(
@@ -124,6 +124,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return swerveControllerCommand.andThen(() -> drive.drive(0, 0, 0));
+    return null;//return swerveControllerCommand.andThen(() -> drive.drive(0, 0, 0));
   }
 }
