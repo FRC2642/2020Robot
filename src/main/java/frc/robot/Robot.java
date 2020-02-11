@@ -105,10 +105,7 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
     // autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
     //takes a picture with the camera
-    UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
     //sets resolution of camera
-    camera.setResolution(640, 480);
-
     jevoisCam = new JevoisDriver();
 
   }
