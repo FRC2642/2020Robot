@@ -138,6 +138,41 @@ public final class Constants {
     public static final double kMaxMPS = 12.0 * kMaxSpeedConversionFactor; //desired movement speed * gear ratio conversion
 
     /**
+     * VISION CONSTANTS
+     */
+
+     //JeVois Camera Number
+	public static final int kJevoisCamNumber = 1; //JEVOIS_CAM_NUMBER
+	// Serial Port Constants 
+	public static final int kBaudRate = 115200; //BAUD_RATE
+	// MJPG Streaming Constants 
+	public static final int kMjpgStreamPort = 1180; //MJPG_STREAM_PORT
+	// JeVois Program Selection Constants - must align with JeVois .cfg files
+	public static final int kPixleWidth1 = 320; //MAPPING_WIDTH_PXL_1
+	public static final int kPixleHeight1 = 240; //MAPPING_HEIGHT_PXL_1
+	public static final int kFPS1 = 20; //MAPPING_FRMRT_FPS_1
+	// JeVois Program Selection Constants - must align with JeVois .cfg files
+	public static final int kPixleWidth2 = 320; //MAPPING_WIDTH_PXL_2
+	public static final int kPixleHeight2 = 240; //MAPPING_HEIGHT_PXL_2
+	public static final int kFPS2 = 20; //MAPPING_FRMRT_FPS_2
+	// Packet format constants (how the string is sent from the JeVois)
+	public static final String kPacketStart = "{"; //PACKET_START_CHAR
+	public static final String kPacketEnd = "}"; //PACKET_END_CHAR
+	public static final String kPacketSpacer = ","; //PACKET_DILEM_CHAR
+	// Status variables 
+	public static boolean camStreamRunning = false;
+    public static  boolean trackingOnline = false;
+    public static  boolean trackingEnable = true;
+    public static  boolean serOutEnable = false;
+	// Most recently seen target 
+	public static double trk;			//how many targets 
+    public static double xCntr;			//x coordinate of target center
+	public static double yCntr;			//y coordinate of target center
+    public static double camMode;		//Camera mode either vision processing, driver mode, or another vision processing mode
+
+
+
+    /**
      * PID GAINS AND OTHER PID CONSTANTS
      */
     //PID constants
