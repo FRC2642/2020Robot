@@ -63,7 +63,7 @@ public class MagazineSubsystem extends SubsystemBase {
   }
 
   public void magBeltOn(){
-    setBeltVelocity(kMagBeltSpeed);
+    setBeltVelocity(Math.abs(kMagBeltSpeed));
   }
 
   //Magazine "Left" and "Right" Belt Lift Pistons
