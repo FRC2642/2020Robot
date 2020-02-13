@@ -101,7 +101,8 @@ public final class Constants {
     public static final double kModuleDegreesToRelativeRotations 
                                = kRelativeRotationsPerModuleRotation / 360.0; //rots / degrees
     public static final double kMaxSpeedConversionFactor = 8.0;
-    public static final double kMaxAcceleration = 1.2192;
+    //value isn't accurate, change later
+    public static final double kArmAngleConversionFactor = 10.0;
 
     /**
      * ROBOT CONSTANTS
@@ -136,7 +137,8 @@ public final class Constants {
     //swerve max speeds
     public static final double kMaxModuleRPM = 12.0 * kMaxSpeedConversionFactor; //desired module rotation speed * gear ratio conversion
     public static final double kMaxMPS = 12.0 * kMaxSpeedConversionFactor; //desired movement speed * gear ratio conversion
-
+    public static final double kMaxAcceleration = 1.2192;
+  
     /**
      * VISION CONSTANTS
      */
