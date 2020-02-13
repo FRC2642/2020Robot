@@ -23,8 +23,12 @@ import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.SwerveModule;
+import frc.robot.Constants;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
 
 import static frc.robot.Constants.*;
 import static edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics.normalizeWheelSpeeds;
@@ -43,10 +47,12 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public List<SwerveModule> modules;
   public SwerveModuleState[] moduleStates;
 
-  SwerveDriveKinematics kinematics;
+  public SwerveDriveKinematics kinematics;
   SwerveDriveOdometry odometry;
   public AHRS navx;
-
+  public TrajectoryConfig config;
+  public Trajectory exampleTrajectory;
+ 
   public boolean isDriveFieldCentric;
   public boolean isAimingMode;
 
@@ -120,7 +126,28 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     odometry = new SwerveDriveOdometry(kinematics, getRobotYawInRotation2d());
 
-    //instantiates navx
+    TrajectoryConfig config =
+        new TrajectoryConfig(Constants.kMaxMPS,
+                             Constants.kMaxAcceleration)
+            // Add kinematics to ensure max speed is actually obeyed
+            .setKinematics(kinematics);
+
+    
+            Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+              // Start at the origin facing the +X direction
+              new Pose2d(0, 0, new Rotation2d(0)),
+              // Pass through these two interior waypoints, making an 's' curve path
+              List.of(
+                  new Translation2d(1, 1),
+                  new Translation2d(2, -1)
+              ),
+              // End 3 meters straight ahead of where we started, facing forward
+              new Pose2d(3, 0, new Rotation2d(0)),
+              config
+    );
+    
+    
+            //instantiates navx
     try{
       navx = new AHRS();
     } catch (RuntimeException ex) {
