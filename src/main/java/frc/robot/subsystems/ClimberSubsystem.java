@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
@@ -16,7 +17,6 @@ import static frc.robot.Constants.*;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import static frc.robot.util.GeneralUtil.*;
 
 /**
  * Add your docs here.
@@ -43,6 +43,10 @@ public class ClimberSubsystem extends SubsystemBase {
 
   public void climberMove(double setPoint){
     climberPID.setReference(setPoint, ControlType.kPosition);
+  }
+
+  public void stop() {
+    climberMotor.set(0);
   }
 
   public double getEncoder(){

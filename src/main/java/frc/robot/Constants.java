@@ -103,6 +103,7 @@ public final class Constants {
     public static final double kMaxSpeedConversionFactor = 8.0;
     //value isn't accurate, change later
    public static final double kArmAngleConversionFactor = 10.0;
+   public static final double kShooterRPMConversionFactor = 18.84954;
     public static final double kMaxAcceleration = 1.2192;
 
     /**

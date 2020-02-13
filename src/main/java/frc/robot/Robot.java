@@ -171,12 +171,10 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
       // if the pipeline hasn't been confirmed to run, it won't run.
       if (pipelineRan) {
         /*
-         * if the pipeline ran, it'll get the values for angle and distance, and then do
+         * if the pipeline ran, it'll get the values for distance, and then do
          * math and find the distance from the camera to the wall
          */
-        double y = this.angleToTape;
-        double x = this.distanceToTape;
-        
+        double x = this.distanceToTape;     
           //tape is 6ft 9 1/4in or 81 1/4in off the ground
         distanceToWall = Math.sqrt((x * x) - 6601.5625);
        

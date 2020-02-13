@@ -62,18 +62,20 @@ public class ShooterSubsystem extends SubsystemBase {
   //sets speed for shooter
   public void shoot() {
  //20, 30, 40, and 60 are example numbers, can and will be changed
+ //gets distance to wall from JeVois camera
  double distance = Robot.getDistanceToWall();
+ //does math and gets accurate distance
  distance = distance * kArmAngleConversionFactor;
- if (distance > 20 && distance < 40) {
-   leftShooterMotor.set(20);
-   righShooterMotor.set(20);
- } else if (distance > 40 && distance < 60) {
-  leftShooterMotor.set(30);
-  righShooterMotor.set(30);
- } //add more criterias
+ //does more math with the correct distance and finds the necessary RPM to shoot the ball a certain distance
+double shooterRPM = distance * kShooterRPMConversionFactor;
+//sets PIDs to make motors run at previously determined RPM
+rShooterPID.setReference(shooterRPM, ControlType.kVelocity);
+lShooterPID.setReference(shooterRPM, ControlType.kVelocity);
 }
 
   public void stop() {
+    leftShooterMotor.set(0);
+    righShooterMotor.set(0);
   }
   
   public void setShooterSpeed(double targetVelocity){
