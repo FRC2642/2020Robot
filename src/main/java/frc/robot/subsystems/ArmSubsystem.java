@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 
+import frc.robot.Robot;
+
 public class ArmSubsystem extends ProfiledPIDSubsystem {
   static TalonSRX armMotor;
   public DigitalInput armSwitch = new DigitalInput(kArmLimitSwitch);
@@ -40,15 +42,19 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
     return armMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 2);
 
   }
-  public void armLift() {
-    //20, 40, and 60 are example numbers
+  public void armLift(double d) {
+    //20, 30, 40, and 60 are example numbers, can and will be changed
+    double distance = Robot.getDistanceToWall();
+    distance = distance * kArmAngleConversionFactor;
+    if (distance > 20 && distance < 40) {
+      setGoal(20);
+    } else if (distance > 40 && distance < 60) {
+      setGoal(30);
+    } //add more criterias
+  }
 
-    /*if (getDistanceToWall() > 20 && getDistanceToWall() < 40) {
-      setGoal(value);
-    } else if (getDistanceToWall() > 40 && getDistanceToWall() < 60) {
-      setGoal(difValue)
-    } ...
-    */
+  public void armBasePos() {
+    setGoal(45);
   }
 
   public void armDown() {
@@ -59,7 +65,7 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
     }
   }
 
-  public void armClimbPos() {
+  public void armClimbPos() { 
     
     setGoal(90);
 
