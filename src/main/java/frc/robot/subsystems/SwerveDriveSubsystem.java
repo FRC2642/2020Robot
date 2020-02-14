@@ -299,10 +299,10 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     backRightModule.setModuleVelocity(0);
 
     //sets wheels in the locked orientation
-    frontLeftModule.setModuleAngle(toRotation2d(0));   
-    frontRightModule.setModuleAngle(toRotation2d(0));
-    backLeftModule.setModuleAngle(toRotation2d(0));
-    backRightModule.setModuleAngle(toRotation2d(0));
+    frontLeftModule.setModuleAngle(toRotation2d(-45));   
+    frontRightModule.setModuleAngle(toRotation2d(45));
+    backLeftModule.setModuleAngle(toRotation2d(45));
+    backRightModule.setModuleAngle(toRotation2d(-45));
   }
 
   /**
