@@ -31,9 +31,7 @@ public class IntakeCommand extends CommandBase {
   @Override
   public void execute() {
     //getRawAxis axies values may need changing
-    if (RobotContainer.auxController.getRawAxis(3) > 0.6)
-      RobotContainer.intake.intakeIn();
-    else if (RobotContainer.auxController.getRawAxis(3) < 0.6){}
+   
     //ekatni is intake backwards, as shooting is the reverse of grabbing
      
   }
@@ -47,7 +45,6 @@ public class IntakeCommand extends CommandBase {
  
   // Called once after isFinished returns true
    protected void end() {
-    RobotContainer.intake.stop();
    }
 
   // Called when another command which requires one or more of the same

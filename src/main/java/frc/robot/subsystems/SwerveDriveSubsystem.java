@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.SwerveModule;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 
 import static frc.robot.Constants.*;
@@ -298,10 +299,10 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     backRightModule.setModuleVelocity(0);
 
     //sets wheels in the locked orientation
-    frontLeftModule.setModuleAngle(toRotation2d(-45.0));   
-    frontRightModule.setModuleAngle(toRotation2d(45.0));
-    backLeftModule.setModuleAngle(toRotation2d(45.0));
-    backRightModule.setModuleAngle(toRotation2d(-45.0));
+    frontLeftModule.setModuleAngle(toRotation2d(-45));   
+    frontRightModule.setModuleAngle(toRotation2d(45));
+    backLeftModule.setModuleAngle(toRotation2d(45));
+    backRightModule.setModuleAngle(toRotation2d(-45));
   }
 
   /**
@@ -372,6 +373,13 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     return odometry.getPoseMeters();
   }
 
+  public double getPoseXInFeet(){
+    Pose2d pose2d = getPoseMeters();
+    Translation2d poseTrans2d = pose2d.getTranslation();
+    double pose = poseTrans2d.getX();
+    return Units.metersToFeet(pose);
+  }
+
   /**
    * DIAGNOSTIC 
    */
@@ -397,12 +405,13 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("isDriveFieldCentric", getIsDriveFieldCentric());
     SmartDashboard.putBoolean("isAimingMode", getIsAimingMode());
     SmartDashboard.putString("positionOnField", odometry.getPoseMeters().toString());
-    
+
     try{
     odometry.update(getRobotYawInRotation2d(), moduleStates);
     } catch(RuntimeException e){ 
     }
 
     SmartDashboard.putNumber("driveVelocity", frontLeftModule.getDriveVelocity());
+    SmartDashboard.putNumber("poseXInFeet", getPoseXInFeet());
   }
 }

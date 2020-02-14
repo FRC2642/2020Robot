@@ -68,24 +68,28 @@ public class MagazineSubsystem extends SubsystemBase {
     magPis.set(false);
   }
 
+  public void stop(){
+    magPID.setReference(0, ControlType.kVelocity);
+  }
+
   //Ultrasonic Sonar Ball Counter
   public void senseBall(){
 
-  //Gets the sonar's range in inches
-  double range = ultra.getRangeInches();
+    //Gets the sonar's range in inches
+    double range = ultra.getRangeInches();
 
-    if(range <= 6) {
-      hasBallEntered = true;
-    } else {
-      hasBallEntered = false;
+      if(range <= 6) {
+        hasBallEntered = true;
+      } else {
+        hasBallEntered = false;
+      }
+
+      if (hasBallEntered = true) {
+        ballCount++;
+      } else {
+
+      }   
     }
-
-    if (hasBallEntered = true) {
-      ballCount++;
-    } else {
-
-    }   
-  }
 
   @Override
   public void periodic() {
