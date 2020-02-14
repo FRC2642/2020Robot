@@ -25,6 +25,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.MagazineSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
+import frc.robot.subsystems.ArmSubsystem;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 /**
@@ -41,6 +42,7 @@ public class RobotContainer {
   public static final ShooterSubsystem shooter = new ShooterSubsystem(); 
   public static final ColorSpinnerSubsystem spinner = new ColorSpinnerSubsystem();
   public static final ClimberSubsystem climb = new ClimberSubsystem();
+  public static final ArmSubsystem arm = new ArmSubsystem();
 
   public final Command intakeCommand = new IntakeCommand(intake);
   
@@ -80,6 +82,37 @@ public class RobotContainer {
       );
 
     intake.setDefaultCommand(intakeCommand);
+    
+    arm.setDefaultCommand(
+      new RunCommand(
+        () -> arm.armLift(
+          -(auxController.getRawAxis(5) * .5)
+       ))
+    );
+    intake.setDefaultCommand(
+      new RunCommand(
+        () -> intake.stop()
+       )
+     );
+
+    magazine.setDefaultCommand(
+      new RunCommand (
+        () -> magazine.magBeltOn()
+      )
+    );
+
+    climb.setDefaultCommand(
+      new RunCommand (
+        () -> climb.stop()
+      )
+    );
+
+    spinner.setDefaultCommand(
+      new RunCommand(
+        () -> spinner.stop()
+      )
+    );
+
     
     //manually drives motors, leave out unless testing 
     /*drive.setDefaultCommand(
