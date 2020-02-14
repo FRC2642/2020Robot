@@ -7,20 +7,23 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.*;
+import static frc.robot.Constants.ID_LEFT_SHOOTER_MOTOR;
+import static frc.robot.Constants.ID_RIGHT_SHOOTER_MOTOR;
+import static frc.robot.Constants.kArmAngleConversionFactor;
+import static frc.robot.Constants.kCurrentLimit;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import com.revrobotics.ControlType;
 
-//ekatni is intake backwards, as shooting is the reverse of grabbing
 public class ShooterSubsystem extends SubsystemBase {
   
   /**
-   * Creates a new EkatniSubsystem.
+   * Creates a new ShooterSubsystem.
    */
 
   CANSparkMax leftShooterMotor;
@@ -58,7 +61,17 @@ public class ShooterSubsystem extends SubsystemBase {
 
   //sets speed for shooter
   public void shoot() {
-  }
+ //20, 30, 40, and 60 are example numbers, can and will be changed
+ double distance = Robot.getDistanceToWall();
+ distance = distance * kArmAngleConversionFactor;
+ if (distance > 20 && distance < 40) {
+   leftShooterMotor.set(20);
+   righShooterMotor.set(20);
+ } else if (distance > 40 && distance < 60) {
+  leftShooterMotor.set(30);
+  righShooterMotor.set(30);
+ } //add more criterias
+}
 
   public void stop() {
   }
