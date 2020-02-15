@@ -60,9 +60,9 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
     colorSpinnerMotor.set(-.4);
   }
 
-//spins colorspinner motor Clockwise
-  public void spinR(){
-    colorSpinnerMotor.set(.4);
+//spins slowly
+  public void slowSpin(){
+    colorSpinnerMotor.set(.1);//might need to be less
   }
 
 //stops motor
