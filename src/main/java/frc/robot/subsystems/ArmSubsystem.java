@@ -52,7 +52,9 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
       setGoal(30);
     } //add more criterias
   }
-
+  public ErrorCode getArmPos() {
+    return getEncoderValue();
+  }
   public void armBasePos() {
     setGoal(45);
   }
