@@ -11,17 +11,16 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ColorSpinnerSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 
-public class toColor extends CommandBase {
+public class SpinToColor extends CommandBase {
 
   ColorSpinnerSubsystem spinner;
   SwerveDriveSubsystem drive;
 
   public String color;//needs work
 
-  public toColor(final ColorSpinnerSubsystem colorSub, final SwerveDriveSubsystem driveSub){
+  public SpinToColor(final ColorSpinnerSubsystem colorSub) {
     spinner = colorSub;
-    drive = driveSub;
-    addRequirements(spinner, drive);
+    addRequirements(spinner);
   }
 
   // Called when the command is initially scheduled.

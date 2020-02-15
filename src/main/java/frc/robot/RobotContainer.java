@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.colorSpinner.SpinByAmount;
+import frc.robot.commands.colorSpinner.SpinToColor;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ColorSpinnerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -28,87 +30,74 @@ import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.ArmSubsystem;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
+
 /**
- * This class is where the bulk of the robot should be declared.  Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls).  Instead, the structure of the robot
- * (including subsystems, commands, and button mappings) should be declared here.
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a "declarative" paradigm, very little robot logic should
+ * actually be handled in the {@link Robot} periodic methods (other than the
+ * scheduler calls). Instead, the structure of the robot (including subsystems,
+ * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
 
   public static final SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
   public static final IntakeSubsystem intake = new IntakeSubsystem();
   public static final MagazineSubsystem magazine = new MagazineSubsystem();
-  public static final ShooterSubsystem shooter = new ShooterSubsystem(); 
+  public static final ShooterSubsystem shooter = new ShooterSubsystem();
   public static final ColorSpinnerSubsystem spinner = new ColorSpinnerSubsystem();
   public static final ClimberSubsystem climb = new ClimberSubsystem();
   public static final ArmSubsystem arm = new ArmSubsystem();
- 
-  //public final Command intakeCommand = new IntakeCommand(intake);
 
+  public final Command intakeCommand = new IntakeCommand(intake, magazine);
+  public final Command spinToColor = new SpinToColor(spinner);
+  public final Command spinByAmount = new SpinByAmount(spinner);
 
   public static XboxController driveController = new XboxController(kDriveControllerPort);
   public static XboxController auxController = new XboxController(kAuxControllerPort);
   public static Trigger leftTrigger = new Trigger(intake::getLeftTrigger);
   public static Trigger rightTrigger = new Trigger(shooter::getRightTrigger);
+
   /**
-   * The container for the robot.  Contains subsystems, OI devices, and commands.
+   * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
 
     configureButtonBindings();
-   
-    drive.setDefaultCommand(
-      new RunCommand(
-        () -> drive.drive(
-          //.5, 0, 0),
-             -(driveController.getRawAxis(1)) * .7, 
-          driveController.getRawAxis(0) * .7, 
-          driveController.getRawAxis(4)),  
-          drive)
+
+    drive.setDefaultCommand(new RunCommand(
+      () -> drive.drive( // .5, 0, 0),
+        -(driveController.getRawAxis(1)) * .7, 
+        driveController.getRawAxis(0) * .7, 
+        driveController.getRawAxis(4)),
+        drive)
       );
-    
-    /* arm.setDefaultCommand(
-      new RunCommand(
-        () -> arm.armLift(
-          (auxController.getRawAxis(5) * .5)
-       )
-      )
-    );
 
-    intake.setDefaultCommand(
-      new RunCommand(
-        () -> intake.stop()
-       )
-     );
+    arm.setDefaultCommand(new RunCommand(
+      () -> arm.armLift((auxController.getRawAxis(5) * .5)
+     )
+    )
+  );
 
-    magazine.setDefaultCommand(
-      new RunCommand (
-        () -> magazine.stop()
-      )
-    );
+    intake.setDefaultCommand(new RunCommand(() -> intake.stop()));
 
-    climb.setDefaultCommand(
-      new RunCommand (
-        () -> climb.stop()
-      )
-    );
+    magazine.setDefaultCommand(new RunCommand(() -> magazine.stop()));
 
-    spinner.setDefaultCommand(
-      new RunCommand(
-        () -> spinner.stop()
-      )
-    ); */
+    climb.setDefaultCommand(new RunCommand(
+      () -> climb.climbMove((auxController.getRawAxis(1)) *.5, (auxController.getRawAxis(0) * .5))
+   )
+  );
 
-    
-    
-    //manually drives motors, leave out unless testing 
-    /*drive.setDefaultCommand(
-      new RunCommand(
-        () -> drive.motorTest(drive.frontRightModule,
-              -driveController.getRawAxis(1), -driveController.getRawAxis(5)),
-              drive)
-    );*/ 
+    spinner.setDefaultCommand(new RunCommand(
+      () -> spinner.stop()
+    )
+   );
+
+    // manually drives motors, leave out unless testing
+    /*
+     * drive.setDefaultCommand( new RunCommand( () ->
+     * drive.motorTest(drive.frontRightModule, -driveController.getRawAxis(1),
+     * -driveController.getRawAxis(5)), drive) );
+     */
   }
 
   /**
@@ -121,6 +110,26 @@ public class RobotContainer {
     //instantiates drive toggle button
     new JoystickButton(driveController, Button.kBack.value)
       .whenPressed(new InstantCommand(drive::toggleIsDriveFieldCentric));
+    new JoystickButton(driveController, Button.kY.value)
+    .whenPressed(new InstantCommand(arm::armClimbPos));
+    new JoystickButton(driveController, Button.kB.value)
+    .whenPressed(new InstantCommand(arm::armBasePos));
+    new JoystickButton(driveController, Button.kA.value)
+    .whenPressed(new InstantCommand(arm::armTrenchPos));
+
+    new JoystickButton(auxController, Button.kA.value)
+    .whenPressed(spinToColor.andThen(spinToColor));
+    new JoystickButton(auxController, Button.kY.value)
+    .whenPressed(spinByAmount);
+    new JoystickButton(auxController, Button.kBumperRight.value)
+    .whenPressed(new InstantCommand(spinner::extend)); 
+    new JoystickButton(auxController, Button.kBumperLeft.value)
+    .whenPressed(new InstantCommand(spinner::retract));
+
+    rightTrigger.whileActiveContinuous(intakeCommand);
+    //leftTrigger.whileActiveContinuous();
+    
+
 
     /**
      * Everything below here requires reworking.
