@@ -7,11 +7,13 @@
 
 package frc.robot.subsystems;
 
+
 import static frc.robot.Constants.ID_LEFT_SHOOTER_MOTOR;
 import static frc.robot.Constants.ID_RIGHT_SHOOTER_MOTOR;
 import static frc.robot.Constants.kArmAngleConversionFactor;
 import static frc.robot.Constants.kCurrentLimit;
 
+import frc.robot.Constants;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANEncoder;
@@ -54,8 +56,8 @@ public class ShooterSubsystem extends SubsystemBase {
     rShooterEncoder = righShooterMotor.getEncoder();
     lShooterPID.setFeedbackDevice(lShooterEncoder);
     rShooterPID.setFeedbackDevice(rShooterEncoder);
-    rShooterPID.setOutputRange(kMinOutput, kMaxOutput);
-    lShooterPID.setOutputRange(kMinOutput, kMaxOutput);
+    rShooterPID.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput);
+    lShooterPID.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput);
 
   }
 
