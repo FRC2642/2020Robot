@@ -17,6 +17,7 @@ import static frc.robot.Constants.*;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import static frc.robot.util.GeneralUtil.*;
 
 /**
  * Add your docs here.
@@ -33,6 +34,8 @@ public class ClimberSubsystem extends SubsystemBase {
     climberMotor.restoreFactoryDefaults(); // set motor to defaults
     climberMotor.setInverted(false); // makes sure the motor is not inverted
     climberMotor.setSmartCurrentLimit(kCurrentLimit); // sets limit on motor
+
+    setPIDGains(climberPID, PIDProfile.CLIMB);
 
     climberEncoder = climberMotor.getEncoder();
 

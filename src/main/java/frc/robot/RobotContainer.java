@@ -48,6 +48,8 @@ public class RobotContainer {
   public static final ClimberSubsystem climb = new ClimberSubsystem();
   public static final ArmSubsystem arm = new ArmSubsystem();
 
+  //public final Command intakeCommand = new IntakeCommand(intake);
+
   public final Command intakeCommand = new IntakeCommand(intake, magazine);
   public final Command spinToColor = new SpinToColor(spinner);
   public final Command spinByAmount = new SpinByAmount(spinner);
@@ -71,6 +73,38 @@ public class RobotContainer {
         driveController.getRawAxis(4)),
         drive)
       );
+    
+     arm.setDefaultCommand(
+      new RunCommand(
+        () -> arm.armLift(
+          (auxController.getRawAxis(5) * .5)
+       )
+      )
+    );
+
+    intake.setDefaultCommand(
+      new RunCommand(
+        () -> intake.stop()
+       )
+     );
+
+    magazine.setDefaultCommand(
+      new RunCommand (
+        () -> magazine.magIdle()
+      )
+    );
+
+    climb.setDefaultCommand(
+      new RunCommand (
+        () -> climb.stop()
+      )
+    );
+
+    spinner.setDefaultCommand(
+      new RunCommand(
+        () -> spinner.stop()
+      )
+    );
 
     arm.setDefaultCommand(new RunCommand(
       () -> arm.armLift((auxController.getRawAxis(5) * .5)

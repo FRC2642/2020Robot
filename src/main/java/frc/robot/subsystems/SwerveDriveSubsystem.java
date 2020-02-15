@@ -48,6 +48,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public List<SwerveModule> modules;
   public SwerveModuleState[] moduleStates;
   public SwerveModuleState state;
+
+
   public SwerveDriveKinematics kinematics;
   SwerveDriveOdometry odometry;
 
