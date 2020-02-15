@@ -64,6 +64,14 @@ public class MagazineSubsystem extends SubsystemBase {
     setBeltVelocity(Math.abs(kMagBeltSpeed));
   }
 
+  public void magLoad() {
+    setBeltVelocity(kMagLoadSpeed);
+  }
+
+  public void magShoot() {
+    setBeltVelocity(kMagShootSpeed);
+  }
+
   //Magazine "Left" and "Right" Belt Lift Pistons
   public void magDisengage(){
     magPis.set(true);

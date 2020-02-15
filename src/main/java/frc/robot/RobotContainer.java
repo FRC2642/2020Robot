@@ -42,7 +42,7 @@ public class RobotContainer {
   public static final ColorSpinnerSubsystem spinner = new ColorSpinnerSubsystem();
   public static final ClimberSubsystem climb = new ClimberSubsystem();
 
-  public final Command intakeCommand = new IntakeCommand(intake);
+  public final Command intakeCommand = new IntakeCommand(intake, magazine);
   
   SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
     drive.exampleTrajectory,
