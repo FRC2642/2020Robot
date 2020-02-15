@@ -7,8 +7,7 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.kAuxControllerPort;
-import static frc.robot.Constants.kDriveControllerPort;
+import static frc.robot.Constants.*;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -38,31 +37,14 @@ import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 public class RobotContainer {
 
   public static final SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
-  public static final IntakeSubsystem intake = new IntakeSubsystem();
+  /* public static final IntakeSubsystem intake = new IntakeSubsystem();
   public static final MagazineSubsystem magazine = new MagazineSubsystem();
   public static final ShooterSubsystem shooter = new ShooterSubsystem(); 
   public static final ColorSpinnerSubsystem spinner = new ColorSpinnerSubsystem();
   public static final ClimberSubsystem climb = new ClimberSubsystem();
   public static final ArmSubsystem arm = new ArmSubsystem();
-
-  public final Command intakeCommand = new IntakeCommand(intake);
-  
-  SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-    drive.exampleTrajectory,
-    drive::getPoseMeters, 
-    drive.kinematics,
-
-    //Position controllers
-    new PIDController(Constants.kPXController, 0, 0),
-    new PIDController(Constants.kPYController, 0, 0),
-    new ProfiledPIDController(Constants.kPThetaController, 0, 0,
-                              Constants.kThetaControllerConstraints),
-
-    drive::setModuleStates,
-
-    drive
-
-);
+ */
+  //public final Command intakeCommand = new IntakeCommand(intake);
 
   public static XboxController driveController = new XboxController(kDriveControllerPort);
   public static XboxController auxController = new XboxController(kAuxControllerPort);
@@ -72,6 +54,8 @@ public class RobotContainer {
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+
+    configureButtonBindings();
    
     drive.setDefaultCommand(
       new RunCommand(
@@ -82,8 +66,8 @@ public class RobotContainer {
           driveController.getRawAxis(4)),  
           drive)
       );
-
-    arm.setDefaultCommand(
+    
+    /* arm.setDefaultCommand(
       new RunCommand(
         () -> arm.armLift(
           (auxController.getRawAxis(5) * .5)
@@ -113,7 +97,7 @@ public class RobotContainer {
       new RunCommand(
         () -> spinner.stop()
       )
-    );
+    ); */
 
     
     
@@ -160,6 +144,21 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+
+    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+    drive.exampleTrajectory,
+    drive::getPoseMeters, 
+    drive.kinematics,
+
+    //Position controllers
+    new PIDController(Constants.kPXController, 0, 0),
+    new PIDController(Constants.kPYController, 0, 0),
+    new ProfiledPIDController(Constants.kPThetaController, 0, 0,
+                              Constants.kThetaControllerConstraints),
+    drive::setModuleStates,
+    drive
+  );
+
     return swerveControllerCommand.andThen(() -> drive.drive(0, 0, 0));
   }
 }
