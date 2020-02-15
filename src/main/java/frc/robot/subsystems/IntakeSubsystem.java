@@ -8,10 +8,11 @@
 package frc.robot.subsystems;
 
 import static frc.robot.Constants.*;
-
+import frc.robot.RobotContainer;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -28,8 +29,10 @@ public class IntakeSubsystem extends SubsystemBase {
     intakePiston = new Solenoid(kIntakePistonPort);
   }
 
-   public void LTrigger() {
+   public boolean getLeftTrigger() {
     //stop intake i guess
+    double lt = RobotContainer.driveController.getTriggerAxis(Hand.kLeft);
+    return (lt > .5);
     }
 
   //extends and runs intake
