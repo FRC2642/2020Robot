@@ -48,15 +48,14 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public List<SwerveModule> modules;
   public SwerveModuleState[] moduleStates;
   public SwerveModuleState state;
-
   public SwerveDriveKinematics kinematics;
   SwerveDriveOdometry odometry;
+
   public AHRS navx;
   public TrajectoryConfig config;
   public Trajectory exampleTrajectory;
  
   public boolean isDriveFieldCentric;
-  public boolean isAimingMode;
 
   /**
    * Creates a new SwerveDriveSubsystem.
@@ -161,7 +160,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     //assigns values to togglables
     isDriveFieldCentric = true;
-    isAimingMode = false;
   }
 
   /**
@@ -195,13 +193,30 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         lockWheels();
     } else {
       //chooses between field centric mode, robot centric mode, and aiming mode
-      if(isAimingMode){
-        aimingModeDrive(xInput, yInput, rotate);
-      }else if(isDriveFieldCentric){
+      if(isDriveFieldCentric){
         fieldCentricDrive(xInput, yInput, rotate);
       } else if(!isDriveFieldCentric){
         robotCentricDrive(xInput, yInput, rotate);
       }
+    }
+  }
+
+  public void driveByAimbot(double rawXInput, double rawYInput, double rawRotate){
+    //sets deadbands
+    double xInput = deadband(rawXInput);
+    double yInput = deadband(rawYInput);
+    double rotate = deadband(rawRotate);
+
+    //sqaures joystick input
+    xInput *= Math.abs(xInput);
+    yInput *= Math.abs(yInput);
+    rotate *= Math.abs(rotate);
+
+    //if there is no stick input
+    if(xInput == 0 && yInput == 0 && rotate == 0){
+        lockWheels();
+    } else {
+        aimingModeDrive(xInput, yInput, rotate);
     }
   }
 
@@ -343,17 +358,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     return isDriveFieldCentric;
   }
 
-  /**
-   * Toggles aiming mode on and off
-   */
-  public void toggleIsAimingMode(){
-    isAimingMode = !isAimingMode;
-  }
-
-  public boolean getIsAimingMode(){
-    return isAimingMode;
-  }
-
   //inverts spark
   public void invertMotor(CANSparkMax motor){
     boolean state = motor.getInverted();
@@ -430,7 +434,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("naxv angle", getRobotYaw());
     SmartDashboard.putBoolean("isDriveFieldCentric", getIsDriveFieldCentric());
-    SmartDashboard.putBoolean("isAimingMode", getIsAimingMode());
     SmartDashboard.putString("positionOnField", odometry.getPoseMeters().toString());
 
     try{

@@ -43,7 +43,7 @@ public class ShooterSubsystem extends SubsystemBase {
     righShooterMotor.restoreFactoryDefaults();
     //set to not inverted
     leftShooterMotor.setInverted(false);
-    righShooterMotor.setInverted(false);
+    righShooterMotor.setInverted(true);
     //set current limit
     leftShooterMotor.setSmartCurrentLimit(kCurrentLimit);
     righShooterMotor.setSmartCurrentLimit(kCurrentLimit);
