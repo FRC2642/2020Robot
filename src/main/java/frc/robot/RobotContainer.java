@@ -10,7 +10,6 @@ package frc.robot;
 import static frc.robot.Constants.*;
 
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -50,7 +49,7 @@ public class RobotContainer {
   public static final ArmSubsystem arm = new ArmSubsystem();
 
   public final Command intakeCommand = new IntakeCommand(intake, magazine);
-  public final static Command spinToColor = new SpinToColor(spinner);
+  public final Command spinToColor = new SpinToColor(spinner);
   public final Command spinByAmount = new SpinByAmount(spinner);
 
   public static XboxController driveController = new XboxController(kDriveControllerPort);

@@ -7,11 +7,6 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.ID_LEFT_SHOOTER_MOTOR;
-import static frc.robot.Constants.ID_RIGHT_SHOOTER_MOTOR;
-import static frc.robot.Constants.kArmAngleConversionFactor;
-import static frc.robot.Constants.kCurrentLimit;
-
 import static frc.robot.Constants.*;
 
 import com.revrobotics.CANSparkMax;
