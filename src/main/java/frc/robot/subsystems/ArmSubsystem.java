@@ -42,7 +42,7 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
     return armMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 2);
 
   }
-  public void armLift() {
+  public void armLift(double d) {
     //20, 30, 40, and 60 are example numbers, can and will be changed
     double distance = Robot.getDistanceToWall();
     distance = distance * kArmAngleConversionFactor;
@@ -51,7 +51,12 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
     } else if (distance > 40 && distance < 60) {
       setGoal(30);
     } //add more criterias
-
+  }
+  public ErrorCode getArmPos() {
+    return getEncoderValue();
+  }
+  public void armBasePos() {
+    setGoal(45);
   }
 
   public void armDown() {

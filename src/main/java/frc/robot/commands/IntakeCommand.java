@@ -32,6 +32,7 @@ MagazineSubsystem magazine;
   //Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
     intake.intakeIn();
     magazine.magLoad();
   }
@@ -40,10 +41,13 @@ MagazineSubsystem magazine;
   @Override
   public void end(boolean interrupted) {
   }
+ 
+  // Called once after isFinished returns true
+   protected void end() {
+   }
 
-  //Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
+  // Called when another command which requires one or more of the same
+  // subsystems is scheduled to run
+  protected void interrupted() {
   }
 }

@@ -16,6 +16,11 @@
  for the strength of our robot as a whole.
  Please don't break.
 
+ I pray for ekatni (intake backwards)
+ for its identity has been lost
+ never to be seen again.
+ I love you <3
+
  We pray to the control systems, and National Instruments,
  for if we do not we will surely perish
  as the RoboRio may not work.
@@ -45,9 +50,7 @@
 
 package frc.robot;
 
-import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoSource;
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -172,12 +175,10 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
       // if the pipeline hasn't been confirmed to run, it won't run.
       if (pipelineRan) {
         /*
-         * if the pipeline ran, it'll get the values for angle and distance, and then do
+         * if the pipeline ran, it'll get the values for distance, and then do
          * math and find the distance from the camera to the wall
          */
-        double y = this.angleToTape;
-        double x = this.distanceToTape;
-        
+        double x = this.distanceToTape;     
           //tape is 6ft 9 1/4in or 81 1/4in off the ground
         distanceToWall = Math.sqrt((x * x) - 6601.5625);
        
