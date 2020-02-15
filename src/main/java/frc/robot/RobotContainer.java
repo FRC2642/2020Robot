@@ -81,14 +81,14 @@ public class RobotContainer {
           drive)
       );
 
-    intake.setDefaultCommand(intakeCommand);
-    
     arm.setDefaultCommand(
       new RunCommand(
         () -> arm.armLift(
           -(auxController.getRawAxis(5) * .5)
-       ))
+       )
+      )
     );
+
     intake.setDefaultCommand(
       new RunCommand(
         () -> intake.stop()
@@ -113,6 +113,7 @@ public class RobotContainer {
       )
     );
 
+    
     
     //manually drives motors, leave out unless testing 
     /*drive.setDefaultCommand(
