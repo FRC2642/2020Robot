@@ -47,7 +47,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public SwerveModule backRightModule;
   public List<SwerveModule> modules;
   public SwerveModuleState[] moduleStates;
-  //public void state;
+  public SwerveModuleState state;
 
   public SwerveDriveKinematics kinematics;
   SwerveDriveOdometry odometry;
@@ -294,20 +294,24 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public void lockWheels(){
     
     //stops wheels
-    state = frontLeftModule.setModuleVelocity(0);
+    frontLeftModule.setModuleVelocity(0);
     frontRightModule.setModuleVelocity(0);
     backLeftModule.setModuleVelocity(0);
     backRightModule.setModuleVelocity(0);
 
     //sets wheels in the locked orientation
-    /*frontLeftModule.setModuleAngle(toRotation2d(-45));   
+    frontLeftModule.setModuleAngle(toRotation2d(-45));   
     frontRightModule.setModuleAngle(toRotation2d(45));
     backLeftModule.setModuleAngle(toRotation2d(45));
-    backRightModule.setModuleAngle(toRotation2d(-45));*/
+    backRightModule.setModuleAngle(toRotation2d(-45));
 
-    frontLeftModule.setDesiredState(state);
-    
+    ChassisSpeeds chassisSpeeds = kinematics.toChassisSpeeds(moduleStates);
+    setModuleStates(moduleStates);
   }
+
+    //frontLeftModule.setDesiredState(moduleStates);
+    
+  //}
 
   /**
    * Toggles between field-centric drive and robot-centric drive

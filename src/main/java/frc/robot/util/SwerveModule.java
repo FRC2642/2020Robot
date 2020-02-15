@@ -123,8 +123,9 @@ public class SwerveModule {
   public void setModuleVelocity(double targetVelocity){
 
     //System.out.println("velocity = " + targetVelocity);
-
+  
     drivePID.setReference(targetVelocity, ControlType.kVelocity);
+    
   }
 
   /**
@@ -185,11 +186,11 @@ public class SwerveModule {
     return realignedAngle;
   }
 
-  public void setDesiredState(SwerveModuleState state) {
+  /*public void setDesiredState(SwerveModuleState state) {
     // Calculate the drive output from the drive PID controller.
     final double driveOutput = drivePID.calculate(
-        driveEncoder.getEncoder(), state.speedMetersPerSecond);
-  }
+        driveEncoder.getEncoder(), state.speedMetersPerSecond);*/
+  
   /**
    * Realigns a target angle in the -180 to 180 degree range into the 0 to 360 degree range
    * 
