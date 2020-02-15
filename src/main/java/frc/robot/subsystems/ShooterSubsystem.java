@@ -7,21 +7,19 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.ID_LEFT_SHOOTER_MOTOR;
-import static frc.robot.Constants.ID_RIGHT_SHOOTER_MOTOR;
-import static frc.robot.Constants.kArmAngleConversionFactor;
-import static frc.robot.Constants.kCurrentLimit;
+import static frc.robot.Constants.*;
 
-import frc.robot.Constants;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.ControlType;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.ControlType;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
 
 public class ShooterSubsystem extends SubsystemBase {
   
