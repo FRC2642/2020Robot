@@ -40,9 +40,16 @@ public class ClimberSubsystem extends SubsystemBase {
     
   }
 
-  public void climberMove(double setPoint){
+  public void climberReference(double setPoint){
     climberPID.setReference(setPoint, ControlType.kPosition);
   }
+ /* public void climbMove() {
+    //change 30 to correct value
+    if(getEncoder() > 30) {
+      climberMotor.set(0);
+    } else {
+    }
+  }*/
 
   public void stop() {
     climberMotor.set(0);

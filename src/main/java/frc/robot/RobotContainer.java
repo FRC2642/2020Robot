@@ -10,6 +10,7 @@ package frc.robot;
 import static frc.robot.Constants.*;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,8 +19,9 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.ColorSpinnerCommand;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.colorSpinner.SpinByAmount;
+import frc.robot.commands.colorSpinner.SpinToColor;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ColorSpinnerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -29,86 +31,61 @@ import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.ArmSubsystem;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
+
 /**
- * This class is where the bulk of the robot should be declared.  Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls).  Instead, the structure of the robot
- * (including subsystems, commands, and button mappings) should be declared here.
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a "declarative" paradigm, very little robot logic should
+ * actually be handled in the {@link Robot} periodic methods (other than the
+ * scheduler calls). Instead, the structure of the robot (including subsystems,
+ * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
 
   public static final SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
   public static final IntakeSubsystem intake = new IntakeSubsystem();
   public static final MagazineSubsystem magazine = new MagazineSubsystem();
-  public static final ShooterSubsystem shooter = new ShooterSubsystem(); 
+  public static final ShooterSubsystem shooter = new ShooterSubsystem();
   public static final ColorSpinnerSubsystem spinner = new ColorSpinnerSubsystem();
   public static final ClimberSubsystem climb = new ClimberSubsystem();
   public static final ArmSubsystem arm = new ArmSubsystem();
 
-  public final Command intakeCommand = new IntakeCommand(intake);
-  public final Command spinnerCommand = new ColorSpinnerCommand(spinner);
+  public final Command intakeCommand = new IntakeCommand(intake, magazine);
+  public final static Command spinToColor = new SpinToColor(spinner);
+  public final Command spinByAmount = new SpinByAmount(spinner);
 
   public static XboxController driveController = new XboxController(kDriveControllerPort);
   public static XboxController auxController = new XboxController(kAuxControllerPort);
   public static Trigger leftTrigger = new Trigger(intake::getLeftTrigger);
   public static Trigger rightTrigger = new Trigger(shooter::getRightTrigger);
+
   /**
-   * The container for the robot.  Contains subsystems, OI devices, and commands.
+   * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
 
     configureButtonBindings();
-   
-    drive.setDefaultCommand(
-      new RunCommand(
-        () -> drive.drive(
-          //.5, 0, 0),
-             -(driveController.getRawAxis(1)) * .7, 
-          driveController.getRawAxis(0) * .7, 
-          driveController.getRawAxis(4)),  
-          drive)
-      );
-    
-     arm.setDefaultCommand(
-      new RunCommand(
-        () -> arm.armLift(
-          (auxController.getRawAxis(5) * .5)
-       )
-      )
-    );
 
-    intake.setDefaultCommand(
-      new RunCommand(
-        () -> intake.stop()
-       )
-     );
+    drive.setDefaultCommand(new RunCommand(() -> drive.drive(
+        // .5, 0, 0),
+        -(driveController.getRawAxis(1)) * .7, driveController.getRawAxis(0) * .7, driveController.getRawAxis(4)),
+        drive));
 
-    magazine.setDefaultCommand(
-      new RunCommand (
-        () -> magazine.stop()
-      )
-    );
+    arm.setDefaultCommand(new RunCommand(() -> arm.armLift((auxController.getRawAxis(5) * .5))));
 
-    climb.setDefaultCommand(
-      new RunCommand (
-        () -> climb.stop()
-      )
-    );
+    intake.setDefaultCommand(new RunCommand(() -> intake.stop()));
 
-    spinner.setDefaultCommand(
-      new RunCommand(
-        () -> spinner.stop()
-      )
-    ); 
-    
-    
-    //manually drives motors, leave out unless testing 
-    /*drive.setDefaultCommand(
-      new RunCommand(
-        () -> drive.motorTest(drive.frontRightModule,
-              -driveController.getRawAxis(1), -driveController.getRawAxis(5)),
-              drive)
-    );*/ 
+    magazine.setDefaultCommand(new RunCommand(() -> magazine.stop()));
+
+    climb.setDefaultCommand(new RunCommand(() -> climb.stop()));
+
+    spinner.setDefaultCommand(new RunCommand(() -> spinner.stop()));
+
+    // manually drives motors, leave out unless testing
+    /*
+     * drive.setDefaultCommand( new RunCommand( () ->
+     * drive.motorTest(drive.frontRightModule, -driveController.getRawAxis(1),
+     * -driveController.getRawAxis(5)), drive) );
+     */
   }
 
   /**
@@ -120,14 +97,17 @@ public class RobotContainer {
   private void configureButtonBindings() {
     //instantiates drive toggle button
     new JoystickButton(driveController, Button.kBack.value)
-      .whenPressed(new InstantCommand(drive::toggleIsDriveFieldCentric, drive));
+      .whenPressed(new InstantCommand(drive::toggleIsDriveFieldCentric));
 
     new JoystickButton(auxController, Button.kA.value)
-    .whenPressed();
+    .whenPressed(spinToColor.andThen(spinToColor));
     new JoystickButton(auxController, Button.kY.value)
-    .whenPressed();
+    .whenPressed(spinByAmount);
     new JoystickButton(auxController, Button.kBumperRight.value)
-    .whenPressed(); 
+    .whenPressed(new InstantCommand(spinner::extend)); 
+    new JoystickButton(auxController, Button.kBumperLeft.value)
+    .whenPressed(new InstantCommand(spinner::retract));
+    new Joystick()
       rightTrigger.whileActiveContinuous(intakeCommand);
      // leftTrigger.whenPressed()
     

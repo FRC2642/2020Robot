@@ -9,6 +9,8 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.*;
 
+import static frc.robot.util.GeneralUtil.*;
+
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
@@ -29,6 +31,7 @@ public class MagazineSubsystem extends SubsystemBase {
 
   int ballCount = 0;
   boolean hasBallEntered = false;
+  boolean hasBallCounted = false;
 
   public MagazineSubsystem() {
     //Magazine Neo Information
@@ -44,6 +47,7 @@ public class MagazineSubsystem extends SubsystemBase {
 
     magPID.setFeedbackDevice(magEncoder);
 
+    setPIDGains(magPID, PIDProfile.MAGAZINE);
     //Lifts Magazine belt on startup
     magPis.set(true);
 
@@ -57,7 +61,15 @@ public class MagazineSubsystem extends SubsystemBase {
   }
 
   public void magBeltOn(){
-    setBeltVelocity(kMagBeltSpeed);
+    setBeltVelocity(Math.abs(kMagBeltSpeed));
+  }
+
+  public void magLoad() {
+    setBeltVelocity(kMagLoadSpeed);
+  }
+
+  public void magShoot() {
+    setBeltVelocity(kMagShootSpeed);
   }
 
   //Magazine "Left" and "Right" Belt Lift Pistons
@@ -84,11 +96,11 @@ public class MagazineSubsystem extends SubsystemBase {
         hasBallEntered = false;
       }
 
-      if (hasBallEntered = true) {
-        ballCount++;
-      } else {
 
-      }   
+    if (hasBallEntered && !hasBallCounted) {
+      ballCount++;
+      hasBallCounted = true;
+    }
     }
   @Override
   public void periodic() {
