@@ -65,20 +65,33 @@ public class RobotContainer {
 
     configureButtonBindings();
 
-    drive.setDefaultCommand(new RunCommand(() -> drive.drive(
-        // .5, 0, 0),
-        -(driveController.getRawAxis(1)) * .7, driveController.getRawAxis(0) * .7, driveController.getRawAxis(4)),
-        drive));
+    drive.setDefaultCommand(new RunCommand(
+      () -> drive.drive( // .5, 0, 0),
+        -(driveController.getRawAxis(1)) * .7, 
+        driveController.getRawAxis(0) * .7, 
+        driveController.getRawAxis(4)),
+        drive)
+      );
 
-    arm.setDefaultCommand(new RunCommand(() -> arm.armLift((auxController.getRawAxis(5) * .5))));
+    arm.setDefaultCommand(new RunCommand(
+      () -> arm.armLift((auxController.getRawAxis(5) * .5)
+     )
+    )
+  );
 
     intake.setDefaultCommand(new RunCommand(() -> intake.stop()));
 
     magazine.setDefaultCommand(new RunCommand(() -> magazine.stop()));
 
-    climb.setDefaultCommand(new RunCommand(() -> climb.stop()));
+    climb.setDefaultCommand(new RunCommand(
+      () -> climb.climbMove((auxController.getRawAxis(1)) *.5, (auxController.getRawAxis(0) * .5))
+   )
+  );
 
-    spinner.setDefaultCommand(new RunCommand(() -> spinner.stop()));
+    spinner.setDefaultCommand(new RunCommand(
+      () -> spinner.stop()
+    )
+   );
 
     // manually drives motors, leave out unless testing
     /*
@@ -98,6 +111,12 @@ public class RobotContainer {
     //instantiates drive toggle button
     new JoystickButton(driveController, Button.kBack.value)
       .whenPressed(new InstantCommand(drive::toggleIsDriveFieldCentric));
+    new JoystickButton(driveController, Button.kY.value)
+    .whenPressed(new InstantCommand(arm::armClimbPos));
+    new JoystickButton(driveController, Button.kB.value)
+    .whenPressed(new InstantCommand(arm::armBasePos));
+    new JoystickButton(driveController, Button.kA.value)
+    .whenPressed(new InstantCommand(arm::armTrenchPos));
 
     new JoystickButton(auxController, Button.kA.value)
     .whenPressed(spinToColor.andThen(spinToColor));
@@ -107,9 +126,9 @@ public class RobotContainer {
     .whenPressed(new InstantCommand(spinner::extend)); 
     new JoystickButton(auxController, Button.kBumperLeft.value)
     .whenPressed(new InstantCommand(spinner::retract));
-    new Joystick()
-      rightTrigger.whileActiveContinuous(intakeCommand);
-     // leftTrigger.whenPressed()
+
+    rightTrigger.whileActiveContinuous(intakeCommand);
+    //leftTrigger.whileActiveContinuous();
     
 
 

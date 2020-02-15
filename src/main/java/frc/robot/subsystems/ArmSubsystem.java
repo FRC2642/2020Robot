@@ -55,9 +55,7 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
   public ErrorCode getArmPos() {
     return getEncoderValue();
   }
-  public void armBasePos() {
-    setGoal(45);
-  }
+  
 
   public void armDown() {
         if (getArmSwitch()) {
@@ -66,7 +64,12 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
       setGoal(0);
     }
   }
-
+  public void armTrenchPos() {
+    setGoal(20);
+  }
+  public void armBasePos() {
+    setGoal(45);
+  }
   public void armClimbPos() { 
     
     setGoal(90);
