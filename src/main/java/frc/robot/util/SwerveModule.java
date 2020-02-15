@@ -10,7 +10,6 @@ package frc.robot.util;
 import static frc.robot.Constants.*;
 
 import com.revrobotics.CANAnalog;
-import edu.wpi.first.wpilibj.Encoder;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
@@ -186,10 +185,7 @@ public class SwerveModule {
     return realignedAngle;
   }
 
-  /*public void setDesiredState(SwerveModuleState state) {
-    // Calculate the drive output from the drive PID controller.
-    final double driveOutput = drivePID.calculate(
-        driveEncoder.getEncoder(), state.speedMetersPerSecond);*/
+  
   
   /**
    * Realigns a target angle in the -180 to 180 degree range into the 0 to 360 degree range

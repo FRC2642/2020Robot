@@ -48,6 +48,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public List<SwerveModule> modules;
   public SwerveModuleState[] moduleStates;
   public SwerveModuleState state;
+  public LockedSwerveModuleStates[] moduleState;
+
 
   public SwerveDriveKinematics kinematics;
   SwerveDriveOdometry odometry;
@@ -292,26 +294,45 @@ public class SwerveDriveSubsystem extends SubsystemBase {
    * Sets wheels into locked position (most resistant to being pushed)
    */
   public void lockWheels(){
-    
+    double frontLeftVelocity = 0;
+    double frontRightVelocity = 0;
+    double backLeftVelocity = 0;
+    double backRightVelocity = 0;
+
+    Rotation2d frontLeftAngle = ((toRotation2d(-45)));
+    Rotation2d frontRightAngle = ((toRotation2d(45)));
+    Rotation2d backLeftAngle = ((toRotation2d(45)));
+    Rotation2d backRightAngle = ((toRotation2d(-45)));
+
     //stops wheels
-    frontLeftModule.setModuleVelocity(0);
-    frontRightModule.setModuleVelocity(0);
-    backLeftModule.setModuleVelocity(0);
-    backRightModule.setModuleVelocity(0);
+    frontLeftModule.setModuleVelocity(frontLeftVelocity);
+    frontRightModule.setModuleVelocity(frontRightVelocity);
+    backLeftModule.setModuleVelocity(backLeftVelocity);
+    backRightModule.setModuleVelocity(backRightVelocity);
 
     //sets wheels in the locked orientation
-    frontLeftModule.setModuleAngle(toRotation2d(-45));   
-    frontRightModule.setModuleAngle(toRotation2d(45));
-    backLeftModule.setModuleAngle(toRotation2d(45));
-    backRightModule.setModuleAngle(toRotation2d(-45));
+    frontLeftModule.setModuleAngle(frontLeftAngle);   
+    frontRightModule.setModuleAngle(frontRightAngle);
+    backLeftModule.setModuleAngle(backLeftAngle);
+    backRightModule.setModuleAngle(backRightAngle);
 
-    ChassisSpeeds chassisSpeeds = kinematics.toChassisSpeeds(moduleStates);
-    setModuleStates(moduleStates);
-  }
-
-    //frontLeftModule.setDesiredState(moduleStates);
+    SwerveModuleState frontLeft= new SwerveModuleState(frontLeftVelocity, frontLeftAngle);
+    SwerveModuleState frontRight = new SwerveModuleState(frontRightVelocity, frontRightAngle);
+    SwerveModuleState backLeft = new SwerveModuleState(backLeftVelocity, backLeftAngle);
+    SwerveModuleState backRight = new SwerveModuleState(backRightVelocity, backRightAngle);
     
-  //}
+    ChassisSpeeds chassisSpeeds = kinematics.toChassisSpeeds(frontLeft, frontRight, backLeft, backRight);
+
+    moduleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
+  }
+  /*   SwerveModuleState frontLeft = moduleStates[0];
+    SwerveModuleState frontRight = moduleStates[1];
+    SwerveModuleState backLeft = moduleStates[2];
+    SwerveModuleState backRight = moduleStates[3];
+
+    setModuleStates(moduleState);
+  } */
+    
 
   /**
    * Toggles between field-centric drive and robot-centric drive
