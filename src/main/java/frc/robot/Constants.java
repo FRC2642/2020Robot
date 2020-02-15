@@ -218,8 +218,6 @@ public final class Constants {
     //controller ports 
     public static final int kDriveControllerPort = 0;
     public static final int kAuxControllerPort = 1;
-
-
     //PID Controllers for auto command
     public static final double kPXController = .3;
     public static final double kPYController = .4;

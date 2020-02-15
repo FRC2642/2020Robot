@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ColorSpinnerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -46,7 +48,8 @@ public class RobotContainer {
 
   public static XboxController driveController = new XboxController(kDriveControllerPort);
   public static XboxController auxController = new XboxController(kAuxControllerPort);
-
+  public static Trigger leftTrigger = new Trigger(intake::getLeftTrigger);
+  public static Trigger rightTrigger = new Trigger(shooter::getRightTrigger);
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
@@ -67,8 +70,9 @@ public class RobotContainer {
     /* arm.setDefaultCommand(
       new RunCommand(
         () -> arm.armLift(
-          -(auxController.getRawAxis(5) * .5)
-       ))
+          (auxController.getRawAxis(5) * .5)
+       )
+      )
     );
 
     intake.setDefaultCommand(
@@ -95,6 +99,7 @@ public class RobotContainer {
       )
     ); */
 
+    
     
     //manually drives motors, leave out unless testing 
     /*drive.setDefaultCommand(
