@@ -45,7 +45,7 @@ public class ClimberSubsystem extends SubsystemBase {
     climberPID.setReference(setPoint, ControlType.kPosition);
   }
   public void climbMove(double d, double e) {
-  }
+  } 
 
   public void stop() {
     climberMotor.set(0);
