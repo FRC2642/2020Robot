@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems;
 
+import frc.robot.RobotContainer;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
@@ -43,9 +44,11 @@ public class ClimberSubsystem extends SubsystemBase {
     
   }
 
-  public void climberMove(double setPoint){
+  public void climberReference(double setPoint){
     climberPID.setReference(setPoint, ControlType.kPosition);
   }
+  public void climbMove(double d, double e) {
+  } 
 
   public void stop() {
     climberMotor.set(0);

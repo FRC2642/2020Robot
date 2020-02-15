@@ -46,7 +46,7 @@ public class ShooterSubsystem extends SubsystemBase {
     righShooterMotor.restoreFactoryDefaults();
     //set to not inverted
     leftShooterMotor.setInverted(false);
-    righShooterMotor.setInverted(false);
+    righShooterMotor.setInverted(true);
     //set current limit
     leftShooterMotor.setSmartCurrentLimit(kCurrentLimit);
     righShooterMotor.setSmartCurrentLimit(kCurrentLimit);
@@ -81,6 +81,7 @@ public boolean getRightTrigger() {
   double rt = RobotContainer.driveController.getTriggerAxis(Hand.kRight);
   return (rt > .5);
 }
+  
   public void stop() {
     leftShooterMotor.set(0);
     righShooterMotor.set(0);

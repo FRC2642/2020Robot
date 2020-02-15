@@ -101,14 +101,7 @@ public class MagazineSubsystem extends SubsystemBase {
       ballCount++;
       hasBallCounted = true;
     }
-  }     
-  public int getballCount() {
-    return ballCount;
-  }
-  public void resetBallCount() {
-    ballCount = 0;
-  }
-
+    }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
