@@ -1,29 +1,12 @@
 /*----------------------------------------------------------------------------*/
 /* Copyright (c) 2019 FIRST. All Rights Reserved.                             */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
+/* Open Source Software - may be modified and shared by FRC teams. The code   */gt 
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.*;
-
-import com.revrobotics.CANEncoder;
-import com.revrobotics.CANPIDController;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.ControlType;
-
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Ultrasonic;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-public class MagazineSubsystem extends SubsystemBase {
-  
-  CANSparkMax magBeltMotor;
-  CANEncoder magEncoder;
-  CANPIDController magPID;
   public Solenoid magPis = new Solenoid(kMagazinePistonPort);
   Ultrasonic ultra = new Ultrasonic(kMagazineSonarOutput, kMagazineSonarInput);
 
