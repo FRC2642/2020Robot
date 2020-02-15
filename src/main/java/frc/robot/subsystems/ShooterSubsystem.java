@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import static frc.robot.Constants.*;
+import static frc.robot.util.GeneralUtil.*;
 
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
@@ -20,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.util.GeneralUtil.PIDProfile;
 
 public class ShooterSubsystem extends SubsystemBase {
   
@@ -49,6 +51,8 @@ public class ShooterSubsystem extends SubsystemBase {
     leftShooterMotor.setSmartCurrentLimit(kCurrentLimit);
     righShooterMotor.setSmartCurrentLimit(kCurrentLimit);
     //PID
+    setPIDGains(lShooterPID, PIDProfile.SHOOTER);
+    setPIDGains(rShooterPID, PIDProfile.SHOOTER);
     lShooterPID = leftShooterMotor.getPIDController();
     rShooterPID = righShooterMotor.getPIDController();
     lShooterEncoder = leftShooterMotor.getEncoder();
@@ -57,7 +61,6 @@ public class ShooterSubsystem extends SubsystemBase {
     rShooterPID.setFeedbackDevice(rShooterEncoder);
     rShooterPID.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput);
     lShooterPID.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput);
-
   }
 
   //sets speed for shooter

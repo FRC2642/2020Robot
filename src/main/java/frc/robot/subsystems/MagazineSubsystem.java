@@ -72,7 +72,7 @@ public class MagazineSubsystem extends SubsystemBase {
     setBeltVelocity(kMagIdleSpeed);
   }
   //Magazine Belt Is Set To Stop
-  public void stop(){
+  public void stop() {
     magPID.setReference(0, ControlType.kVelocity);
   }
 
