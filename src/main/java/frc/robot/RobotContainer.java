@@ -37,13 +37,13 @@ import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 public class RobotContainer {
 
   public static final SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
-  /* public static final IntakeSubsystem intake = new IntakeSubsystem();
+  public static final IntakeSubsystem intake = new IntakeSubsystem();
   public static final MagazineSubsystem magazine = new MagazineSubsystem();
   public static final ShooterSubsystem shooter = new ShooterSubsystem(); 
   public static final ColorSpinnerSubsystem spinner = new ColorSpinnerSubsystem();
   public static final ClimberSubsystem climb = new ClimberSubsystem();
   public static final ArmSubsystem arm = new ArmSubsystem();
- */
+ 
   //public final Command intakeCommand = new IntakeCommand(intake);
 
 
@@ -120,7 +120,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     //instantiates drive toggle button
     new JoystickButton(driveController, Button.kBack.value)
-      .whenPressed(new InstantCommand(drive::toggleIsDriveFieldCentric, drive));
+      .whenPressed(new InstantCommand(drive::toggleIsDriveFieldCentric));
 
     /**
      * Everything below here requires reworking.

@@ -5,23 +5,24 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.colorSpinner;
+package frc.robot.commands.aimbot;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.ColorSpinnerSubsystem;
+import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 
-public class toColor extends CommandBase {
-
-  ColorSpinnerSubsystem spinner;
+public class AimCommand extends CommandBase {
+  
   SwerveDriveSubsystem drive;
+  ArmSubsystem arm;
+  ShooterSubsystem shoot;
 
-  public String color;//needs work
-
-  public toColor(final ColorSpinnerSubsystem colorSub, final SwerveDriveSubsystem driveSub){
-    spinner = colorSub;
+  public AimCommand(SwerveDriveSubsystem driveSub, ArmSubsystem armSub, ShooterSubsystem shootSub) {
     drive = driveSub;
-    addRequirements(spinner, drive);
+    arm = armSub;
+    shoot = shootSub;
+    addRequirements(drive, arm, shoot);
   }
 
   // Called when the command is initially scheduled.
@@ -32,8 +33,6 @@ public class toColor extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-  while (spinner.detectColor() != color);
-    spinner.spinL();
   }
 
   // Called once the command ends or is interrupted.
@@ -44,11 +43,6 @@ public class toColor extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (spinner.detectColor() == color){
-    return true;
-    }
-    else{
     return false;
-    }
   }
 }
