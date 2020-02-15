@@ -182,14 +182,14 @@ public final class Constants {
     public static final double kMinOutput = -1.0;
     public static final double kMaxOutput = 1.0;                                           
     //PIDF values for closed-loop velocity control for drive modules
-    public static final double kDriveFF = .5 / 15.989; //approx .03127
+    public static final double kDriveFF = .5 / 16.171; //approx .03127
     public static final double kDriveP = 0.0;
-    public static final double kDriveI = kDriveFF / 2000.0;
+    public static final double kDriveI = kDriveFF / 4000.0;
     public static final double kDriveD = 0.0;
     //PIDF values for closed-loop position control for angle modules
     public static final double kAngleFF = 0.0;
-    public static final double kAngleP = .3;
-    public static final double kAngleI = 0.0005;
+    public static final double kAngleP = 0.4;
+    public static final double kAngleI = 0.0002;
     public static final double kAngleD = 0.04;
     //PIDF values for closed-loop velocity control for the magazine belt
     public static final double kMagFF = 0.0;

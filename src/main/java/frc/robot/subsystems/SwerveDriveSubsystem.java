@@ -82,13 +82,13 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     backRightAngleMotor.restoreFactoryDefaults(); 
 
     //sets default inversion settings for motors
-    frontLeftDriveMotor.setInverted(true);
+    frontLeftDriveMotor.setInverted(false);
     frontLeftAngleMotor.setInverted(true);
     frontRightDriveMotor.setInverted(false);
     frontRightAngleMotor.setInverted(true);
     backLeftDriveMotor.setInverted(false);
     backLeftAngleMotor.setInverted(true);
-    backRightDriveMotor.setInverted(true);
+    backRightDriveMotor.setInverted(false);
     backRightAngleMotor.setInverted(true); 
 
     //sets current limits 
@@ -303,6 +303,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     frontRightModule.setModuleAngle(toRotation2d(45));
     backLeftModule.setModuleAngle(toRotation2d(45));
     backRightModule.setModuleAngle(toRotation2d(-45));
+
+    
   }
 
   /**
