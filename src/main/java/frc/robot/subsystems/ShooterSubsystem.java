@@ -75,6 +75,7 @@ public boolean getRightTrigger() {
   double rt = RobotContainer.driveController.getTriggerAxis(Hand.kRight);
   return (rt > .5);
 }
+  
   public void stop() {
     leftShooterMotor.set(0);
     righShooterMotor.set(0);

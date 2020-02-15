@@ -101,9 +101,9 @@ public final class Constants {
     public static final double kModuleDegreesToRelativeRotations 
                                = kRelativeRotationsPerModuleRotation / 360.0; //rots / degrees
     public static final double kMaxSpeedConversionFactor = 8.31; //gear ratio conversion
+    public static final double kShooterRPMConversionFactor = 18.84954;
     //value isn't accurate, change later
    public static final double kArmAngleConversionFactor = 10.0;
-   public static final double kShooterRPMConversionFactor = 18.84954;
 
     /**
      * ROBOT CONSTANTS

@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.ColorSpinnerCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ColorSpinnerSubsystem;
@@ -43,7 +44,9 @@ public class RobotContainer {
   public static final ColorSpinnerSubsystem spinner = new ColorSpinnerSubsystem();
   public static final ClimberSubsystem climb = new ClimberSubsystem();
   public static final ArmSubsystem arm = new ArmSubsystem();
+
   public final Command intakeCommand = new IntakeCommand(intake);
+  public final Command spinnerCommand = new ColorSpinnerCommand(spinner);
 
   public static XboxController driveController = new XboxController(kDriveControllerPort);
   public static XboxController auxController = new XboxController(kAuxControllerPort);
@@ -118,6 +121,16 @@ public class RobotContainer {
     //instantiates drive toggle button
     new JoystickButton(driveController, Button.kBack.value)
       .whenPressed(new InstantCommand(drive::toggleIsDriveFieldCentric, drive));
+
+    new JoystickButton(auxController, Button.kA.value)
+    .whenPressed();
+    new JoystickButton(auxController, Button.kY.value)
+    .whenPressed(spinnerCommand)
+
+      rightTrigger.whileActiveContinuous(intakeCommand);
+     // leftTrigger.whenPressed()
+    
+
 
     /**
      * Everything below here requires reworking.

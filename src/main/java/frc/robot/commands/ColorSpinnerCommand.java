@@ -8,12 +8,13 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.ColorSpinnerSubsystem;
 
 public class ColorSpinnerCommand extends CommandBase {
   /**
    * Creates a new ColorSensor.
    */
-  public ColorSpinnerCommand() {
+  public ColorSpinnerCommand(ColorSpinnerSubsystem spinner) {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
