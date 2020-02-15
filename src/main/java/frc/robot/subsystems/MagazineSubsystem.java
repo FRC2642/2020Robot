@@ -59,17 +59,21 @@ public class MagazineSubsystem extends SubsystemBase {
   public void setBeltVelocity(double targetVelocity){
     magPID.setReference(targetVelocity, ControlType.kVelocity);
   }
-
-  public void magBeltOn(){
-    setBeltVelocity(Math.abs(kMagBeltSpeed));
-  }
-
+  //Magazine Belt Is Set To Load Speed
   public void magLoad() {
     setBeltVelocity(kMagLoadSpeed);
   }
-
+  //Magazine Belt Is Set To Shoot Speed
   public void magShoot() {
     setBeltVelocity(kMagShootSpeed);
+  }
+  //Magazine Belt Is Set To Idle Speed
+  public void magIdle() {
+    setBeltVelocity(kMagIdleSpeed);
+  }
+  //Magazine Belt Is Set To Stop
+  public void stop(){
+    magPID.setReference(0, ControlType.kVelocity);
   }
 
   //Magazine "Left" and "Right" Belt Lift Pistons
@@ -78,10 +82,6 @@ public class MagazineSubsystem extends SubsystemBase {
   }
   public void magEngage(){
     magPis.set(false);
-  }
-
-  public void stop(){
-    magPID.setReference(0, ControlType.kVelocity);
   }
 
   //Ultrasonic Sonar Ball Counter

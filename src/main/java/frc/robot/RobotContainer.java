@@ -84,7 +84,7 @@ public class RobotContainer {
 
     magazine.setDefaultCommand(
       new RunCommand (
-        () -> magazine.stop()
+        () -> magazine.magIdle()
       )
     );
 
