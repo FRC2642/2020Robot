@@ -62,8 +62,24 @@ public class ClimberSubsystem extends SubsystemBase {
     climberMotor.set(0);
     climberPis.set(true);
   }
+public void climberDown(){
+    climberPis.set(false);
+    climberMotor.set(0); // These are just sample numbers, will be changed
+  }
 
-    climberPis.set(false);t6
+  public void climberDown(){
+    climberPis.set(false);
+    climberMotor.set(0); // These are just sample numbers, will be changed
+  }
+}
+
+  public void stop(){
+    climberMotor.set(0);
+    climberPis.set(true);
+  }
+
+  public void climberUp(){
+    climberPis.set(false);
     climberMotor.set(0); // These are just sample numbers, will be changed
   }
 
