@@ -134,7 +134,9 @@ public final class Constants {
     //motor neutral deadband
     public static final double kMotorNeutralDeadband = .15;
     //mag belt speed
-    public static final double kMagBeltSpeed = 15;
+    public static final double kMagBeltSpeed = .15;
+    public static final double kMagShootSpeed = .15;
+    public static final double kMagLoadSpeed = .15;
     //swerve max speeds
     public static final double kMaxModuleRPM = 12.0 * kMaxSpeedConversionFactor; //desired module rotation speed * gear ratio conversion
     public static final double kMaxMPS = 12.0 * kMaxSpeedConversionFactor; //desired movement speed * gear ratio conversion
@@ -218,8 +220,6 @@ public final class Constants {
     //controller ports 
     public static final int kDriveControllerPort = 0;
     public static final int kAuxControllerPort = 1;
-
-
     //PID Controllers for auto command
     public static final double kPXController = .3;
     public static final double kPYController = .4;
