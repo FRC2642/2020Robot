@@ -73,6 +73,10 @@ rShooterPID.setReference(shooterRPM, ControlType.kVelocity);
 lShooterPID.setReference(shooterRPM, ControlType.kVelocity);
 }
 
+
+public void LTrigger() {
+  //set to raw axis or something
+}
   public void stop() {
     leftShooterMotor.set(0);
     righShooterMotor.set(0);

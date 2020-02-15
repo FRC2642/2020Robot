@@ -28,6 +28,10 @@ public class IntakeSubsystem extends SubsystemBase {
     intakePiston = new Solenoid(kIntakePistonPort);
   }
 
+   public void LTrigger() {
+    //stop intake i guess
+    }
+
   //extends and runs intake
   public void intakeIn() {
     intakeMotor.set(.6);

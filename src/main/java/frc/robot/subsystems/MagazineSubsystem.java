@@ -67,7 +67,9 @@ public class MagazineSubsystem extends SubsystemBase {
   public void magEngage(){
     magPis.set(false);
   }
-
+  public void stop(){
+    magPID.setReference(0, ControlType.kVelocity);
+  }
   //Ultrasonic Sonar Ball Counter
   public void senseBall(){
 

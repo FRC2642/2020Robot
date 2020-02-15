@@ -17,7 +17,7 @@
  Please don't break.
 
  I pray for ekatni (intake backwards)
- for it's identity has been lost
+ for its identity has been lost
  never to be seen again.
  I love you <3
 

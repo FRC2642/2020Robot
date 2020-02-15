@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ColorSpinnerSubsystem;
@@ -65,7 +66,8 @@ public class RobotContainer {
 
   public static XboxController driveController = new XboxController(kDriveControllerPort);
   public static XboxController auxController = new XboxController(kAuxControllerPort);
-
+  public static Trigger leftTrigger = new Trigger(intake::LTrigger);
+  public static Trigger rightTrigger = new Trigger(shooter::RTrigger);
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
@@ -97,7 +99,7 @@ public class RobotContainer {
 
     magazine.setDefaultCommand(
       new RunCommand (
-        () -> magazine.magBeltOn()
+        () -> magazine.stop()
       )
     );
 
