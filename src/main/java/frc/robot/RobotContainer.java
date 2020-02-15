@@ -125,8 +125,9 @@ public class RobotContainer {
     new JoystickButton(auxController, Button.kA.value)
     .whenPressed();
     new JoystickButton(auxController, Button.kY.value)
-    .whenPressed(spinnerCommand)
-
+    .whenPressed();
+    new JoystickButton(auxController, Button.kBumperRight.value)
+    .whenPressed(); 
       rightTrigger.whileActiveContinuous(intakeCommand);
      // leftTrigger.whenPressed()
     
