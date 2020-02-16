@@ -108,44 +108,41 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     //instantiates drive toggle button
+
+    //-=+=-DRIVE Controller Buttons-=+=-//
+
     new JoystickButton(driveController, Button.kBack.value)
       .whenPressed(new InstantCommand(drive::toggleIsDriveFieldCentric));
+    //puts arm in highest/climb position
     new JoystickButton(driveController, Button.kY.value)
     .whenPressed(new InstantCommand(arm::armClimbPos));
+    //puts arm in midway position
     new JoystickButton(driveController, Button.kB.value)
     .whenPressed(new InstantCommand(arm::armBasePos));
+    //puts arm in lowest/trench position
     new JoystickButton(driveController, Button.kA.value)
     .whenPressed(new InstantCommand(arm::armTrenchPos));
 
+//-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-// 
+  
+    //-=+=-AUX Controller Buttons-=+=-//
+
+    //spins color spinner to certain color
     new JoystickButton(auxController, Button.kA.value)
     .whenPressed(spinToColor.andThen(spinToColor));
+    //spins color spinner by set ammount
     new JoystickButton(auxController, Button.kY.value)
     .whenPressed(spinByAmount);
+    //extends the color spinner
     new JoystickButton(auxController, Button.kBumperRight.value)
-    .whenPressed(new InstantCommand(spinner::extend)); 
+    .whenPressed(new InstantCommand(spinner::extend));
+    //retracts the color spinner 
     new JoystickButton(auxController, Button.kBumperLeft.value)
     .whenPressed(new InstantCommand(spinner::retract));
 
     rightTrigger.whileActiveContinuous(intakeCommand);
     //leftTrigger.whileActiveContinuous();
     
-
-
-    /**
-     * Everything below here requires reworking.
-     */
-    //toggles aiming mode
-    /* new JoystickButton(driveController, Button.kStart.value)
-      .whenPressed(new InstantCommand(drive::toggleIsAimingMode, drive));
-    //rotates ColorSpinner motor left/Counter Clockwise
-    new JoystickButton(auxController, Button.kX.value)
-      .whenHeld(new RunCommand(spinner::spinL, spinner));
-    //rotates ColorSpinner motor right/Clockwise
-    new JoystickButton(auxController, Button.kB.value)
-      .whenHeld(new RunCommand(spinner::spinR, spinner));
-    //magazine belt
-    new JoystickButton(driveController, Button.kA.value)
-        .whenHeld(new RunCommand(magazine::magBeltOn, magazine)); */
   }
 
   /**
