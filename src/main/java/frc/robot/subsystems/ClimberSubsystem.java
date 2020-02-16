@@ -7,7 +7,6 @@
 
 package frc.robot.subsystems;
 
-import frc.robot.RobotContainer;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;

@@ -9,7 +9,6 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.*;
 
-import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -23,8 +22,8 @@ import frc.robot.Robot;
 
 public class ArmSubsystem extends ProfiledPIDSubsystem {
   static TalonSRX armMotor;
-  public DigitalInput armSwitch = new DigitalInput(kArmLimitSwitch);
-
+  public DigitalInput upperArmSwitch = new DigitalInput(kUpperArmLimitSwitch);
+  public DigitalInput lowerArmSwitch = new DigitalInput(kLowerArmLimitSwitch);
   /**
    * Creates a new ArmSubsystem.
    */
@@ -38,10 +37,9 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
     armMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 2);
   }
 
-  public ErrorCode getEncoderValue() {
-    return armMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 2);
+ // public ErrorCode getEncoderValue() {
 
-  }
+ // }
   public void armLift(double d) {
     //20, 30, 40, and 60 are example numbers, can and will be changed
     double distance = Robot.getDistanceToWall();
@@ -52,36 +50,43 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
       setGoal(30);
     } //add more criterias
   }
-  public ErrorCode getArmPos() {
-    return getEncoderValue();
-  }
+  //public ErrorCode getArmPos() {
+    //return getEncoderValue();
+//}
   
 
   public void armDown() {
-        if (getArmSwitch()) {
-      ArmSubsystem.armStop();
+        if (getUpperArmSwitch()) {
+        armStop();
     } else {
       setGoal(0);
     }
   }
   public void armTrenchPos() {
-    setGoal(20);
+    setGoal(227.555556);
   }
   public void armBasePos() {
-    setGoal(45);
+    setGoal(512.000001);
   }
   public void armClimbPos() { 
-    
-    setGoal(90);
+    if(lowerArmSwitch.get()) {
+      armStop();
+    } else 
+    setGoal(1024);
 
     }
 
   public static void armStop() {
     armMotor.set(ControlMode.PercentOutput, 0);
   }
-  public boolean getArmSwitch() {
-    armSwitch.get();
-    return armSwitch.get();
+  public boolean getUpperArmSwitch() {
+    upperArmSwitch.get();
+    return upperArmSwitch.get();
+  }
+
+  public boolean getLowerArmSwitch() {
+    lowerArmSwitch.get();
+    return lowerArmSwitch.get();
   }
   
   @Override
