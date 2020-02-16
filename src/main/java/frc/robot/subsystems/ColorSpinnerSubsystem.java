@@ -1,10 +1,7 @@
 
-
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.ID_SPINNER_MOTOR;
-import static frc.robot.Constants.kColorSpinnerPistonPort;
-import static frc.robot.Constants.kCurrentLimit;
+import static frc.robot.Constants.*;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -12,8 +9,9 @@ import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -21,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class ColorSpinnerSubsystem extends SubsystemBase {
 
   CANSparkMax colorSpinnerMotor;
-  public Solenoid colorSpinnerPiston;
+  public DoubleSolenoid colorSpinnerPiston;
   public ColorSensorV3 m_colorSensor;
 
   //creates final RGB values for colors
@@ -44,7 +42,7 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
     colorSpinnerMotor.setInverted(false);
     colorSpinnerMotor.setSmartCurrentLimit(kCurrentLimit);
 
-    colorSpinnerPiston = new Solenoid(kColorSpinnerPistonPort);
+    colorSpinnerPiston = new DoubleSolenoid(kColorSpinnerPistonPort1, kColorSpinnerPistonPort2);
 
     m_colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
 
@@ -60,9 +58,13 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
     colorSpinnerMotor.set(-.4);
   }
 
-//spins colorspinner motor Clockwise
-  public void spinR(){
-    colorSpinnerMotor.set(.4);
+//slowly spins clockwise
+  public void slowSpinR(){
+    colorSpinnerMotor.set(.1);
+  }
+//slowly pins counter clokewise
+  public void slowSpinL(){
+    colorSpinnerMotor.set(-.1);
   }
 
 //stops motor
@@ -78,12 +80,12 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
 
  //extends piston
   public void extend(){
-    colorSpinnerPiston.set(true);
+    colorSpinnerPiston.set(Value.kForward);
   }
 
 //retracts piston
   public void retract(){
-    colorSpinnerPiston.set(false);
+    colorSpinnerPiston.set(Value.kReverse);
   }
 
   public String detectColor(){

@@ -11,14 +11,16 @@ import static frc.robot.Constants.*;
 import frc.robot.RobotContainer;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
   
   CANSparkMax intakeMotor;
-  public Solenoid intakePiston;
+  public DoubleSolenoid intakePiston;
 
   public IntakeSubsystem(){
     intakeMotor = new CANSparkMax(ID_INTAKE_MOTOR, MotorType.kBrushless);
@@ -26,23 +28,19 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor.setInverted(false);
     intakeMotor.setSmartCurrentLimit(kCurrentLimit);
 
-    intakePiston = new Solenoid(kIntakePistonPort);
+    intakePiston = new DoubleSolenoid(kIntakePistonPort1, kIntakePistonPort2);
   }
 
   //extends and runs intake
   public void intakeIn() {
     intakeMotor.set(.6);
-    if(intakePiston.get()){
-      intakePiston.set(false);
-    }
+    intakePiston.set(Value.kReverse);
   }
 
   //stops intake
   public void stop() {
     intakeMotor.set(0);
-    if(!intakePiston.get()){
-      intakePiston.set(true);
-    }
+    intakePiston.set(Value.kForward);
   }
     
   public boolean getLeftTrigger() {

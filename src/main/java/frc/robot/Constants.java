@@ -65,11 +65,19 @@ public final class Constants {
        * SOLENOID PORTS
        */
     //mag piston port 
-    public static final int kMagazinePistonPort = 0;
+    public static final int kMagazinePistonPort1 = 0;
+    public static final int kMagazinePistonPort2 = 1;
+
     //intake piston port
-    public static final int kIntakePistonPort = 1;
+    public static final int kIntakePistonPort1 = 2;
+    public static final int kIntakePistonPort2 = 3;
+
     //color spinner piston port
-    public static final int kColorSpinnerPistonPort = 2;
+    public static final int kColorSpinnerPistonPort1 = 4;
+    public static final int kColorSpinnerPistonPort2 = 5;
+
+    //climb piston port
+    public static final int kClimberPistonPort = 6;
 
       /**
        * ANALOG
@@ -82,7 +90,7 @@ public final class Constants {
        * DIO
        */
     //hanger limit switch
-    public static final int khangerLowerLimitSwitch = 0;
+    public static final int kclimberLimitSwitch = 0; // not 0
     public static final int kArmLimitSwitch = 1;
 
       /**
@@ -223,8 +231,7 @@ public final class Constants {
     public static final double kClimbI = 0.0005;
     public static final double kClimbD = 0.04;
     
-                               
-    /**
+  /**
      * CONTROLLER PORTS
      */
     //controller ports 
