@@ -7,7 +7,6 @@
 
 package frc.robot.subsystems;
 
-import frc.robot.RobotContainer;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
@@ -24,7 +23,6 @@ import static frc.robot.util.GeneralUtil.*;
  */
 public class ClimberSubsystem extends SubsystemBase {
   
-  public DigitalInput climberLowerLimitSwitch = new DigitalInput(Constants.khangerLowerLimitSwitch);  
   private CANEncoder climberEncoder;
   public CANSparkMax climberMotor;
   public CANPIDController climberPID;
@@ -47,8 +45,26 @@ public class ClimberSubsystem extends SubsystemBase {
   public void climberReference(double setPoint){
     climberPID.setReference(setPoint, ControlType.kPosition);
   }
-  public void climbMove(double d, double e) {
-  } 
+  
+  public void climb(double power){
+    climberMotor.set(power);
+  }
+
+  public void climbUp(){
+    if(getEncoder() < kClimberUpperLimit){
+      climb(.7);
+    } else {
+      stop();
+    }
+  }
+
+  public void climbDown(){
+    if(getEncoder() > kClimberLowerLimit){
+      climb(-.7);
+    } else {
+      stop();
+    }
+  }
 
   public void stop() {
     climberMotor.set(0);

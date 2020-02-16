@@ -29,12 +29,6 @@ public class IntakeSubsystem extends SubsystemBase {
     intakePiston = new Solenoid(kIntakePistonPort);
   }
 
-   public boolean getLeftTrigger() {
-    //stop intake i guess
-    double lt = RobotContainer.driveController.getTriggerAxis(Hand.kLeft);
-    return (lt > .5);
-    }
-
   //extends and runs intake
   public void intakeIn() {
     intakeMotor.set(.6);
@@ -47,6 +41,12 @@ public class IntakeSubsystem extends SubsystemBase {
     intakePiston.set(true);
   }
     
+  public boolean getLeftTrigger() {
+    //stop intake i guess
+    double lt = RobotContainer.driveController.getTriggerAxis(Hand.kLeft);
+    return (lt > .5);
+  }
+  
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
