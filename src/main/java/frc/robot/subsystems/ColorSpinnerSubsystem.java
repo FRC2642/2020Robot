@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class ColorSpinnerSubsystem extends SubsystemBase {
 
   CANSparkMax colorSpinnerMotor;
-  public Solenoid colorSpinerPiston;
+  public Solenoid colorSpinnerPiston;
   public ColorSensorV3 m_colorSensor;
 
   //creates final RGB values for colors
@@ -44,7 +44,7 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
     colorSpinnerMotor.setInverted(false);
     colorSpinnerMotor.setSmartCurrentLimit(kCurrentLimit);
 
-    colorSpinerPiston = new Solenoid(kColorSpinnerPistonPort);
+    colorSpinnerPiston = new Solenoid(kColorSpinnerPistonPort);
 
     m_colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
 
@@ -60,9 +60,13 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
     colorSpinnerMotor.set(-.4);
   }
 
-//spins colorspinner motor Clockwise
-  public void spinR(){
-    colorSpinnerMotor.set(.4);
+//slowly spins clockwise
+  public void slowSpinR(){
+    colorSpinnerMotor.set(.1);
+  }
+//slowly pins counter clokewise
+  public void slowSpinL(){
+    colorSpinnerMotor.set(-.1);
   }
 
 //stops motor
@@ -78,12 +82,12 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
 
  //extends piston
   public void extend(){
-    colorSpinerPiston.set(true);
+    colorSpinnerPiston.set(true);
   }
 
 //retracts piston
   public void retract(){
-    colorSpinerPiston.set(false);
+    colorSpinnerPiston.set(false);
   }
 
   public String detectColor(){

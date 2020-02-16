@@ -39,15 +39,19 @@ public class ClimberSubsystem extends SubsystemBase {
     climberMotor.setInverted(false); // makes sure the motor is not inverted
     climberMotor.setSmartCurrentLimit(kCurrentLimit); // sets limit on motor
 
+    setPIDGains(climberPID, PIDProfile.CLIMB);
+
     climberEncoder = climberMotor.getEncoder();
 
     climberPID = climberMotor.getPIDController();
     climberPID.setFeedbackDevice(climberEncoder);
   }
 
-  public void climberMove(double setPoint){
+  public void climberReference(double setPoint){
     climberPID.setReference(setPoint, ControlType.kPosition);
   }
+  public void climbMove(double d, double e) {
+  } 
 
   public double getEncoder(){
     return climberEncoder.getPosition();

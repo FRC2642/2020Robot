@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ColorSpinnerSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 
-public class spinByAmount extends CommandBase {
+public class SpinByAmount extends CommandBase {
 
   public boolean notDetected = true;
   ColorSpinnerSubsystem spinner;
@@ -20,10 +20,9 @@ public class spinByAmount extends CommandBase {
   double spin; 
   public int counter = 0; 
 
-  public spinByAmount(final ColorSpinnerSubsystem colorSub, final SwerveDriveSubsystem driveSub){
+  public SpinByAmount(final ColorSpinnerSubsystem colorSub){
     spinner = colorSub;
-    drive = driveSub;
-    addRequirements(spinner, drive);
+    addRequirements(spinner);
   }
   //creates a counter that detects how many times the wheel spins
   public boolean spinnerCounter(){ 
@@ -45,18 +44,17 @@ public class spinByAmount extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-   while (spinnerCounter()){
     spinner.spinL();
     if (spinner.detectColor() == Color & !notDetected){
       spinnerCounter();
       notDetected = true;
     }
-    else{
+    else if(spinner.detectColor() != Color){
       notDetected = false;
     }
     }
  
-  }
+  
   
 
   // Called once the command ends or is interrupted.

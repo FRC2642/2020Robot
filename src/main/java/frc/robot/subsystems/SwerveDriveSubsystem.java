@@ -47,16 +47,16 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public SwerveModule backRightModule;
   public List<SwerveModule> modules;
   public SwerveModuleState[] moduleStates;
-  //public void state;
+  public SwerveModuleState state;
 
   public SwerveDriveKinematics kinematics;
   SwerveDriveOdometry odometry;
+
   public AHRS navx;
   public TrajectoryConfig config;
   public Trajectory exampleTrajectory;
  
   public boolean isDriveFieldCentric;
-  public boolean isAimingMode;
 
   /**
    * Creates a new SwerveDriveSubsystem.
@@ -161,7 +161,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     //assigns values to togglables
     isDriveFieldCentric = true;
-    isAimingMode = false;
   }
 
   /**
@@ -195,13 +194,30 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         lockWheels();
     } else {
       //chooses between field centric mode, robot centric mode, and aiming mode
-      if(isAimingMode){
-        aimingModeDrive(xInput, yInput, rotate);
-      }else if(isDriveFieldCentric){
+      if(isDriveFieldCentric){
         fieldCentricDrive(xInput, yInput, rotate);
       } else if(!isDriveFieldCentric){
         robotCentricDrive(xInput, yInput, rotate);
       }
+    }
+  }
+
+  public void driveByAimbot(double rawXInput, double rawYInput, double rawRotate){
+    //sets deadbands
+    double xInput = deadband(rawXInput);
+    double yInput = deadband(rawYInput);
+    double rotate = deadband(rawRotate);
+
+    //sqaures joystick input
+    xInput *= Math.abs(xInput);
+    yInput *= Math.abs(yInput);
+    rotate *= Math.abs(rotate);
+
+    //if there is no stick input
+    if(xInput == 0 && yInput == 0 && rotate == 0){
+        lockWheels();
+    } else {
+        aimingModeDrive(xInput, yInput, rotate);
     }
   }
 
@@ -292,22 +308,45 @@ public class SwerveDriveSubsystem extends SubsystemBase {
    * Sets wheels into locked position (most resistant to being pushed)
    */
   public void lockWheels(){
-    
+    double frontLeftVelocity = 0;
+    double frontRightVelocity = 0;
+    double backLeftVelocity = 0;
+    double backRightVelocity = 0;
+
+    Rotation2d frontLeftAngle = ((toRotation2d(-45)));
+    Rotation2d frontRightAngle = ((toRotation2d(45)));
+    Rotation2d backLeftAngle = ((toRotation2d(45)));
+    Rotation2d backRightAngle = ((toRotation2d(-45)));
+
     //stops wheels
-    state = frontLeftModule.setModuleVelocity(0);
-    frontRightModule.setModuleVelocity(0);
-    backLeftModule.setModuleVelocity(0);
-    backRightModule.setModuleVelocity(0);
+    frontLeftModule.setModuleVelocity(frontLeftVelocity);
+    frontRightModule.setModuleVelocity(frontRightVelocity);
+    backLeftModule.setModuleVelocity(backLeftVelocity);
+    backRightModule.setModuleVelocity(backRightVelocity);
 
     //sets wheels in the locked orientation
-    /*frontLeftModule.setModuleAngle(toRotation2d(-45));   
-    frontRightModule.setModuleAngle(toRotation2d(45));
-    backLeftModule.setModuleAngle(toRotation2d(45));
-    backRightModule.setModuleAngle(toRotation2d(-45));*/
+    frontLeftModule.setModuleAngle(frontLeftAngle);   
+    frontRightModule.setModuleAngle(frontRightAngle);
+    backLeftModule.setModuleAngle(backLeftAngle);
+    backRightModule.setModuleAngle(backRightAngle);
 
-    frontLeftModule.setDesiredState(state);
+    SwerveModuleState frontLeft= new SwerveModuleState(frontLeftVelocity, frontLeftAngle);
+    SwerveModuleState frontRight = new SwerveModuleState(frontRightVelocity, frontRightAngle);
+    SwerveModuleState backLeft = new SwerveModuleState(backLeftVelocity, backLeftAngle);
+    SwerveModuleState backRight = new SwerveModuleState(backRightVelocity, backRightAngle);
     
+    ChassisSpeeds chassisSpeeds = kinematics.toChassisSpeeds(frontLeft, frontRight, backLeft, backRight);
+
+    moduleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
   }
+  /*   SwerveModuleState frontLeft = moduleStates[0];
+    SwerveModuleState frontRight = moduleStates[1];
+    SwerveModuleState backLeft = moduleStates[2];
+    SwerveModuleState backRight = moduleStates[3];
+
+    setModuleStates(moduleState);
+  } */
+    
 
   /**
    * Toggles between field-centric drive and robot-centric drive
@@ -318,17 +357,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
   public boolean getIsDriveFieldCentric(){
     return isDriveFieldCentric;
-  }
-
-  /**
-   * Toggles aiming mode on and off
-   */
-  public void toggleIsAimingMode(){
-    isAimingMode = !isAimingMode;
-  }
-
-  public boolean getIsAimingMode(){
-    return isAimingMode;
   }
 
   //inverts spark
@@ -407,7 +435,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("naxv angle", getRobotYaw());
     SmartDashboard.putBoolean("isDriveFieldCentric", getIsDriveFieldCentric());
-    SmartDashboard.putBoolean("isAimingMode", getIsAimingMode());
     SmartDashboard.putString("positionOnField", odometry.getPoseMeters().toString());
 
     try{
