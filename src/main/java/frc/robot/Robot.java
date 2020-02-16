@@ -21,6 +21,11 @@
  never to be seen again.
  I love you <3
 
+ Into true egress
+ for hanger prayed.
+ Lost to new ages
+ to dust it lay.
+
  We pray to the control systems, and National Instruments,
  for if we do not we will surely perish
  as the RoboRio may not work.
