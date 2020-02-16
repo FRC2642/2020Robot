@@ -16,11 +16,18 @@
  for the strength of our robot as a whole.
  Please don't break.
 
+public void depricatedSubsystems() {
+
  I pray for ekatni (intake backwards)
  for its identity has been lost
  never to be seen again.
  I love you <3
 
+ I pray for Z-Target (our auto-aiming system)
+ because somebody thought aimbot was better.
+ despite obvious inferiority
+ 
+}
  Into true egress
  for hanger prayed.
  Lost to new ages
