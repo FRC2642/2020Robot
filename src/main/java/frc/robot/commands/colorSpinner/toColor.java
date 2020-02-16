@@ -20,6 +20,10 @@ public class toColor extends CommandBase {
   String currentColor;
   String colorNeeded;
 
+  public void LOrD{
+
+  }
+
   public toColor(final ColorSpinnerSubsystem colorSub, final SwerveDriveSubsystem driveSub){
     spinner = colorSub;
     drive = driveSub;
@@ -49,7 +53,21 @@ public class toColor extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    spinner.slowSpin();
+    if (correctColor == "RED" & currentColor == "YELLOW"){
+      spinner.slowSpinL();
+    }
+    else if (correctColor == "GREEN" & currentColor == "RED"){
+      spinner.slowSpinL();
+    }
+    else if (correctColor == "BLUE" & currentColor == "GREEN"){
+      spinner.slowSpinL();
+    }
+    else if (correctColor == "YELLOW" & currentColor == "BLUE"){
+      spinner.slowSpinL();
+    }
+    else{
+      spinner.slowSpinR();
+    }
     currentColor = spinner.detectColor();
     currentColor = currentColor.toUpperCase();
   }
