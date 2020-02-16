@@ -17,8 +17,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ControlType;
 
-import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Ultrasonic;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class MagazineSubsystem extends SubsystemBase {
@@ -26,7 +27,7 @@ public class MagazineSubsystem extends SubsystemBase {
   CANSparkMax magBeltMotor;
   CANEncoder magEncoder;
   CANPIDController magPID;
-  public Solenoid magPis = new Solenoid(kMagazinePistonPort);
+  public DoubleSolenoid magPis = new DoubleSolenoid(kMagazinePistonPort1, kMagazinePistonPort2);
   Ultrasonic ultra = new Ultrasonic(kMagazineSonarOutput, kMagazineSonarInput);
 
   int ballCount = 0;
@@ -49,7 +50,7 @@ public class MagazineSubsystem extends SubsystemBase {
 
     setPIDGains(magPID, PIDProfile.MAGAZINE);
     //Lifts Magazine belt on startup
-    magPis.set(true);
+    magPis.set(Value.kForward);
 
     //Sets sonar to constant pulse
     ultra.setAutomaticMode(true);
@@ -78,10 +79,10 @@ public class MagazineSubsystem extends SubsystemBase {
 
   //Magazine "Left" and "Right" Belt Lift Pistons
   public void magDisengage(){
-    magPis.set(true);
+    magPis.set(Value.kForward);
   }
   public void magEngage(){
-    magPis.set(false);
+    magPis.set(Value.kReverse);
   }
 
   //Ultrasonic Sonar Ball Counter
