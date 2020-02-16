@@ -5,6 +5,8 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
+// Hanger Articulating Network Generating Ethernet Redirecter
+
 package frc.robot.subsystems;
 
 import com.revrobotics.CANEncoder;
@@ -13,20 +15,23 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import static frc.robot.Constants.*;
-import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalInput; 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import static frc.robot.util.GeneralUtil.*;
+import edu.wpi.first.wpilibj.Solenoid;
 
 /**
  * Add your docs here.
  */
+
 public class ClimberSubsystem extends SubsystemBase {
   
-  public DigitalInput climberLowerLimitSwitch = new DigitalInput(Constants.khangerLowerLimitSwitch);  
   private CANEncoder climberEncoder;
   public CANSparkMax climberMotor;
   public CANPIDController climberPID;
+  public Solenoid climberPis = new Solenoid(kMagazinePistonPort);
+  public DigitalInput climberLimitSwitch = new DigitalInput(Constants.kclimberLimitSwitch);
 
   public ClimberSubsystem(){
     climberMotor = new CANSparkMax(ID_CLIMBER_MOTOR, MotorType.kBrushless);
@@ -40,7 +45,6 @@ public class ClimberSubsystem extends SubsystemBase {
 
     climberPID = climberMotor.getPIDController();
     climberPID.setFeedbackDevice(climberEncoder);
-    
   }
 
   public void climberReference(double setPoint){
@@ -49,12 +53,30 @@ public class ClimberSubsystem extends SubsystemBase {
   public void climbMove(double d, double e) {
   } 
 
-  public void stop() {
-    climberMotor.set(0);
-  }
-
   public double getEncoder(){
     return climberEncoder.getPosition();
   }
 
+  public boolean getLimitSwitch(){
+    return climberLimitSwitch.get();
+  }
+  
+  public void climberDown(){
+    climberPis.set(false);
+    climberMotor.set(0); // These are just sample numbers, will be changed
+  }
+
+  public void stop(){
+    climberMotor.set(0);
+    climberPis.set(true);
+  }
+
+  public void climberUp(){
+    if(!getLimitSwitch()){
+      climberPis.set(false);
+      climberMotor.set(0); // These are just sample numbers, will be changed 
+    } else {
+      stop();
+    }
+  }
 }

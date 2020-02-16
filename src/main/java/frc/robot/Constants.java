@@ -88,7 +88,9 @@ public final class Constants {
        * DIO
        */
     //hanger limit switch
-    public static final int khangerLowerLimitSwitch = 0;
+    public static final int kclimberLimitSwitch = 0; // not 0
+    public static final int kArmLimitSwitch = 1;
+
       /**
        * USB
        */

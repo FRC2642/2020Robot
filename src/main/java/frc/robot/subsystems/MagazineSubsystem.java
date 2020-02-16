@@ -8,8 +8,8 @@
 package frc.robot.subsystems;
 
 import static frc.robot.Constants.*;
-
 import static frc.robot.util.GeneralUtil.*;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
@@ -18,9 +18,12 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ControlType;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 
 public class MagazineSubsystem extends SubsystemBase {
   
@@ -29,6 +32,9 @@ public class MagazineSubsystem extends SubsystemBase {
   CANPIDController magPID;
   public DoubleSolenoid magPis = new DoubleSolenoid(kMagazinePistonPort1, kMagazinePistonPort2);
   Ultrasonic ultra = new Ultrasonic(kMagazineSonarOutput, kMagazineSonarInput);
+  Timer timer = new Timer();
+
+
 
   int ballCount = 0;
   boolean hasBallEntered = false;
@@ -57,7 +63,7 @@ public class MagazineSubsystem extends SubsystemBase {
   }
 
   //Magazine Conveyor 
-  public void setBeltVelocity(double targetVelocity){
+  public void setBeltVelocity(double targetVelocity) {
     magPID.setReference(targetVelocity, ControlType.kVelocity);
   }
   //Magazine Belt Is Set To Load Speed
@@ -83,10 +89,11 @@ public class MagazineSubsystem extends SubsystemBase {
   }
   public void magEngage(){
     magPis.set(Value.kReverse);
+
   }
 
   //Ultrasonic Sonar Ball Counter
-  public void senseBall(){
+  public void senseBall() {
 
     //Gets the sonar's range in inches
     double range = ultra.getRangeInches();
@@ -102,6 +109,16 @@ public class MagazineSubsystem extends SubsystemBase {
       ballCount++;
       hasBallCounted = true;
     }
+  
+      if (ballCount == 5) {
+        timer.start();
+        RobotContainer.auxController.setRumble(RumbleType.kLeftRumble, 1);
+        RobotContainer.auxController.setRumble(RumbleType.kRightRumble, 1);
+      }
+      if (timer.get() > .5) {
+        RobotContainer.auxController.setRumble(RumbleType.kLeftRumble, 0);
+        RobotContainer.auxController.setRumble(RumbleType.kRightRumble, 0);
+      }
     }
   @Override
   public void periodic() {
