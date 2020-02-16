@@ -7,6 +7,25 @@
 
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.*;
+
+import static frc.robot.util.GeneralUtil.*;
+
+import com.revrobotics.CANEncoder;
+import com.revrobotics.CANPIDController;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.ControlType;
+
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Ultrasonic;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class MagazineSubsystem extends SubsystemBase {
+  
+  CANSparkMax magBeltMotor;
+  CANEncoder magEncoder;
+  CANPIDController magPID;
   public Solenoid magPis = new Solenoid(kMagazinePistonPort);
   Ultrasonic ultra = new Ultrasonic(kMagazineSonarOutput, kMagazineSonarInput);
 

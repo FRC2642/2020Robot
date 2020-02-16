@@ -18,7 +18,7 @@ import static frc.robot.Constants.*;
 import edu.wpi.first.wpilibj.DigitalInput; 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import static frc.robot.util.GeneralUtil.*;`
+import static frc.robot.util.GeneralUtil.*;
 import edu.wpi.first.wpilibj.Solenoid;
 
 /**
@@ -72,11 +72,11 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public void climberUp(){
-    if (getLimitSwitch(false)){
+    if(!getLimitSwitch()){
       climberPis.set(false);
       climberMotor.set(0); // These are just sample numbers, will be changed 
-    } else (
+    } else {
       stop();
-    )
+    }
   }
 }
