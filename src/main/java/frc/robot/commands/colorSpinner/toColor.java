@@ -18,6 +18,7 @@ public class toColor extends CommandBase {
   SwerveDriveSubsystem drive;
   String correctColor;
   String currentColor;
+  String colorNeeded;
 
   public toColor(final ColorSpinnerSubsystem colorSub, final SwerveDriveSubsystem driveSub){
     spinner = colorSub;
@@ -30,15 +31,27 @@ public class toColor extends CommandBase {
   public void initialize() {
     correctColor = DriverStation.getInstance().getGameSpecificMessage();
     correctColor = correctColor.toUpperCase();
-    currentColor = spinner.detectColor();
-    currentColor = currentColor.toUpperCase();
+    if (correctColor == "RED"){
+      colorNeeded = "BLUE";
+    }
+    if (correctColor == "GREEN"){
+      colorNeeded = "YELLOW";
+    }
+    if (correctColor == "BLUE"){
+      colorNeeded = "RED";
+    }
+    if (correctColor == "YELLOW"){
+      colorNeeded = "GREEN";
+    }
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-  while (currentColor != correctColor);
     spinner.slowSpin();
+    currentColor = spinner.detectColor();
+    currentColor = currentColor.toUpperCase();
   }
 
   // Called once the command ends or is interrupted.
@@ -50,14 +63,14 @@ public class toColor extends CommandBase {
   @Override
   public boolean isFinished() {
     if (correctColor == null){
+      return false;
+    }
+    if (currentColor == colorNeeded){
+      spinner.stop();
       return true;
     }
-    if (currentColor == correctColor){
-    spinner.stop();
-    return true;
-    }
     else{
-    return false;
+      return false;
     }
   }
 }

@@ -45,18 +45,17 @@ public class spinByAmount extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-   while (spinnerCounter()){
     spinner.spinL();
     if (spinner.detectColor() == Color & !notDetected){
       spinnerCounter();
       notDetected = true;
     }
-    else{
+    else if(spinner.detectColor() != Color){
       notDetected = false;
     }
     }
  
-  }
+  
   
 
   // Called once the command ends or is interrupted.
