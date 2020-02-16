@@ -7,16 +7,17 @@
 
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.*;
+import static frc.robot.util.GeneralUtil.*;
+
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import static frc.robot.Constants.*;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import static frc.robot.util.GeneralUtil.*;
+
 
 /**
  * Add your docs here.
@@ -46,13 +47,14 @@ public class ClimberSubsystem extends SubsystemBase {
     climberPID.setReference(setPoint, ControlType.kPosition);
   }
   
-  public void climb(double power){
+  public void setClimbPower(double power){
     climberMotor.set(power);
   }
+  
 
   public void climbUp(){
     if(getEncoder() < kClimberUpperLimit){
-      climb(.7);
+      setClimbPower(.7);
     } else {
       stop();
     }
@@ -60,7 +62,17 @@ public class ClimberSubsystem extends SubsystemBase {
 
   public void climbDown(){
     if(getEncoder() > kClimberLowerLimit){
-      climb(-.7);
+      setClimbPower(-.7);
+    } else {
+      stop();
+    }
+  }
+
+  public void climb(double speed){
+    if(speed > .5){
+      climbUp();
+    } else if(speed < -.5){
+      climbDown();
     } else {
       stop();
     }

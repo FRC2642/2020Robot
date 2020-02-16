@@ -102,7 +102,9 @@ public class RobotContainer {
     );
 
     climb.setDefaultCommand(
-      new RunCommand(climb::stop)
+      new RunCommand(
+        () -> climb.climb(-auxController.getRawAxis(1))
+      )
     );
 
     bar.setDefaultCommand(
