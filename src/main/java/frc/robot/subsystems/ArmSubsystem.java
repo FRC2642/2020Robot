@@ -13,7 +13,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
@@ -22,8 +21,6 @@ import frc.robot.Robot;
 
 public class ArmSubsystem extends ProfiledPIDSubsystem {
   static TalonSRX armMotor;
-  public DigitalInput upperArmSwitch = new DigitalInput(kUpperArmLimitSwitch);
-  public DigitalInput lowerArmSwitch = new DigitalInput(kLowerArmLimitSwitch);
   /**
    * Creates a new ArmSubsystem.
    */
@@ -34,7 +31,7 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
             // The motion profile constraints
             new TrapezoidProfile.Constraints(0, 0)));
 
-    armMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 2);
+            armMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Absolute, 0, 2);
   }
 
  // public ErrorCode getEncoderValue() {
@@ -50,14 +47,18 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
       setGoal(30);
     } //add more criterias
   }
-  //public ErrorCode getArmPos() {
-    //return getEncoderValue();
-//}
-  
+  public double getArmPos() {
+    int armPos = 
+    armMotor.getSensorCollection().getPulseWidthPosition() & 0xFFF;
+    return armPos;
+}
+
+
+
 
   public void armDown() {
-        if (getUpperArmSwitch()) {
-        armStop();
+        if (getArmPos() == 0) {
+      armStop();
     } else {
       setGoal(0);
     }
@@ -69,9 +70,9 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
     setGoal(512.000001);
   }
   public void armClimbPos() { 
-    if(lowerArmSwitch.get()) {
+    if(getArmPos() == 1024){
       armStop();
-    } else 
+    }
     setGoal(1024);
 
     }
@@ -79,16 +80,7 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
   public static void armStop() {
     armMotor.set(ControlMode.PercentOutput, 0);
   }
-  public boolean getUpperArmSwitch() {
-    upperArmSwitch.get();
-    return upperArmSwitch.get();
-  }
-
-  public boolean getLowerArmSwitch() {
-    lowerArmSwitch.get();
-    return lowerArmSwitch.get();
-  }
-  
+ 
   @Override
   public void useOutput(double output, TrapezoidProfile.State setpoint) {
     // Use the output (and optionally the setpoint) here
