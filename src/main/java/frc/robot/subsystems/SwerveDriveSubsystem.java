@@ -339,13 +339,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     moduleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
   }
-  /*   SwerveModuleState frontLeft = moduleStates[0];
-    SwerveModuleState frontRight = moduleStates[1];
-    SwerveModuleState backLeft = moduleStates[2];
-    SwerveModuleState backRight = moduleStates[3];
-
-    setModuleStates(moduleState);
-  } */
     
 
   /**

@@ -46,7 +46,7 @@ public final class Constants {
     public static final int ID_BACK_RIGHT_DRIVE_MOTOR = 7;
     public static final int ID_BACK_RIGHT_ANGLE_MOTOR = 8;
     //CAN ID for mag tilt motor
-    public static final int ID_MAG_TILT_MOTOR = 11;
+    public static final int ID_MAG_TILT_MOTOR = 11; //talon
     //CAN ID for Spinner Motor
     public static final int ID_SPINNER_MOTOR = 10;
     //CAN ID for Mag Belt
@@ -57,9 +57,9 @@ public final class Constants {
     public static final int ID_RIGHT_SHOOTER_MOTOR = 16;
     public static final int ID_LEFT_SHOOTER_MOTOR = 15;
     //CAN IDs for Hanger
-    public static final int ID_CLIMBER_MOTOR = 14;
+    public static final int ID_CLIMBER_MOTOR = 14; //talon
     //CAN ID for climb bar motor
-    public static final int ID_CLIMB_BAR_MOTOR = 9;
+    public static final int ID_CLIMB_BAR_MOTOR = 9; //talon
 
       /**
        * SOLENOID PORTS
@@ -76,6 +76,8 @@ public final class Constants {
     public static final int kColorSpinnerPistonPort1 = 4;
     public static final int kColorSpinnerPistonPort2 = 5;
 
+    //climb piston port
+    public static final int kClimberPistonPort = 6;
 
       /**
        * ANALOG
@@ -115,8 +117,8 @@ public final class Constants {
      * ROBOT CONSTANTS
      */
     //distances from robot center (x = length (forward/backward), y = width (left/right))
-    public static final double kRobotLength = 0.6858;   //meters
-    public static final double kRobotWidth = 0.6858;    //meters
+    public static final double kRobotLength = 0.889;    //meters, 35 in
+    public static final double kRobotWidth = 0.6223;    //meters, 24.5
     public static final double kXDistanceFromCenter = kRobotLength / 2;
     public static final double kYDistanceFromCenter = kRobotWidth / 2;
     //absolute encoder offsets (swerve)
@@ -152,6 +154,14 @@ public final class Constants {
     public static final double kShooterRPM = 6000; //RPM
   
     /**
+     * ENCODER SOFT LIMITS
+     */
+
+    public static final double kClimberUpperLimit = 3000.0; //TEMP VAL
+    public static final double kClimberLowerLimit = 0.0; //TEMP VAL
+
+
+    /**
      * VISION CONSTANTS
      */
 
@@ -183,8 +193,6 @@ public final class Constants {
     public static double xCntr;			//x coordinate of target center
 	public static double yCntr;			//y coordinate of target center
     public static double camMode;		//Camera mode either vision processing, driver mode, or another vision processing mode
-
-
 
     /**
      * PID GAINS AND OTHER PID CONSTANTS

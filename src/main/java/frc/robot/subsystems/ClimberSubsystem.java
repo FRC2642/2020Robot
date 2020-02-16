@@ -9,17 +9,18 @@
 
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.*;
+import static frc.robot.util.GeneralUtil.*;
+
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import static frc.robot.Constants.*;
-import edu.wpi.first.wpilibj.DigitalInput; 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import static frc.robot.util.GeneralUtil.*;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 
 /**
  * Add your docs here.
@@ -30,8 +31,8 @@ public class ClimberSubsystem extends SubsystemBase {
   private CANEncoder climberEncoder;
   public CANSparkMax climberMotor;
   public CANPIDController climberPID;
-  public Solenoid climberPis = new Solenoid(kMagazinePistonPort);
-  public DigitalInput climberLimitSwitch = new DigitalInput(Constants.kclimberLimitSwitch);
+  public Solenoid climberPis = new Solenoid(kClimberPistonPort);
+  public DigitalInput climberLimitSwitch = new DigitalInput(kclimberLimitSwitch);
 
   public ClimberSubsystem(){
     climberMotor = new CANSparkMax(ID_CLIMBER_MOTOR, MotorType.kBrushless);
@@ -50,8 +51,37 @@ public class ClimberSubsystem extends SubsystemBase {
   public void climberReference(double setPoint){
     climberPID.setReference(setPoint, ControlType.kPosition);
   }
-  public void climbMove(double d, double e) {
-  } 
+  
+  public void setClimbPower(double power){
+    climberMotor.set(power);
+  }
+  
+
+  public void climbUp(){
+    if(getEncoder() < kClimberUpperLimit){
+      setClimbPower(.7);
+    } else {
+      stop();
+    }
+  }
+
+  public void climbDown(){
+    if(getEncoder() > kClimberLowerLimit){
+      setClimbPower(-.7);
+    } else {
+      stop();
+    }
+  }
+
+  public void climb(double speed){
+    if(speed > .5){
+      climbUp();
+    } else if(speed < -.5){
+      climbDown();
+    } else {
+      stop();
+    }
+  }
 
   public double getEncoder(){
     return climberEncoder.getPosition();

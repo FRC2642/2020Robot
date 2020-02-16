@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
 
 public class ArmSubsystem extends ProfiledPIDSubsystem {
   static TalonSRX armMotor;
@@ -80,7 +81,11 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
   public static void armStop() {
     armMotor.set(ControlMode.PercentOutput, 0);
   }
- 
+
+  public boolean isManualOverride(){
+    return (RobotContainer.auxController.getRawAxis(5) > .2 || RobotContainer.auxController.getRawAxis(5) < -.2);
+  }
+  
   @Override
   public void useOutput(double output, TrapezoidProfile.State setpoint) {
     // Use the output (and optionally the setpoint) here
