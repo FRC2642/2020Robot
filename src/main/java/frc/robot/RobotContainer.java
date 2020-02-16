@@ -112,20 +112,6 @@ public class RobotContainer {
     )
   );
 
-    intake.setDefaultCommand(new RunCommand(() -> intake.stop()));
-
-    magazine.setDefaultCommand(new RunCommand(() -> magazine.stop()));
-
-    climb.setDefaultCommand(new RunCommand(
-      () -> climb.climbMove((auxController.getRawAxis(1)) *.5, (auxController.getRawAxis(0) * .5))
-   )
-  );
-
-    spinner.setDefaultCommand(new RunCommand(
-      () -> spinner.stop()
-    )
-   );
-
     // manually drives motors, leave out unless testing
     /*
      * drive.setDefaultCommand( new RunCommand( () ->
