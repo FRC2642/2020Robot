@@ -31,7 +31,7 @@ public class ClimberSubsystem extends SubsystemBase {
   public CANSparkMax climberMotor;
   public CANPIDController climberPID;
   public Solenoid climberPis = new Solenoid(kMagazinePistonPort);
-
+  public DigitalInput climberLimitSwitch = new DigitalInput(Constants.kclimberLimitSwitch);
 
   public ClimberSubsystem(){
     climberMotor = new CANSparkMax(ID_CLIMBER_MOTOR, MotorType.kBrushless);
@@ -53,10 +53,8 @@ public class ClimberSubsystem extends SubsystemBase {
     return climberEncoder.getPosition();
   }
 
-  public void climberLimits(){
-    if ( getEncoder() == 0 || getEncoder() == 1){ // These are just sample numbers, will be changed
-      stop();
-    }
+  public boolean getLimitSwitch(){
+    return climberLimitSwitch.get();
   }
   
   public void climberDown(){
@@ -70,7 +68,11 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public void climberUp(){
-    climberPis.set(false);
-    climberMotor.set(0); // These are just sample numbers, will be changed
+    if (getLimitSwitch(false)){
+      climberPis.set(false);
+      climberMotor.set(0); // These are just sample numbers, will be changed 
+    } else (
+      gstop();
+    )
   }
 }
