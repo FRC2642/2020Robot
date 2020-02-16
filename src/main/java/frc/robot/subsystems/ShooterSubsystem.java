@@ -7,23 +7,21 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.ID_LEFT_SHOOTER_MOTOR;
-import static frc.robot.Constants.ID_RIGHT_SHOOTER_MOTOR;
-import static frc.robot.Constants.kArmAngleConversionFactor;
-import static frc.robot.Constants.kCurrentLimit;
-
 import static frc.robot.Constants.*;
+import static frc.robot.util.GeneralUtil.*;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.ControlType;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.ControlType;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.util.GeneralUtil.PIDProfile;
 
 public class ShooterSubsystem extends SubsystemBase {
   
@@ -48,20 +46,21 @@ public class ShooterSubsystem extends SubsystemBase {
     righShooterMotor.restoreFactoryDefaults();
     //set to not inverted
     leftShooterMotor.setInverted(false);
-    righShooterMotor.setInverted(false);
+    righShooterMotor.setInverted(true);
     //set current limit
     leftShooterMotor.setSmartCurrentLimit(kCurrentLimit);
     righShooterMotor.setSmartCurrentLimit(kCurrentLimit);
     //PID
+    setPIDGains(lShooterPID, PIDProfile.SHOOTER);
+    setPIDGains(rShooterPID, PIDProfile.SHOOTER);
     lShooterPID = leftShooterMotor.getPIDController();
     rShooterPID = righShooterMotor.getPIDController();
     lShooterEncoder = leftShooterMotor.getEncoder();
     rShooterEncoder = righShooterMotor.getEncoder();
     lShooterPID.setFeedbackDevice(lShooterEncoder);
     rShooterPID.setFeedbackDevice(rShooterEncoder);
-    rShooterPID.setOutputRange(kMinOutput, kMaxOutput);
-    lShooterPID.setOutputRange(kMinOutput, kMaxOutput);
-
+    rShooterPID.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput);
+    lShooterPID.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput);
   }
 
   //sets speed for shooter

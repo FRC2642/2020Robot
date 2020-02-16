@@ -16,16 +16,12 @@ public class SpinToColor extends CommandBase {
   ColorSpinnerSubsystem spinner;
   SwerveDriveSubsystem drive;
 
-  public String color = "blue";//needs work
+  public String color;//needs work
 
   public SpinToColor(final ColorSpinnerSubsystem colorSub) {
     spinner = colorSub;
     addRequirements(spinner);
   }
-  /**
-   * Creates a new toColor.
-   */
-
 
   // Called when the command is initially scheduled.
   @Override
