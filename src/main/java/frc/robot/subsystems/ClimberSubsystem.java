@@ -72,7 +72,7 @@ public class ClimberSubsystem extends SubsystemBase {
       climberPis.set(false);
       climberMotor.set(0); // These are just sample numbers, will be changed 
     } else (
-      gstop();
+      stop();
     )
   }
 }
