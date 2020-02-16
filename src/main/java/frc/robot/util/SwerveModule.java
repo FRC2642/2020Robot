@@ -122,8 +122,9 @@ public class SwerveModule {
   public void setModuleVelocity(double targetVelocity){
 
     //System.out.println("velocity = " + targetVelocity);
-
+  
     drivePID.setReference(targetVelocity, ControlType.kVelocity);
+    
   }
 
   /**
@@ -184,6 +185,8 @@ public class SwerveModule {
     return realignedAngle;
   }
 
+  
+  
   /**
    * Realigns a target angle in the -180 to 180 degree range into the 0 to 360 degree range
    * 

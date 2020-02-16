@@ -101,9 +101,9 @@ public final class Constants {
     public static final double kModuleDegreesToRelativeRotations 
                                = kRelativeRotationsPerModuleRotation / 360.0; //rots / degrees
     public static final double kMaxSpeedConversionFactor = 8.31; //gear ratio conversion
+    public static final double kShooterRPMConversionFactor = 18.84954;
     //value isn't accurate, change later
    public static final double kArmAngleConversionFactor = 10.0;
-   public static final double kShooterRPMConversionFactor = 18.84954;
 
     /**
      * ROBOT CONSTANTS
@@ -134,11 +134,16 @@ public final class Constants {
     //motor neutral deadband
     public static final double kMotorNeutralDeadband = .15;
     //mag belt speed
-    public static final double kMagBeltSpeed = 15;
+    public static final double kMagBeltSpeed = .15;
+    public static final double kMagShootSpeed = .15;
+    public static final double kMagLoadSpeed = .15;
+    public static final double kMagIdleSpeed = .15;
     //swerve max speeds
     public static final double kMaxModuleRPM = 12.0 * kMaxSpeedConversionFactor; //desired module rotation speed * gear ratio conversion
     public static final double kMaxMPS = 12.0 * kMaxSpeedConversionFactor; //desired movement speed * gear ratio conversion
     public static final double kMaxAcceleration = 1.2192;
+    //shooter rpm
+    public static final double kShooterRPM = 6000; //RPM
   
     /**
      * VISION CONSTANTS
@@ -182,14 +187,14 @@ public final class Constants {
     public static final double kMinOutput = -1.0;
     public static final double kMaxOutput = 1.0;                                           
     //PIDF values for closed-loop velocity control for drive modules
-    public static final double kDriveFF = .5 / 15.989; //approx .03127
+    public static final double kDriveFF = .5 / 16.171; //approx .03127
     public static final double kDriveP = 0.0;
-    public static final double kDriveI = kDriveFF / 2000.0;
+    public static final double kDriveI = kDriveFF / 4000.0;
     public static final double kDriveD = 0.0;
     //PIDF values for closed-loop position control for angle modules
     public static final double kAngleFF = 0.0;
-    public static final double kAngleP = .3;
-    public static final double kAngleI = 0.0005;
+    public static final double kAngleP = 0.4;
+    public static final double kAngleI = 0.0002;
     public static final double kAngleD = 0.04;
     //PIDF values for closed-loop velocity control for the magazine belt
     public static final double kMagFF = 0.0;
@@ -211,6 +216,7 @@ public final class Constants {
     public static final double kClimbP = .3;
     public static final double kClimbI = 0.0005;
     public static final double kClimbD = 0.04;
+    
                                
     /**
      * CONTROLLER PORTS
@@ -218,8 +224,6 @@ public final class Constants {
     //controller ports 
     public static final int kDriveControllerPort = 0;
     public static final int kAuxControllerPort = 1;
-
-
     //PID Controllers for auto command
     public static final double kPXController = .3;
     public static final double kPYController = .4;

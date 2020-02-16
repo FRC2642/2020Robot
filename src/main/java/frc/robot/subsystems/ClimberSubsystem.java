@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems;
 
+import frc.robot.RobotContainer;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
@@ -16,6 +17,7 @@ import static frc.robot.Constants.*;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import static frc.robot.util.GeneralUtil.*;
 
 /**
  * Add your docs here.
@@ -33,6 +35,8 @@ public class ClimberSubsystem extends SubsystemBase {
     climberMotor.setInverted(false); // makes sure the motor is not inverted
     climberMotor.setSmartCurrentLimit(kCurrentLimit); // sets limit on motor
 
+    setPIDGains(climberPID, PIDProfile.CLIMB);
+
     climberEncoder = climberMotor.getEncoder();
 
     climberPID = climberMotor.getPIDController();
@@ -40,9 +44,11 @@ public class ClimberSubsystem extends SubsystemBase {
     
   }
 
-  public void climberMove(double setPoint){
+  public void climberReference(double setPoint){
     climberPID.setReference(setPoint, ControlType.kPosition);
   }
+  public void climbMove(double d, double e) {
+  } 
 
   public void stop() {
     climberMotor.set(0);
