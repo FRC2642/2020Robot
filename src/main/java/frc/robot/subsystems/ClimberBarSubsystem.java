@@ -37,6 +37,10 @@ public class ClimberBarSubsystem extends SubsystemBase {
     moveAlongBar(-.7);
   }
 
+  public void stop(){
+    moveAlongBar(0);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

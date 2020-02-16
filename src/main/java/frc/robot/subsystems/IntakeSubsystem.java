@@ -32,13 +32,17 @@ public class IntakeSubsystem extends SubsystemBase {
   //extends and runs intake
   public void intakeIn() {
     intakeMotor.set(.6);
-    intakePiston.set(false);
+    if(intakePiston.get()){
+      intakePiston.set(false);
+    }
   }
 
   //stops intake
   public void stop() {
     intakeMotor.set(0);
-    intakePiston.set(true);
+    if(!intakePiston.get()){
+      intakePiston.set(true);
+    }
   }
     
   public boolean getLeftTrigger() {
