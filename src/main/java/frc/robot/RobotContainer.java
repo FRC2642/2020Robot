@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.aimbot.AimbotRotateCommand;
+import frc.robot.commands.aimbot.AimbotSpinupCommand;
 import frc.robot.commands.aimbot.AimbotTiltCommand;
 import frc.robot.commands.colorSpinner.EndSpinRoutine;
 import frc.robot.commands.colorSpinner.SpinByAmount;
@@ -61,6 +62,7 @@ public class RobotContainer {
 
   public final Command aimbotRotate = new AimbotRotateCommand(drive);
   public final Command aimbotTilt = new AimbotTiltCommand(arm);
+  public final Command aimbotSpinup = new AimbotSpinupCommand(shooter);
 
   public static XboxController driveController = new XboxController(kDriveControllerPort);
   public static XboxController auxController = new XboxController(kAuxControllerPort);
@@ -151,12 +153,14 @@ public class RobotContainer {
     new JoystickButton(driveController, Button.kBumperRight.value)
     .whenHeld(aimbotRotate.alongWith(
       new ConditionalCommand(aimbotTilt, arm.getDefaultCommand(), () -> !arm.isManualOverride()),
+      aimbotSpinup
     ));
 
     //intakes balls
     rightTrigger.whileActiveContinuous(intakeCommand);
     //activates shooting mode
     //leftTrigger.whileActiveContinuous(shootCommand);
+
 //-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-// 
   
     //-=+=-AUX Controller Buttons-=+=-//
