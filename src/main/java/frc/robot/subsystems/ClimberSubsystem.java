@@ -18,7 +18,7 @@ import static frc.robot.Constants.*;
 import edu.wpi.first.wpilibj.DigitalInput; 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import static frc.robot.util.GeneralUtil.*;
+import static frc.robot.util.GeneralUtil.*;`
 import edu.wpi.first.wpilibj.Solenoid;
 
 /**
@@ -31,7 +31,7 @@ public class ClimberSubsystem extends SubsystemBase {
   public CANSparkMax climberMotor;
   public CANPIDController climberPID;
   public Solenoid climberPis = new Solenoid(kMagazinePistonPort);
-
+  public DigitalInput climberLimitSwitch = new DigitalInput(Constants.kclimberLimitSwitch);
 
   public ClimberSubsystem(){
     climberMotor = new CANSparkMax(ID_CLIMBER_MOTOR, MotorType.kBrushless);
@@ -53,22 +53,26 @@ public class ClimberSubsystem extends SubsystemBase {
     return climberEncoder.getPosition();
   }
 
-  public void climberLimits(){
-    if ( getEncoder() == 0 || getEncoder() == 1){ // These are just sample numbers, will be changed
-      stop();
-    }
+  public boolean getLimitSwitch(){
+    return climberLimitSwitch.get();
   }
+  
+  public void climberDown(){
+    climberPis.set(false);
+    climberMotor.set(0); // These are just sample numbers, will be changed
+  }
+
   public void stop(){
     climberMotor.set(0);
     climberPis.set(true);
   }
 
-    climberPis.set(false);t6
-    climberMotor.set(0); // These are just sample numbers, will be changed
-  }
-
-  public void climberDown(){
-    climberPis.set(false);
-    climberMotor.set(0); // These are just sample numbers, will be changed
+  public void climberUp(){
+    if (getLimitSwitch(false)){
+      climberPis.set(false);
+      climberMotor.set(0); // These are just sample numbers, will be changed 
+    } else (
+      stop();
+    )
   }
 }

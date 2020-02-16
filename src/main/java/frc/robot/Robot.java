@@ -17,9 +17,14 @@
  Please don't break.
 
  I pray for ekatni (intake backwards)
- for it's identity has been lost
+ for its identity has been lost
  never to be seen again.
  I love you <3
+
+ Into true egress
+ for hanger prayed.
+ Lost to new ages
+ to dust it lay.
 
  We pray to the control systems, and National Instruments,
  for if we do not we will surely perish
@@ -50,9 +55,7 @@
 
 package frc.robot;
 
-import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoSource;
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;

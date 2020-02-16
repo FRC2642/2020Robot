@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------------*/
 /* Copyright (c) 2019 FIRST. All Rights Reserved.                             */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */gt 
+/* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
@@ -12,6 +12,7 @@ package frc.robot.subsystems;
 
   int ballCount = 0;
   boolean hasBallEntered = false;
+  boolean hasBallCounted = false;
 
   public MagazineSubsystem() {
     //Magazine Neo Information
@@ -27,6 +28,7 @@ package frc.robot.subsystems;
 
     magPID.setFeedbackDevice(magEncoder);
 
+    setPIDGains(magPID, PIDProfile.MAGAZINE);
     //Lifts Magazine belt on startup
     magPis.set(true);
 
@@ -40,7 +42,15 @@ package frc.robot.subsystems;
   }
 
   public void magBeltOn(){
-    setBeltVelocity(kMagBeltSpeed);
+    setBeltVelocity(Math.abs(kMagBeltSpeed));
+  }
+
+  public void magLoad() {
+    setBeltVelocity(kMagLoadSpeed);
+  }
+
+  public void magShoot() {
+    setBeltVelocity(kMagShootSpeed);
   }
 
   //Magazine "Left" and "Right" Belt Lift Pistons
@@ -67,12 +77,18 @@ package frc.robot.subsystems;
         hasBallEntered = false;
       }
 
-      if (hasBallEntered = true) {
-        ballCount++;
-      } else {
 
-      }   
+    if (hasBallEntered && !hasBallCounted) {
+      ballCount++;
+      hasBallCounted = true;
     }
+  }     
+  public int getballCount() {
+    return ballCount;
+  }
+  public void resetBallCount() {
+    ballCount = 0;
+  }
 
   @Override
   public void periodic() {
