@@ -34,6 +34,8 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
   String colorString;
   ColorMatchResult match;
   Color detectedColor;
+  double slowStopSpeed = 0.4;
+  double slowingSpeed = 0.005; //change this for diffrent slowing of the motor after rotating
   
 
   public ColorSpinnerSubsystem() {
@@ -66,6 +68,12 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
 //stops motor
   public void stop(){
     colorSpinnerMotor.set(0.0);
+  }
+//slow stop
+  public void slowStop(){
+    while (slowStopSpeed != 0);
+    colorSpinnerMotor.set(slowStopSpeed);
+    slowStopSpeed = slowStopSpeed - slowingSpeed;
   }
 
  //extends piston

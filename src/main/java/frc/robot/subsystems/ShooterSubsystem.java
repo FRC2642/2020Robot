@@ -11,14 +11,19 @@ import static frc.robot.Constants.ID_LEFT_SHOOTER_MOTOR;
 import static frc.robot.Constants.ID_RIGHT_SHOOTER_MOTOR;
 import static frc.robot.Constants.kArmAngleConversionFactor;
 import static frc.robot.Constants.kCurrentLimit;
-import static frc.robot.Constants.*;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.ControlType;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import static frc.robot.Constants.kShooterRPMConversionFactor;
+
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.ControlType;
+
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
 
 public class ShooterSubsystem extends SubsystemBase {
   
@@ -43,7 +48,7 @@ public class ShooterSubsystem extends SubsystemBase {
     righShooterMotor.restoreFactoryDefaults();
     //set to not inverted
     leftShooterMotor.setInverted(false);
-    righShooterMotor.setInverted(false);
+    righShooterMotor.setInverted(true);
     //set current limit
     leftShooterMotor.setSmartCurrentLimit(kCurrentLimit);
     righShooterMotor.setSmartCurrentLimit(kCurrentLimit);
@@ -54,8 +59,8 @@ public class ShooterSubsystem extends SubsystemBase {
     rShooterEncoder = righShooterMotor.getEncoder();
     lShooterPID.setFeedbackDevice(lShooterEncoder);
     rShooterPID.setFeedbackDevice(rShooterEncoder);
-    rShooterPID.setOutputRange(kMinOutput, kMaxOutput);
-    lShooterPID.setOutputRange(kMinOutput, kMaxOutput);
+    rShooterPID.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput);
+    lShooterPID.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput);
 
   }
 
@@ -73,6 +78,10 @@ rShooterPID.setReference(shooterRPM, ControlType.kVelocity);
 lShooterPID.setReference(shooterRPM, ControlType.kVelocity);
 }
 
+public boolean getRightTrigger() {
+  double rt = RobotContainer.driveController.getTriggerAxis(Hand.kRight);
+  return (rt > .5);
+}
   public void stop() {
     leftShooterMotor.set(0);
     righShooterMotor.set(0);
