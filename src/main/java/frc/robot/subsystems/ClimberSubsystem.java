@@ -30,7 +30,7 @@ public class ClimberSubsystem extends SubsystemBase {
   public ClimberSubsystem(){
     climberMotor = new CANSparkMax(ID_CLIMBER_MOTOR, MotorType.kBrushless);
     climberMotor.restoreFactoryDefaults(); // set motor to defaults
-    climberMotor.setInverted(false); // makes sure the motor is not inverted
+    climberMotor.setInverted(true); // makes sure the motor is not inverted
     climberMotor.setSmartCurrentLimit(kCurrentLimit); // sets limit on motor
 
     climberEncoder = climberMotor.getEncoder();
