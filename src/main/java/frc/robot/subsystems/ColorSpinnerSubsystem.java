@@ -11,6 +11,7 @@ import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
@@ -19,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class ColorSpinnerSubsystem extends SubsystemBase {
 
   CANSparkMax colorSpinnerMotor;
-  public DoubleSolenoid colorSpinnerPiston;
+  public Solenoid colorSpinnerPiston;
   public ColorSensorV3 m_colorSensor;
 
   //creates final RGB values for colors
@@ -42,7 +43,7 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
     colorSpinnerMotor.setInverted(false);
     colorSpinnerMotor.setSmartCurrentLimit(kCurrentLimit);
 
-    colorSpinnerPiston = new DoubleSolenoid(kColorSpinnerPistonPort1, kColorSpinnerPistonPort2);
+    colorSpinnerPiston = new Solenoid(kColorSpinnerPistonPort);
 
     m_colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
 
@@ -80,12 +81,12 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
 
  //extends piston
   public void extend(){
-    colorSpinnerPiston.set(Value.kForward);
+    colorSpinnerPiston.set(true);
   }
 
 //retracts piston
   public void retract(){
-    colorSpinnerPiston.set(Value.kReverse);
+    colorSpinnerPiston.set(false);
   }
 
   public String detectColor(){
@@ -110,7 +111,7 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
   
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Confidence", match.confidence);
+    //SmartDashboard.putNumber("Confidence", match.confidence);
     SmartDashboard.putString("Detected Color", colorString);
   }
 }

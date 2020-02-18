@@ -18,6 +18,7 @@ import com.revrobotics.CANSparkMax.SoftLimitDirection;
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
 
 import static frc.robot.util.GeneralUtil.*;
@@ -250,9 +251,18 @@ public class SwerveModule {
   }
 
   public double getModulePosition(){
-    double angle = getAbsoluteAngleEncoderWithOffset() - dashboardOffset;
-    if(angle < 0){
-      angle += 360;
+    double angle = getAbsoluteAngleEncoderWithOffset() + dashboardOffset;
+    if(angle > 360){
+      angle -= 360;
+    }
+    return angle;
+  }
+
+  
+  public double getModulePosition(double dashboardOffset){
+    double angle = getAbsoluteAngleEncoderWithOffset() + dashboardOffset;
+    if(angle > 360){
+      angle -= 360;
     }
     return angle;
   }
@@ -280,6 +290,10 @@ public class SwerveModule {
   //unused
   public double getRelativeOffset(){
     return relativeOffset;
+  }
+
+  public double getDashboardOffset(){
+    return dashboardOffset;
   }
 
   /**

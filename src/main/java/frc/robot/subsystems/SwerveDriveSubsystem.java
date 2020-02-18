@@ -14,7 +14,9 @@ import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
@@ -22,6 +24,8 @@ import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -57,6 +61,21 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public Trajectory exampleTrajectory;
  
   public boolean isDriveFieldCentric;
+  public boolean isAimingMode;
+
+  private ShuffleboardTab tab = Shuffleboard.getTab("True Module Positions");
+  private NetworkTableEntry flOffset =
+      tab.add("FL Offset", 0)
+         .getEntry();
+  private NetworkTableEntry frOffset =
+      tab.add("FR Offset", 0)
+         .getEntry();
+  private NetworkTableEntry blOffset =
+      tab.add("BL Offset", 0)
+         .getEntry();
+  private NetworkTableEntry brOffset =
+      tab.add("BR Offset", 0)
+         .getEntry();
 
   /**
    * Creates a new SwerveDriveSubsystem.
@@ -161,6 +180,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     //assigns values to togglables
     isDriveFieldCentric = true;
+    isAimingMode = false;
   }
 
   /**
@@ -268,7 +288,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     double xVelocity = xInput * kMaxMPS;
     double yVelocity = yInput * kMaxMPS;
     double rotateVelocity = rotate * kMaxModuleRPM;
-    Translation2d centerOfRotation = new Translation2d(-kXDistanceFromCenter, 0);
+    Translation2d centerOfRotation = new Translation2d(kXDistanceFromCenter, 0);
 
     //converts input targets to individual module states (aiming mode)
     ChassisSpeeds targetVelocity = new ChassisSpeeds(xVelocity, yVelocity, rotateVelocity);
@@ -308,15 +328,15 @@ public class SwerveDriveSubsystem extends SubsystemBase {
    * Sets wheels into locked position (most resistant to being pushed)
    */
   public void lockWheels(){
-    double frontLeftVelocity = 0;
-    double frontRightVelocity = 0;
-    double backLeftVelocity = 0;
-    double backRightVelocity = 0;
+    double frontLeftVelocity = 0.0;
+    double frontRightVelocity = 0.0;
+    double backLeftVelocity = 0.0;
+    double backRightVelocity = 0.0;
 
-    Rotation2d frontLeftAngle = ((toRotation2d(-45)));
-    Rotation2d frontRightAngle = ((toRotation2d(45)));
-    Rotation2d backLeftAngle = ((toRotation2d(45)));
-    Rotation2d backRightAngle = ((toRotation2d(-45)));
+    Rotation2d frontLeftAngle = toRotation2d(-45.0);
+    Rotation2d frontRightAngle = toRotation2d(45.0);
+    Rotation2d backLeftAngle = toRotation2d(45.0);
+    Rotation2d backRightAngle = toRotation2d(-45.0);
 
     //stops wheels
     frontLeftModule.setModuleVelocity(frontLeftVelocity);
@@ -350,6 +370,14 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
   public boolean getIsDriveFieldCentric(){
     return isDriveFieldCentric;
+  }
+
+  public void toggleIsAimingMode(){
+    isAimingMode = !isAimingMode;
+  }
+
+  public boolean getIsAimingMode(){
+    return isAimingMode;
   }
 
   //inverts spark
