@@ -37,9 +37,6 @@ public class JSONValue {
 	 * 	java.lang.Boolean,
 	 * 	null
 	 * 
-	 * @deprecated this method may throw an {@code Error} instead of returning
-	 * {@code null}; please use {@link JSONValue#parseWithException(Reader)}
-	 * instead
 	 */
 	public static Object parse(Reader in){
 		try{
@@ -66,10 +63,6 @@ public class JSONValue {
 	 * 	java.lang.Number,
 	 * 	java.lang.Boolean,
 	 * 	null
-	 * 
-	 * @deprecated this method may throw an {@code Error} instead of returning
-	 * {@code null}; please use {@link JSONValue#parseWithException(String)}
-	 * instead
 	 */
 	public static Object parse(String s){
 		StringReader in=new StringReader(s);

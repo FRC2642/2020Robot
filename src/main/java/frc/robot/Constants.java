@@ -84,6 +84,8 @@ public final class Constants {
     //hanger limit switch
     public static final int khangerLowerLimitSwitch = 0;
     public static final int kArmLimitSwitch = 1;
+    //Right SIght
+    public static final int kRightSight = 2;
 
       /**
        * USB
