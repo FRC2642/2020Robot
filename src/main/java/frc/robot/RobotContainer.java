@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -26,6 +27,7 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.aimbot.AimbotRotateCommand;
 import frc.robot.commands.aimbot.AimbotSpinupCommand;
 import frc.robot.commands.aimbot.AimbotTiltCommand;
+import frc.robot.commands.aimbot.ShootCommand;
 import frc.robot.commands.colorSpinner.EndSpinRoutine;
 import frc.robot.commands.colorSpinner.SpinByAmount;
 import frc.robot.commands.colorSpinner.SpinToColor;
@@ -49,27 +51,29 @@ public class RobotContainer {
 
   public static final SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
   public static final IntakeSubsystem intake = new IntakeSubsystem();
-  public static final MagazineSubsystem magazine = new MagazineSubsystem();
-  public static final ShooterSubsystem shooter = new ShooterSubsystem();
+  //public static final MagazineSubsystem magazine = new MagazineSubsystem();
+  //public static final ShooterSubsystem shooter = new ShooterSubsystem();
   public static final ColorSpinnerSubsystem spinner = new ColorSpinnerSubsystem();
   public static final ClimberSubsystem climb = new ClimberSubsystem();
-  public static final ClimberBarSubsystem bar = new ClimberBarSubsystem();
+  //public static final ClimberBarSubsystem bar = new ClimberBarSubsystem();
   public static final ArmSubsystem arm = new ArmSubsystem();
 
-  public final Command intakeCommand = new IntakeCommand(intake, magazine);
-  public final Command spinToColor = new SpinToColor(spinner);
+  //public final Command intakeCommand = new IntakeCommand(intake, magazine);
+ /*  public final Command spinToColor = new SpinToColor(spinner);
   public final Command spinByAmount = new SpinByAmount(spinner);
   public final Command endSpinRoutine = new EndSpinRoutine(spinner, drive); //empty command atm, needs code
-
+ */
   public final Command aimbotRotate = new AimbotRotateCommand(drive);
   public final Command aimbotTilt = new AimbotTiltCommand(arm);
-  public final Command aimbotSpinup = new AimbotSpinupCommand(shooter);
+  //public final Command aimbotSpinup = new AimbotSpinupCommand(shooter);
+  //public final Command shoot = new ShootCommand(magazine);
 
   public static XboxController driveController = new XboxController(kDriveControllerPort);
   public static XboxController auxController = new XboxController(kAuxControllerPort);
 
   public static Trigger leftTrigger = new Trigger(intake::getLeftTrigger);
-  public static Trigger rightTrigger = new Trigger(shooter::getRightTrigger);
+  //public static Trigger rightTrigger = new Trigger(shooter::getRightTrigger);
+  //public static Trigger auxLeftTrigger = new Trigger(shooter::getLTrigger);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -82,44 +86,44 @@ public class RobotContainer {
       () -> drive.drive( // .5, 0, 0),
         -(driveController.getRawAxis(1)) * .7, 
         driveController.getRawAxis(0) * .7, 
-        driveController.getRawAxis(4)),
+        driveController.getRawAxis(4) * .7),
         drive)
       );
     
      arm.setDefaultCommand(
       new RunCommand(
-        () -> arm.armLift(
-          (auxController.getRawAxis(5) * .5)
-       )
+        () -> arm.moveArm(
+          (-auxController.getRawAxis(5) * .5)
+       ), arm
       )
     );
 
     intake.setDefaultCommand(
-      new RunCommand(intake::stop)
+      new RunCommand(intake::stop, intake)
      );
 
-    magazine.setDefaultCommand(
-      new RunCommand(magazine::magIdle)
-    );
+   /*  magazine.setDefaultCommand(
+      new RunCommand(magazine::magDisengage, magazine)
+    ); */
 
     climb.setDefaultCommand(
       new RunCommand(
-        () -> climb.climb(-auxController.getRawAxis(1))
+        () -> climb.climb(-auxController.getRawAxis(1)), climb
       )
     );
 
-    bar.setDefaultCommand(
-      new RunCommand(bar::stop)
-    );
+    /* shooter.setDefaultCommand(
+      new RunCommand(shooter::stop, shooter)
+    ); */
+
+   /*  bar.setDefaultCommand(
+      new RunCommand(
+        () -> bar.move(auxController.getRawAxis(0))
+      )
+    ); */
 
     spinner.setDefaultCommand(
-      new RunCommand(spinner::stop)
-    );
-
-    arm.setDefaultCommand(
-      new RunCommand(
-        () -> arm.armLift(auxController.getRawAxis(5) * .5)
-      )
+      new RunCommand(spinner::stop, spinner)
     );
 
     // manually drives motors, leave out unless testing
@@ -141,6 +145,7 @@ public class RobotContainer {
 
     //-=+=-DRIVE Controller Buttons-=+=-//
 
+    //toggles field drive and robot drive
     new JoystickButton(driveController, Button.kBack.value)
       .whenPressed(new InstantCommand(drive::toggleIsDriveFieldCentric));
     //puts arm in highest/climb position
@@ -153,34 +158,50 @@ public class RobotContainer {
     new JoystickButton(driveController, Button.kA.value)
     .whenPressed(new InstantCommand(arm::armTrenchPos));
     //activates aiming mode
-    new JoystickButton(driveController, Button.kBumperRight.value)
+   /*  new JoystickButton(driveController, Button.kBumperRight.value)
     .whenHeld(aimbotRotate.alongWith(
       new ConditionalCommand(aimbotTilt, arm.getDefaultCommand(), () -> !arm.isManualOverride()),
       aimbotSpinup
-    ));
+    )); */
+    /* new JoystickButton(driveController, Button.kBumperRight.value)
+    .whenHeld(new RunCommand(shooter::setShooterSpeed, shooter));
+ */
+    //manual buttons, maybe taken out
+    new JoystickButton(driveController, Button.kStart.value)
+    .whenPressed(new InstantCommand(drive::toggleIsAimingMode));
+
 
     //intakes balls
-    rightTrigger.whileActiveContinuous(intakeCommand);
+    //leftTrigger.whileActiveContinuous(intakeCommand);
     //activates shooting mode
-    //leftTrigger.whileActiveContinuous(shootCommand);
+   /*  rightTrigger.whileActiveContinuous(
+      new RunCommand(magazine::magEngage, magazine));
+ */
+      //new RunCommand(drive::lockWheels)
+      //.alongWith(shoot));
 
 //-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-// 
   
     //-=+=-AUX Controller Buttons-=+=-//
 
-    //spins color spinner to certain color
+  /*   //spins color spinner to certain color
     new JoystickButton(auxController, Button.kA.value)
     .whenPressed(spinToColor.andThen(endSpinRoutine));
     //spins color spinner by set ammount
     new JoystickButton(auxController, Button.kY.value)
-    .whenPressed(spinByAmount.andThen(endSpinRoutine));
+    .whenPressed(spinByAmount.andThen(endSpinRoutine));*/
     //extends the color spinner
     new JoystickButton(auxController, Button.kBumperRight.value)
     .whenPressed(new InstantCommand(spinner::extend));
     //retracts the color spinner 
     new JoystickButton(auxController, Button.kBumperLeft.value)
     .whenPressed(new InstantCommand(spinner::retract));
-    
+ 
+
+    new JoystickButton(auxController, Button.kA.value)
+    .whenHeld(new RunCommand(drive::alignWheels, drive));
+
+    //auxLeftTrigger.whileActiveContinuous(new RunCommand(() -> shooter.setShooterSpeed(kShooterRPM)));
   }
 
   /**

@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.*;
 import static frc.robot.util.GeneralUtil.*;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
@@ -19,6 +20,7 @@ import com.revrobotics.ControlType;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -30,7 +32,7 @@ public class MagazineSubsystem extends SubsystemBase {
   CANSparkMax magBeltMotor;
   CANEncoder magEncoder;
   CANPIDController magPID;
-  public DoubleSolenoid magPis = new DoubleSolenoid(kMagazinePistonPort1, kMagazinePistonPort2);
+  public Solenoid magPis;
   Ultrasonic ultra = new Ultrasonic(kMagazineSonarOutput, kMagazineSonarInput);
   Timer timer = new Timer();
 
@@ -44,8 +46,10 @@ public class MagazineSubsystem extends SubsystemBase {
     //Magazine Neo Information
     magBeltMotor = new CANSparkMax(ID_MAG_BELT_MOTOR, MotorType.kBrushless);
     magBeltMotor.restoreFactoryDefaults();
-    magBeltMotor.setInverted(false);
+    magBeltMotor.setInverted(true);
     magBeltMotor.setSmartCurrentLimit(kCurrentLimit);
+
+    magPis = new Solenoid(kMagazinePistonPort);
 
     //Magazine PID Controller
     magPID = magBeltMotor.getPIDController();
@@ -56,7 +60,7 @@ public class MagazineSubsystem extends SubsystemBase {
 
     setPIDGains(magPID, PIDProfile.MAGAZINE);
     //Lifts Magazine belt on startup
-    magPis.set(Value.kForward);
+    //magPis.set(true);
 
     //Sets sonar to constant pulse
     ultra.setAutomaticMode(true);
@@ -85,11 +89,23 @@ public class MagazineSubsystem extends SubsystemBase {
 
   //Magazine "Left" and "Right" Belt Lift Pistons
   public void magDisengage(){
-    magPis.set(Value.kForward);
+    stop();
+    magPis.set(false);
   }
   public void magEngage(){
-    magPis.set(Value.kReverse);
+    magShoot();
+    magPis.set(true);
 
+  }
+
+  double speed;
+  public void test(double speed){
+    this.speed = speed;
+    magBeltMotor.set(speed);
+  }
+
+  public double getSpeed(){
+    return speed;
   }
 
   //Ultrasonic Sonar Ball Counter
@@ -122,6 +138,8 @@ public class MagazineSubsystem extends SubsystemBase {
     }
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    SmartDashboard.putNumber("vel", magEncoder.getVelocity());
+
+    SmartDashboard.putNumber("input", speed);
   }
 }

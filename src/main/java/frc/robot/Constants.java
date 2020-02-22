@@ -46,7 +46,7 @@ public final class Constants {
     public static final int ID_BACK_RIGHT_DRIVE_MOTOR = 7;
     public static final int ID_BACK_RIGHT_ANGLE_MOTOR = 8;
     //CAN ID for mag tilt motor
-    public static final int ID_MAG_TILT_MOTOR = 11; //talon
+    public static final int ID_MAG_TILT_MOTOR = 11; //victor
     //CAN ID for Spinner Motor
     public static final int ID_SPINNER_MOTOR = 10;
     //CAN ID for Mag Belt
@@ -57,27 +57,25 @@ public final class Constants {
     public static final int ID_RIGHT_SHOOTER_MOTOR = 16;
     public static final int ID_LEFT_SHOOTER_MOTOR = 15;
     //CAN IDs for Hanger
-    public static final int ID_CLIMBER_MOTOR = 14; //talon
+    public static final int ID_CLIMBER_MOTOR = 14; //victor
     //CAN ID for climb bar motor
-    public static final int ID_CLIMB_BAR_MOTOR = 9; //talon
+    public static final int ID_CLIMB_BAR_MOTOR = 9; //victor
 
       /**
        * SOLENOID PORTS
        */
     //mag piston port 
-    public static final int kMagazinePistonPort1 = 0;
-    public static final int kMagazinePistonPort2 = 1;
+    public static final int kMagazinePistonPort = 0;
 
     //intake piston port
-    public static final int kIntakePistonPort1 = 2;
-    public static final int kIntakePistonPort2 = 3;
+    public static final int kIntakePistonPort1 = 1;
+    public static final int kIntakePistonPort2 = 2;
 
     //color spinner piston port
-    public static final int kColorSpinnerPistonPort1 = 4;
-    public static final int kColorSpinnerPistonPort2 = 5;
+    public static final int kColorSpinnerPistonPort = 3;
 
     //climb piston port
-    public static final int kClimberPistonPort = 6;
+    public static final int kClimberPistonPort = 4;
 
       /**
        * ANALOG
@@ -90,7 +88,7 @@ public final class Constants {
        * DIO
        */
     //hanger limit switch
-    public static final int kclimberLimitSwitch = 0; // not 0
+    public static final int kClimberLimitSwitch = 2; // not 0
     public static final int kArmLimitSwitch = 1;
 
       /**
@@ -121,6 +119,8 @@ public final class Constants {
     public static final double kRobotWidth = 0.6223;    //meters, 24.5
     public static final double kXDistanceFromCenter = kRobotLength / 2;
     public static final double kYDistanceFromCenter = kRobotWidth / 2;
+
+    public static final double kGyroOffset = 180.0;
     //absolute encoder offsets (swerve)
     public static final double kFrontLeftAngleOffset = 159.5;
     public static final double kFrontRightAngleOffset = 45.3;
@@ -128,10 +128,10 @@ public final class Constants {
     public static final double kBackRightAngleOffset = 57.8;
 
     //Dashboard reading offsets (swerve)
-    public static final double kFrontLeftAngleDashboardOffset = 318.0;
-    public static final double kFrontRightAngleDashboardOffset = 89.6;
-    public static final double kBackLeftAngleDashboardOffset = 261.6;
-    public static final double kBackRightAngleDashboardOffset = 114.8;
+    public static final double kFrontLeftAngleDashboardOffset = 212.5;
+    public static final double kFrontRightAngleDashboardOffset = 73.0;
+    public static final double kBackLeftAngleDashboardOffset = 185.0;
+    public static final double kBackRightAngleDashboardOffset = 33.0;
 
 
     /**
@@ -142,16 +142,15 @@ public final class Constants {
     //motor neutral deadband
     public static final double kMotorNeutralDeadband = .15;
     //mag belt speed
-    public static final double kMagBeltSpeed = .15;
-    public static final double kMagShootSpeed = .15;
-    public static final double kMagLoadSpeed = .15;
-    public static final double kMagIdleSpeed = .15;
+    public static final double kMagShootSpeed = 6500;
+    public static final double kMagLoadSpeed = 5000;
+    public static final double kMagIdleSpeed = 2000;
     //swerve max speeds
     public static final double kMaxModuleRPM = 12.0 * kMaxSpeedConversionFactor; //desired module rotation speed * gear ratio conversion
     public static final double kMaxMPS = 12.0 * kMaxSpeedConversionFactor; //desired movement speed * gear ratio conversion
     public static final double kMaxAcceleration = 1.2192;
     //shooter rpm
-    public static final double kShooterRPM = 6000; //RPM
+    public static final double kShooterRPM = 2500; //RPM
   
     /**
      * ENCODER SOFT LIMITS
@@ -211,25 +210,30 @@ public final class Constants {
     public static final double kAngleI = 0.0002;
     public static final double kAngleD = 0.04;
     //PIDF values for closed-loop velocity control for the magazine belt
-    public static final double kMagFF = 0.0;
-    public static final double kMagP = .3;
-    public static final double kMagI = 0.0005;
-    public static final double kMagD = 0.04;
+    public static final double kMagFF = .5 / 5400;
+    public static final double kMagP = 0.0;
+    public static final double kMagI = 0.0;
+    public static final double kMagD = 0.0;
     //PIDF values for closed-loop position control for the arm tilt motor
     public static final double kTiltFF = 0.0;
-    public static final double kTiltP = .3;
-    public static final double kTiltI = 0.0005;
-    public static final double kTiltD = 0.04;
+    public static final double kTiltP = 0.0;
+    public static final double kTiltI = 0.00;
+    public static final double kTiltD = 0.0;
     //PIDF values for closed-loop velocity control for the shooter wheels
-    public static final double kShooterFF = 0.0;
-    public static final double kShooterP = .3;
-    public static final double kShooterI = 0.0005;
-    public static final double kShooterD = 0.04;
+    public static final double kShooterFF = .5 / 2700.0;
+    public static final double kShooterP = 0.0;
+    public static final double kShooterI = 0.0;
+    public static final double kShooterD = 0.0;
     //PIDF values for closed-loop position control for the climbing motor
     public static final double kClimbFF = 0.0;
-    public static final double kClimbP = .3;
-    public static final double kClimbI = 0.0005;
-    public static final double kClimbD = 0.04;
+    public static final double kClimbP = 0.0;
+    public static final double kClimbI = 0.0;
+    public static final double kClimbD = 0.0;
+    //PIDF values for initial alignment of the wheels
+    public static final double kAlignmentFF = 0.0;
+    public static final double kAlignmentP = 0.0;
+    public static final double kAlignmentI = 0.0;
+    public static final double kAlignmentD = 0.0;
     
   /**
      * CONTROLLER PORTS

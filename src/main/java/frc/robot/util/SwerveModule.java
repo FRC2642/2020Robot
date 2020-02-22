@@ -18,9 +18,12 @@ import com.revrobotics.CANSparkMax.SoftLimitDirection;
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
 
 import static frc.robot.util.GeneralUtil.*;
+
+import frc.robot.RobotContainer;
 import frc.robot.util.GeneralUtil.PIDProfile;
 
 /**
@@ -40,6 +43,7 @@ public class SwerveModule {
   Rotation2d targetAngle;
   double targetMotorAngle;
   double trueTargetAngle;
+  boolean isWheelAligned;
 
   double absoluteOffset;
   double dashboardOffset;
@@ -85,26 +89,21 @@ public class SwerveModule {
     //disables soft limits on Spark MAXs
     angleMotor.enableSoftLimit(SoftLimitDirection.kForward, false);
     angleMotor.enableSoftLimit(SoftLimitDirection.kReverse, false);
+
+    isWheelAligned = false;
   }
 
   /**
-   * Gets a target velocity from a SwerveModuleState object
-   * 
-   * @param state What SwerveModuleState object to read
-   * @return Target velocity in m/s
+   * METHODS
    */
+
+  /** */
   public double getTargetVelocity(SwerveModuleState state){
     targetVelocity = state.speedMetersPerSecond;
     //System.out.println("target velocity = " + targetVelocity);
     return targetVelocity;
   }
 
-  /**
-   * Gets a target angle from a SwerveModuleState object
-   * 
-   * @param state What SwerveModuleState object to read
-   * @return Target angle in degrees
-   */
   public Rotation2d getTargetAngle(SwerveModuleState state){
     targetAngle = state.angle;
 
@@ -114,11 +113,7 @@ public class SwerveModule {
     return targetAngle;
   }
 
-  /**
-   * Feeds a desired modular velocity into the closed-loop velocity controller
-   * 
-   * @param targetVelocity desired velocity of the module in meters/second
-   */
+
   public void setModuleVelocity(double targetVelocity){
 
     //System.out.println("velocity = " + targetVelocity);
@@ -127,48 +122,40 @@ public class SwerveModule {
     
   }
 
-  /**
-   * Feeds a desired modular wheel angle into the closed-loop position controller
-   * 
-   * @param targetAngle
-   */
   public void setModuleAngle(Rotation2d targetAngle){
 
-    double target = targetAngle.getDegrees();
-    target *= kModuleDegreesToRelativeRotations;
-    double current = getRelativeAngleEncoder();
+   // if(!RobotContainer.drive.getAreAllWheelsAligned()){
+      double target = targetAngle.getDegrees();
+      target *= kModuleDegreesToRelativeRotations;
+      double current = getRelativeAngleEncoder();
 
-    //adjusts target to be in appropriate range of rotation based on current position
-    if(Math.abs(current) > kRelativeRotationsPerModuleRotation){
-      double rotError = 0.0;
-      if(current > 0){
-        rotError = Math.floor(current / kRelativeRotationsPerModuleRotation);
-      } else if(current < 0){
-        rotError = Math.ceil(current / kRelativeRotationsPerModuleRotation);
+      //adjusts target to be in appropriate range of rotation based on current position
+      if(Math.abs(current) > kRelativeRotationsPerModuleRotation){
+        double rotError = 0.0;
+        if(current > 0){
+          rotError = Math.floor(current / kRelativeRotationsPerModuleRotation);
+        } else if(current < 0){
+          rotError = Math.ceil(current / kRelativeRotationsPerModuleRotation);
+        }
+        target += (rotError * kRelativeRotationsPerModuleRotation);
       }
-      target += (rotError * kRelativeRotationsPerModuleRotation);
-    }
-    
-    double error = target - current;
+      
+      double error = target - current;
 
-    //increases target by rotation if taking a inefficient path
-    if(Math.abs(error) > kRelativeRotationsPerModuleRotation / 2){
-      if(current > 0){
-        target += kRelativeRotationsPerModuleRotation;
-      } else if(current < 0){
-        target -= kRelativeRotationsPerModuleRotation;
+      //increases target by rotation if taking a inefficient path
+      if(Math.abs(error) > kRelativeRotationsPerModuleRotation / 2){
+        if(current > 0){
+          target += kRelativeRotationsPerModuleRotation;
+        } else if(current < 0){
+          target -= kRelativeRotationsPerModuleRotation;
+        }
       }
-    }
-    trueTargetAngle = target;
+      trueTargetAngle = target;
 
-    anglePID.setReference(target, ControlType.kPosition); 
-
-    //analog encoder code, leave out unless using analog encoder
-    /* trueTargetAngle = targetAngle.getDegrees();  
-    trueTargetAngle = realignAndOffsetEncoder(trueTargetAngle);
-
-    anglePID.setReference(trueTargetAngle, ControlType.kPosition); */
-    }
+      anglePID.setReference(target, ControlType.kPosition); 
+    //} else {
+      //stop();
+  }
 
   /**
    * Realigns a target angle in the -180 to 180 degree range into the 0 to 360 degree range
@@ -184,8 +171,6 @@ public class SwerveModule {
 
     return realignedAngle;
   }
-
-  
   
   /**
    * Realigns a target angle in the -180 to 180 degree range into the 0 to 360 degree range
@@ -219,12 +204,25 @@ public class SwerveModule {
     return realignedAngle;
   }
 
+  public void zeroModules(){
+
+    double moduleAngle = getModulePosition();
+    double relativeAngle = moduleAngle * kModuleDegreesToRelativeRotations;
+    setEncoder(relativeAngle);
+    isWheelAligned = true;
+  }
+
   public void zeroEncoder(){
     setEncoder(0.0);
   }
 
   public void setEncoder(double position){
     relativeAngleEncoder.setPosition(position);
+  }
+
+  public void stop(){
+    setModuleVelocity(0);
+    driveMotor.set(0);
   }
 
   /**
@@ -250,9 +248,18 @@ public class SwerveModule {
   }
 
   public double getModulePosition(){
-    double angle = getAbsoluteAngleEncoderWithOffset() - dashboardOffset;
-    if(angle < 0){
-      angle += 360;
+    double angle = getAbsoluteAngleEncoderWithOffset() + dashboardOffset;
+    if(angle > 360){
+      angle -= 360;
+    }
+    return angle;
+  }
+
+  
+  public double getModulePosition(double dashboardOffset){
+    double angle = getAbsoluteAngleEncoderWithOffset() + dashboardOffset;
+    if(angle > 360){
+      angle -= 360;
     }
     return angle;
   }
@@ -280,6 +287,14 @@ public class SwerveModule {
   //unused
   public double getRelativeOffset(){
     return relativeOffset;
+  }
+
+  public double getDashboardOffset(){
+    return dashboardOffset;
+  }
+
+  public boolean getIsWheelAligned(){
+    return isWheelAligned;
   }
 
   /**

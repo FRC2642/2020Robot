@@ -12,6 +12,7 @@ import static frc.robot.Constants.*;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
@@ -21,7 +22,8 @@ import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
 public class ArmSubsystem extends ProfiledPIDSubsystem {
-  static TalonSRX armMotor;
+
+  public VictorSPX armMotor;
   /**
    * Creates a new ArmSubsystem.
    */
@@ -32,7 +34,8 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
             // The motion profile constraints
             new TrapezoidProfile.Constraints(0, 0)));
 
-            armMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Absolute, 0, 2);
+    armMotor = new VictorSPX(ID_MAG_TILT_MOTOR);
+           // armMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Absolute, 0, 2);
   }
 
  // public ErrorCode getEncoderValue() {
@@ -49,13 +52,10 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
     } //add more criterias
   }
   public double getArmPos() {
-    int armPos = 
-    armMotor.getSensorCollection().getPulseWidthPosition() & 0xFFF;
+    int armPos = 0;
+   // armMotor.getSensorCollection().getPulseWidthPosition() & 0xFFF;
     return armPos;
 }
-
-
-
 
   public void armDown() {
         if (getArmPos() == 0) {
@@ -78,7 +78,11 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
 
     }
 
-  public static void armStop() {
+  public void moveArm(double speed){
+    armMotor.set(ControlMode.PercentOutput, speed);
+  }
+
+  public void armStop() {
     armMotor.set(ControlMode.PercentOutput, 0);
   }
 

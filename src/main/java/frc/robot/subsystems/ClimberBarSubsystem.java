@@ -37,6 +37,16 @@ public class ClimberBarSubsystem extends SubsystemBase {
     moveAlongBar(-.7);
   }
 
+  public void move(double speed){
+    if(speed > .5){
+      moveLeftAlongBar();
+    } else if(speed < -.5){
+      moveRightAlongBar();
+    } else {
+      stop();
+    }
+  }
+
   public void stop(){
     moveAlongBar(0);
   }

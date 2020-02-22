@@ -12,6 +12,8 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.*;
 import static frc.robot.util.GeneralUtil.*;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
@@ -28,37 +30,23 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ClimberSubsystem extends SubsystemBase {
   
-  private CANEncoder climberEncoder;
-  public CANSparkMax climberMotor;
-  public CANPIDController climberPID;
+  VictorSPX climberMotor;
+
   public Solenoid climberPis = new Solenoid(kClimberPistonPort);
-  public DigitalInput climberLimitSwitch = new DigitalInput(kclimberLimitSwitch);
+  public DigitalInput climberLimitSwitch = new DigitalInput(kClimberLimitSwitch);
 
   public ClimberSubsystem(){
-    climberMotor = new CANSparkMax(ID_CLIMBER_MOTOR, MotorType.kBrushless);
-    climberMotor.restoreFactoryDefaults(); // set motor to defaults
-    climberMotor.setInverted(false); // makes sure the motor is not inverted
-    climberMotor.setSmartCurrentLimit(kCurrentLimit); // sets limit on motor
-
-    setPIDGains(climberPID, PIDProfile.CLIMB);
-
-    climberEncoder = climberMotor.getEncoder();
-
-    climberPID = climberMotor.getPIDController();
-    climberPID.setFeedbackDevice(climberEncoder);
-  }
-
-  public void climberReference(double setPoint){
-    climberPID.setReference(setPoint, ControlType.kPosition);
+    climberMotor = new VictorSPX(ID_CLIMBER_MOTOR);
+    climberMotor.setInverted(true);
   }
   
   public void setClimbPower(double power){
-    climberMotor.set(power);
+    climberMotor.set(ControlMode.PercentOutput, power);
   }
-  
 
   public void climbUp(){
-    if(getEncoder() < kClimberUpperLimit){
+    if(!getLimitSwitch()){
+      climberPis.set(false);
       setClimbPower(.7);
     } else {
       stop();
@@ -66,11 +54,8 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public void climbDown(){
-    if(getEncoder() > kClimberLowerLimit){
-      setClimbPower(-.7);
-    } else {
-      stop();
-    }
+    climberPis.set(false);
+    setClimbPower(-.7);
   }
 
   public void climb(double speed){
@@ -83,30 +68,13 @@ public class ClimberSubsystem extends SubsystemBase {
     }
   }
 
-  public double getEncoder(){
-    return climberEncoder.getPosition();
-  }
-
   public boolean getLimitSwitch(){
     return climberLimitSwitch.get();
   }
-  
-  public void climberDown(){
-    climberPis.set(false);
-    climberMotor.set(0); // These are just sample numbers, will be changed
-  }
 
   public void stop(){
-    climberMotor.set(0);
+    climberMotor.set(ControlMode.PercentOutput, 0);
     climberPis.set(true);
   }
 
-  public void climberUp(){
-    if(!getLimitSwitch()){
-      climberPis.set(false);
-      climberMotor.set(0); // These are just sample numbers, will be changed 
-    } else {
-      stop();
-    }
-  }
 }
