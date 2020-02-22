@@ -9,6 +9,8 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.*;
 import static frc.robot.util.GeneralUtil.*;
+import frc.robot.util.library.simple.RightSight;
+
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -21,7 +23,6 @@ import com.revrobotics.ControlType;
 //import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 
@@ -31,10 +32,9 @@ public class MagazineSubsystem extends SubsystemBase {
   CANEncoder magEncoder;
   CANPIDController magPID;
   public Solenoid magPis;
-  Ultrasonic ultra = new Ultrasonic(kMagazineSonarOutput, kMagazineSonarInput);
   Timer timer = new Timer();
 
-
+  public RightSight rightSight = new RightSight(kRightSight);
 
   int ballCount = 0;
   boolean hasBallEntered = false;
@@ -60,8 +60,7 @@ public class MagazineSubsystem extends SubsystemBase {
     //Lifts Magazine belt on startup
     //magPis.set(true);
 
-    //Sets sonar to constant pulse
-    ultra.setAutomaticMode(true);
+
   }
 
   //Magazine Conveyor 
@@ -106,13 +105,10 @@ public class MagazineSubsystem extends SubsystemBase {
     return speed;
   }
 
-  //Ultrasonic Sonar Ball Counter
   public void senseBall() {
 
-    //Gets the sonar's range in inches
-    double range = ultra.getRangeInches();
 
-      if(range <= 6) {
+      if(rightSight.get() == true) {
         hasBallEntered = true;
       } else {
         hasBallEntered = false;
