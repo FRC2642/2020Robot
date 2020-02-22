@@ -62,20 +62,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
  
   public boolean isDriveFieldCentric;
   public boolean isAimingMode;
-
-  private ShuffleboardTab tab = Shuffleboard.getTab("True Module Positions");
-  private NetworkTableEntry flOffset =
-      tab.add("FL Offset", 0)
-         .getEntry();
-  private NetworkTableEntry frOffset =
-      tab.add("FR Offset", 0)
-         .getEntry();
-  private NetworkTableEntry blOffset =
-      tab.add("BL Offset", 0)
-         .getEntry();
-  private NetworkTableEntry brOffset =
-      tab.add("BR Offset", 0)
-         .getEntry();
+  public boolean areAllWheelsAligned;
 
   /**
    * Creates a new SwerveDriveSubsystem.
@@ -102,13 +89,13 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     backRightAngleMotor.restoreFactoryDefaults(); 
 
     //sets default inversion settings for motors
-    frontLeftDriveMotor.setInverted(false);
+    frontLeftDriveMotor.setInverted(true);
     frontLeftAngleMotor.setInverted(true);
-    frontRightDriveMotor.setInverted(false);
+    frontRightDriveMotor.setInverted(true);
     frontRightAngleMotor.setInverted(true);
-    backLeftDriveMotor.setInverted(false);
+    backLeftDriveMotor.setInverted(true);
     backLeftAngleMotor.setInverted(true);
-    backRightDriveMotor.setInverted(false);
+    backRightDriveMotor.setInverted(true);
     backRightAngleMotor.setInverted(true); 
 
     //sets current limits 
@@ -148,39 +135,36 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     odometry = new SwerveDriveOdometry(kinematics, getRobotYawInRotation2d());
 
     TrajectoryConfig config =
-        new TrajectoryConfig(Constants.kMaxMPS,
-                             Constants.kMaxAcceleration)
-            // Add kinematics to ensure max speed is actually obeyed
-            .setKinematics(kinematics);
+      new TrajectoryConfig(Constants.kMaxMPS, Constants.kMaxAcceleration)
+        // Add kinematics to ensure max speed is actually obeyed
+        .setKinematics(kinematics);
 
     
-            Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-              // Start at the origin facing the +X direction
-              new Pose2d(0, 0, new Rotation2d(0)),
-              // Pass through these two interior waypoints, making an 's' curve path
-              List.of(
-                  new Translation2d(1, 1),
-                  new Translation2d(2, -1)
-              ),
-              // End 3 meters straight ahead of where we started, facing forward
-              new Pose2d(3, 0, new Rotation2d(0)),
-              config
+    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+      // Start at the origin facing the +X direction
+      new Pose2d(0, 0, new Rotation2d(0)),
+      // Pass through these two interior waypoints, making an 's' curve path
+      List.of(
+        new Translation2d(1, 1),
+          new Translation2d(2, -1)
+      ),
+      // End 3 meters straight ahead of where we started, facing forward
+      new Pose2d(3, 0, new Rotation2d(0)),
+      config
     );
     
     
-            //instantiates navx
+    //instantiates navx
     try{
       navx = new AHRS();
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
     }
 
-    //sets angle adjustment
-    navx.setAngleAdjustment(0);
-
     //assigns values to togglables
     isDriveFieldCentric = true;
     isAimingMode = false;
+    areAllWheelsAligned = false;
   }
 
   /**
@@ -359,11 +343,35 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     moduleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
   }
-    
 
-  /**
-   * Toggles between field-centric drive and robot-centric drive
-   */
+  //needs more precision + better way of knowing when done
+  public void alignWheels(){
+    
+      for(SwerveModule module: modules){
+        //begins zeroing modules
+        module.zeroModules();
+
+        //checks if all modules are aligned 
+        for(SwerveModule mod: modules){
+          //breaks loop if a module is not aligned
+          if(!mod.getIsWheelAligned()){
+            areAllWheelsAligned = false;
+            break;
+          }
+          //if all modules return true, sets all wheels aligned to true
+          areAllWheelsAligned = true;
+        }
+        //breaks if all wheels are aligned
+        if(areAllWheelsAligned){
+          break;
+        }
+      }
+  }
+
+  public boolean getAreAllWheelsAligned(){
+    return areAllWheelsAligned;
+  }
+
   public void toggleIsDriveFieldCentric(){
     isDriveFieldCentric = !isDriveFieldCentric;
   }
@@ -393,6 +401,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     double heading = lastHeading;
     try {
       heading = navx.getYaw();
+      heading = (heading + kGyroOffset) % 360;
     } catch (NullPointerException e){
       System.out.println(e);
     }
@@ -465,5 +474,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("driveVelocity", frontLeftModule.getDriveVelocity());
     SmartDashboard.putNumber("poseXInFeet", getPoseXInFeet());
+
   }
 }

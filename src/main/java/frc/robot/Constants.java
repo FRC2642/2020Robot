@@ -119,6 +119,8 @@ public final class Constants {
     public static final double kRobotWidth = 0.6223;    //meters, 24.5
     public static final double kXDistanceFromCenter = kRobotLength / 2;
     public static final double kYDistanceFromCenter = kRobotWidth / 2;
+
+    public static final double kGyroOffset = 180.0;
     //absolute encoder offsets (swerve)
     public static final double kFrontLeftAngleOffset = 159.5;
     public static final double kFrontRightAngleOffset = 45.3;
@@ -126,10 +128,10 @@ public final class Constants {
     public static final double kBackRightAngleOffset = 57.8;
 
     //Dashboard reading offsets (swerve)
-    public static final double kFrontLeftAngleDashboardOffset = 318.0;
-    public static final double kFrontRightAngleDashboardOffset = 169.6;
-    public static final double kBackLeftAngleDashboardOffset = 261.6;
-    public static final double kBackRightAngleDashboardOffset = 114.8;
+    public static final double kFrontLeftAngleDashboardOffset = 212.5;
+    public static final double kFrontRightAngleDashboardOffset = 73.0;
+    public static final double kBackLeftAngleDashboardOffset = 185.0;
+    public static final double kBackRightAngleDashboardOffset = 33.0;
 
 
     /**
@@ -150,7 +152,7 @@ public final class Constants {
     //shooter rpm
     public static final double kShooterRPM = 2500; //RPM
   
-    /**1
+    /**
      * ENCODER SOFT LIMITS
      */
 
@@ -227,6 +229,11 @@ public final class Constants {
     public static final double kClimbP = 0.0;
     public static final double kClimbI = 0.0;
     public static final double kClimbD = 0.0;
+    //PIDF values for initial alignment of the wheels
+    public static final double kAlignmentFF = 0.0;
+    public static final double kAlignmentP = 0.0;
+    public static final double kAlignmentI = 0.0;
+    public static final double kAlignmentD = 0.0;
     
   /**
      * CONTROLLER PORTS

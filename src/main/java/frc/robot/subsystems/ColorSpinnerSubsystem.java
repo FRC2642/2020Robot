@@ -112,7 +112,7 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     //SmartDashboard.putNumber("Confidence", match.confidence);
-    SmartDashboard.putString("Detected Color", colorString);
+    //SmartDashboard.putString("Detected Color", colorString);
   }
 }
 
