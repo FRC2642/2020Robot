@@ -350,19 +350,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     for(SwerveModule module: modules){
       //begins zeroing modules
         module.zeroModules();
-
-        /*//checks if all modules are aligned 
-        for(SwerveModule mod: modules){
-          //breaks loop if a module is not aligned
-          if(!mod.getIsWheelAligned()){
-            areAllWheelsAligned = false;
-            break;
-        }
-        //if all modules return true, sets all wheels aligned to true
-        areAllWheelsAligned = true;
-      }*/
     }
-    //areAllWheelsAligned = true;
+    
   }
 
   public boolean getAreAllWheelsAligned(){
