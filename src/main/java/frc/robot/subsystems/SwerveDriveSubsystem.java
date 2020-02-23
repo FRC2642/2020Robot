@@ -124,10 +124,10 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     //sets module distances from center of rotation
     //forward = postive x, right = positive y
-    Translation2d frontLeft = new Translation2d(kXDistanceFromCenter, -kYDistanceFromCenter);
-    Translation2d frontRight = new Translation2d(kXDistanceFromCenter, kYDistanceFromCenter);
-    Translation2d backLeft = new Translation2d(-kXDistanceFromCenter, -kYDistanceFromCenter);
-    Translation2d backRight = new Translation2d(-kXDistanceFromCenter, kYDistanceFromCenter);
+    Translation2d frontLeft = new Translation2d(-kXDistanceFromCenter, kYDistanceFromCenter);
+    Translation2d frontRight = new Translation2d(-kXDistanceFromCenter, -kYDistanceFromCenter);
+    Translation2d backLeft = new Translation2d(kXDistanceFromCenter, kYDistanceFromCenter);
+    Translation2d backRight = new Translation2d(kXDistanceFromCenter, -kYDistanceFromCenter);
 
     //assigns module distance to kinematic object
     kinematics = new SwerveDriveKinematics(frontLeft, frontRight, backLeft, backRight);
@@ -347,28 +347,26 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   //needs more precision + better way of knowing when done
   public void alignWheels(){
     
-      for(SwerveModule module: modules){
-        //begins zeroing modules
+    for(SwerveModule module: modules){
+      //begins zeroing modules
         module.zeroModules();
 
-        //checks if all modules are aligned 
+        /*//checks if all modules are aligned 
         for(SwerveModule mod: modules){
           //breaks loop if a module is not aligned
           if(!mod.getIsWheelAligned()){
             areAllWheelsAligned = false;
             break;
-          }
-          //if all modules return true, sets all wheels aligned to true
-          areAllWheelsAligned = true;
         }
-        //breaks if all wheels are aligned
-        if(areAllWheelsAligned){
-          break;
-        }
-      }
+        //if all modules return true, sets all wheels aligned to true
+        areAllWheelsAligned = true;
+      }*/
+    }
+    //areAllWheelsAligned = true;
   }
 
   public boolean getAreAllWheelsAligned(){
+
     return areAllWheelsAligned;
   }
 

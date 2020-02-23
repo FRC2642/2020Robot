@@ -91,6 +91,8 @@ public class SwerveModule {
     angleMotor.enableSoftLimit(SoftLimitDirection.kReverse, false);
 
     isWheelAligned = false;
+
+    zeroEncoder();
   }
 
   /**
@@ -205,11 +207,14 @@ public class SwerveModule {
   }
 
   public void zeroModules(){
-
-    double moduleAngle = getModulePosition();
-    double relativeAngle = moduleAngle * kModuleDegreesToRelativeRotations;
-    setEncoder(relativeAngle);
-    isWheelAligned = true;
+    if(!getIsWheelAligned()){
+      zeroEncoder();
+      
+      double moduleAngle = getModulePosition();
+      double relativeAngle = moduleAngle * kModuleDegreesToRelativeRotations;
+      setEncoder(relativeAngle);
+      isWheelAligned = true;
+    }
   }
 
   public void zeroEncoder(){
