@@ -30,12 +30,13 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
   final Color kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
   final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
 
-  String colorString;
+  public String colorString;
   ColorMatchResult match;
   Color detectedColor;
   double slowStopSpeed = 0.4;
   double slowingSpeed = 0.005; //change this for diffrent slowing of the motor after rotating
   
+  boolean hasCounted;
 
   public ColorSpinnerSubsystem() {
     colorSpinnerMotor = new CANSparkMax(ID_SPINNER_MOTOR, MotorType.kBrushless);
@@ -51,6 +52,8 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
     m_colorMatcher.addColorMatch(kGreenTarget);
     m_colorMatcher.addColorMatch(kRedTarget);
     m_colorMatcher.addColorMatch(kYellowTarget);  
+
+    hasCounted = false;
   }
 
 //Set speed for Color Spinner direction.
@@ -108,11 +111,37 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
 
     return colorString;
   }
+
+  public String getColorString(){
+    return colorString;
+  }
+
+  public void zeroCounter(){
+    counter = 0;
+  }
+
+  public int counter = 0;
+  public void counterUp(){
+    counter++;
+  }
+
+  public int getCounter(){
+    return counter;
+  }
+
+  public boolean getHasCounted(){
+    return hasCounted;
+  }
+
+  public void setHasCounted(boolean hasCounted){
+    this.hasCounted = hasCounted;
+  }
   
   @Override
   public void periodic() {
     //SmartDashboard.putNumber("Confidence", match.confidence);
-    //SmartDashboard.putString("Detected Color", colorString);
+    SmartDashboard.putString("Detected Color", detectColor());
+    SmartDashboard.putNumber("counter", getCounter());
   }
 }
 
