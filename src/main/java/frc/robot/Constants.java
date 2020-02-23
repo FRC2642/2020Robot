@@ -80,9 +80,9 @@ public final class Constants {
       /**
        * ANALOG
        */
-    //sonar
-    public static final int kMagazineSonarInput = 0;
-    public static final int kMagazineSonarOutput = 1;
+    //arm potentiometer
+    public static final int kArmPotPort = 0;
+
     
       /**
        * DIO
@@ -151,50 +151,46 @@ public final class Constants {
     public static final double kMaxAcceleration = 1.2192;
     //shooter rpm
     public static final double kShooterRPM = 2500; //RPM
-  
-    /**
-     * ENCODER SOFT LIMITS
-     */
-
-    public static final double kClimberUpperLimit = 3000.0; //TEMP VAL
-    public static final double kClimberLowerLimit = 0.0; //TEMP VAL
-
+    //tilt presets
+    public static final double kTrenchPos = 0.0;
+    public static final double kNormalPos = 0.0;
+    public static final double kClimbPos = 0.0;
 
     /**
      * VISION CONSTANTS
      */
 
      //JeVois Camera Number
-	public static final int kJevoisCamNumber = 1; //JEVOIS_CAM_NUMBER
-	// Serial Port Constants 
-	public static final int kBaudRate = 115200; //BAUD_RATE
-	// MJPG Streaming Constants 
-	public static final int kMjpgStreamPort = 1180; //MJPG_STREAM_PORT
-	// JeVois Program Selection Constants - must align with JeVois .cfg files
-	public static final int kPixleWidth1 = 320; //MAPPING_WIDTH_PXL_1
-	public static final int kPixleHeight1 = 240; //MAPPING_HEIGHT_PXL_1
-	public static final int kFPS1 = 20; //MAPPING_FRMRT_FPS_1
-	// JeVois Program Selection Constants - must align with JeVois .cfg files
-	public static final int kPixleWidth2 = 320; //MAPPING_WIDTH_PXL_2
-	public static final int kPixleHeight2 = 240; //MAPPING_HEIGHT_PXL_2
-	public static final int kFPS2 = 20; //MAPPING_FRMRT_FPS_2
-	// Packet format constants (how the string is sent from the JeVois)
-	public static final String kPacketStart = "{"; //PACKET_START_CHAR
-	public static final String kPacketEnd = "}"; //PACKET_END_CHAR
-	public static final String kPacketSpacer = ","; //PACKET_DILEM_CHAR
-	// Status variables 
-	public static boolean camStreamRunning = false;
+    public static final int kJevoisCamNumber = 1; //JEVOIS_CAM_NUMBER
+    // Serial Port Constants 
+    public static final int kBaudRate = 115200; //BAUD_RATE
+    // MJPG Streaming Constants 
+    public static final int kMjpgStreamPort = 1180; //MJPG_STREAM_PORT
+    // JeVois Program Selection Constants - must align with JeVois .cfg files
+    public static final int kPixleWidth1 = 320; //MAPPING_WIDTH_PXL_1
+    public static final int kPixleHeight1 = 240; //MAPPING_HEIGHT_PXL_1
+    public static final int kFPS1 = 20; //MAPPING_FRMRT_FPS_1
+    // JeVois Program Selection Constants - must align with JeVois .cfg files
+    public static final int kPixleWidth2 = 320; //MAPPING_WIDTH_PXL_2
+    public static final int kPixleHeight2 = 240; //MAPPING_HEIGHT_PXL_2
+    public static final int kFPS2 = 20; //MAPPING_FRMRT_FPS_2
+    // Packet format constants (how the string is sent from the JeVois)
+    public static final String kPacketStart = "{"; //PACKET_START_CHAR
+    public static final String kPacketEnd = "}"; //PACKET_END_CHAR
+    public static final String kPacketSpacer = ","; //PACKET_DILEM_CHAR
+    // Status variables 
+    public static boolean camStreamRunning = false;
     public static  boolean trackingOnline = false;
     public static  boolean trackingEnable = true;
     public static  boolean serOutEnable = false;
-	// Most recently seen target 
-	public static double trk;			//how many targets 
+    // Most recently seen target 
+    public static double trk;			//how many targets 
     public static double xCntr;			//x coordinate of target center
-	public static double yCntr;			//y coordinate of target center
+    public static double yCntr;			//y coordinate of target center
     public static double camMode;		//Camera mode either vision processing, driver mode, or another vision processing mode
 
     /**
-     * PID GAINS AND OTHER PID CONSTANTS
+     * PID GAINS AND CONSTANTS AND PROFILING CONSTANTS
      */
     //PID constants
     public static final double kMinOutput = -1.0;
@@ -214,45 +210,46 @@ public final class Constants {
     public static final double kMagP = 0.0;
     public static final double kMagI = 0.0;
     public static final double kMagD = 0.0;
-    //PIDF values for closed-loop position control for the arm tilt motor
-    public static final double kTiltFF = 0.0;
-    public static final double kTiltP = 0.0;
-    public static final double kTiltI = 0.00;
-    public static final double kTiltD = 0.0;
     //PIDF values for closed-loop velocity control for the shooter wheels
     public static final double kShooterFF = .5 / 2700.0;
     public static final double kShooterP = 0.0;
     public static final double kShooterI = 0.0;
     public static final double kShooterD = 0.0;
-    //PIDF values for closed-loop position control for the climbing motor
-    public static final double kClimbFF = 0.0;
-    public static final double kClimbP = 0.0;
-    public static final double kClimbI = 0.0;
-    public static final double kClimbD = 0.0;
-    //PIDF values for initial alignment of the wheels
-    public static final double kAlignmentFF = 0.0;
-    public static final double kAlignmentP = 0.0;
-    public static final double kAlignmentI = 0.0;
-    public static final double kAlignmentD = 0.0;
-    
-  /**
+
+    //PID values for profiled closed-loop position control for the arm tilt motor
+    public static final double kTiltP = 0.0;
+    public static final double kTiltI = 0.00;
+    public static final double kTiltD = 0.0;
+
+    public static final double kTiltMaxVel = 0.0; 
+    public static final double kTiltMaxAccel = 0.0;
+
+    public static final double kTiltFFStatic = 0.8; //volts to get past idle
+    public static final double kTiltFFGrav = 0.0; //volts to compensate for gravity (cosine)
+    public static final double kTiltFFVel = 0.0; //volts to hold at given velocity
+
+    /**
+     * AUTO TRAJECTORY PID GAINS
+     */
+
+    //PID Controllers for auto command
+    public static final double kPXController = .3;
+    public static final double kPYController = .4;
+    public static final double kPThetaController = .5;
+    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
+    public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
+  
+    //Constraint for the motion profilied robot angle controller
+    public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
+      new TrapezoidProfile.Constraints(kMaxAngularSpeedRadiansPerSecond,
+        kMaxAngularSpeedRadiansPerSecondSquared);
+
+    /**
      * CONTROLLER PORTS
      */
     //controller ports 
     public static final int kDriveControllerPort = 0;
     public static final int kAuxControllerPort = 1;
-    //PID Controllers for auto command
-    public static final double kPXController = .3;
-    public static final double kPYController = .4;
-    public static final double kPThetaController = .5;
 
-    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
-    public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
- 
-
-     //Constraint for the motion profilied robot angle controller
-     public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
-     new TrapezoidProfile.Constraints(kMaxAngularSpeedRadiansPerSecond,
-       kMaxAngularSpeedRadiansPerSecondSquared);
 }
 

@@ -68,6 +68,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.util.JevoisDriver;
 
 /**
@@ -124,6 +125,7 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
     //sets resolution of camera
     jevoisCam = new JevoisDriver();
 
+    m_autonomousCommand = robotContainer.getAutonomousCommand();
   }
 
   /**
@@ -142,15 +144,8 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
      * place any SmartDashboard methods that should be running even when the robot is disabled here
      */
 
-    SmartDashboard.putNumber("fl", robotContainer.drive.frontLeftModule.getModulePosition());
-    SmartDashboard.putNumber("fr", robotContainer.drive.frontRightModule.getModulePosition());
-    SmartDashboard.putNumber("bl", robotContainer.drive.backLeftModule.getModulePosition());
-    SmartDashboard.putNumber("br", robotContainer.drive.backRightModule.getModulePosition());
-
-    SmartDashboard.putNumber("fl relative", robotContainer.drive.frontLeftModule.getRelativeAngleEncoder());
-    SmartDashboard.putNumber("fr relative", robotContainer.drive.frontRightModule.getRelativeAngleEncoder());
-    SmartDashboard.putNumber("bl relative", robotContainer.drive.backLeftModule.getRelativeAngleEncoder());
-    SmartDashboard.putNumber("br relative", robotContainer.drive.backRightModule.getRelativeAngleEncoder());
+    SmartDashboard.putNumber("shooter vel", robotContainer.shooter.getAverageVelocity());
+    SmartDashboard.putNumber("arm pot", robotContainer.arm.getMeasurement());
 
     
   }
@@ -171,7 +166,6 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = robotContainer.getAutonomousCommand();
 
     findTapeThread.start();
 

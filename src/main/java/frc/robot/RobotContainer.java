@@ -51,29 +51,29 @@ public class RobotContainer {
 
   public static final SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
   public static final IntakeSubsystem intake = new IntakeSubsystem();
-  //public static final MagazineSubsystem magazine = new MagazineSubsystem();
-  //public static final ShooterSubsystem shooter = new ShooterSubsystem();
+  public static final MagazineSubsystem magazine = new MagazineSubsystem();
+  public static final ShooterSubsystem shooter = new ShooterSubsystem();
   public static final ColorSpinnerSubsystem spinner = new ColorSpinnerSubsystem();
-  //public static final ClimberSubsystem climb = new ClimberSubsystem();
+  public static final ClimberSubsystem climb = new ClimberSubsystem();
   //public static final ClimberBarSubsystem bar = new ClimberBarSubsystem();
   public static final ArmSubsystem arm = new ArmSubsystem();
 
-  //public final Command intakeCommand = new IntakeCommand(intake, magazine);
+  public final Command intakeCommand = new IntakeCommand(intake, magazine);
   public final Command spinToColor = new SpinToColor(spinner);
   public final Command spinByAmount = new SpinByAmount(spinner);
   public final Command endSpinRoutine = new EndSpinRoutine(spinner, drive); //empty command atm, needs code
  
   public final Command aimbotRotate = new AimbotRotateCommand(drive);
   public final Command aimbotTilt = new AimbotTiltCommand(arm);
-  //public final Command aimbotSpinup = new AimbotSpinupCommand(shooter);
-  //public final Command shoot = new ShootCommand(magazine);
+  public final Command aimbotSpinup = new AimbotSpinupCommand(shooter);
+  public final Command shoot = new ShootCommand(magazine);
 
   public static XboxController driveController = new XboxController(kDriveControllerPort);
   public static XboxController auxController = new XboxController(kAuxControllerPort);
 
   public static Trigger leftTrigger = new Trigger(intake::getLeftTrigger);
-  //public static Trigger rightTrigger = new Trigger(shooter::getRightTrigger);
-  //public static Trigger auxLeftTrigger = new Trigger(shooter::getLTrigger);
+  public static Trigger rightTrigger = new Trigger(shooter::getRightTrigger);
+  public static Trigger auxLeftTrigger = new Trigger(shooter::getLTrigger);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -102,19 +102,19 @@ public class RobotContainer {
       new RunCommand(intake::stop, intake)
      );
 
-   /*  magazine.setDefaultCommand(
-      new RunCommand(magazine::magDisengage, magazine)
-    ); */
+    magazine.setDefaultCommand(
+      new RunCommand(magazine::runAtIdle, magazine)
+    );
 
-    /*climb.setDefaultCommand(
+    climb.setDefaultCommand(
       new RunCommand(
         () -> climb.climb(-auxController.getRawAxis(1)), climb
       )
-    );/*
+    );
 
-    /* shooter.setDefaultCommand(
+    shooter.setDefaultCommand(
       new RunCommand(shooter::stop, shooter)
-    ); */
+    );
 
    /*  bar.setDefaultCommand(
       new RunCommand(
@@ -165,16 +165,16 @@ public class RobotContainer {
       new ConditionalCommand(aimbotTilt, arm.getDefaultCommand(), () -> !arm.isManualOverride()),
       aimbotSpinup
     )); */
-    /* new JoystickButton(driveController, Button.kBumperRight.value)
+    new JoystickButton(driveController, Button.kBumperRight.value)
     .whenHeld(new RunCommand(shooter::setShooterSpeed, shooter));
- */
+
 
     //intakes balls
-    //leftTrigger.whileActiveContinuous(intakeCommand);
+    leftTrigger.whileActiveContinuous(intakeCommand);
     //activates shooting mode
-   /*  rightTrigger.whileActiveContinuous(
+    rightTrigger.whileActiveContinuous(
       new RunCommand(magazine::magEngage, magazine));
- */
+
       //new RunCommand(drive::lockWheels)
       //.alongWith(shoot));
 
@@ -206,7 +206,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
 
-    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+    /* SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
     drive.exampleTrajectory,
     drive::getPoseMeters, 
     drive.kinematics,
@@ -220,6 +220,7 @@ public class RobotContainer {
     drive
   );
 
-    return swerveControllerCommand.andThen(() -> drive.drive(0, 0, 0));
+    return swerveControllerCommand.andThen(() -> drive.drive(0, 0, 0)); */
+    return null;
   }
 }

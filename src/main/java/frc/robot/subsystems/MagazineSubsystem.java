@@ -33,7 +33,6 @@ public class MagazineSubsystem extends SubsystemBase {
   CANEncoder magEncoder;
   CANPIDController magPID;
   public Solenoid magPis;
-  Ultrasonic ultra = new Ultrasonic(kMagazineSonarOutput, kMagazineSonarInput);
   Timer timer = new Timer();
 
 
@@ -63,7 +62,6 @@ public class MagazineSubsystem extends SubsystemBase {
     //magPis.set(true);
 
     //Sets sonar to constant pulse
-    ultra.setAutomaticMode(true);
   }
 
   //Magazine Conveyor 
@@ -95,7 +93,11 @@ public class MagazineSubsystem extends SubsystemBase {
   public void magEngage(){
     magShoot();
     magPis.set(true);
+  }
 
+  public void runAtIdle(){
+    magIdle();
+    magPis.set(false);
   }
 
   double speed;
@@ -111,14 +113,7 @@ public class MagazineSubsystem extends SubsystemBase {
   //Ultrasonic Sonar Ball Counter
   public void senseBall() {
 
-    //Gets the sonar's range in inches
-    double range = ultra.getRangeInches();
-
-      if(range <= 6) {
-        hasBallEntered = true;
-      } else {
-        hasBallEntered = false;
-      }
+  
 
 
     if (hasBallEntered && !hasBallCounted) {

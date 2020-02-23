@@ -33,7 +33,7 @@ public class ClimberSubsystem extends SubsystemBase {
   VictorSPX climberMotor;
 
   public Solenoid climberPis = new Solenoid(kClimberPistonPort);
-  public DigitalInput climberLimitSwitch = new DigitalInput(kClimberLimitSwitch);
+  public DigitalInput climberLimitSwitch = new DigitalInput(8);
 
   public ClimberSubsystem(){
     climberMotor = new VictorSPX(ID_CLIMBER_MOTOR);
