@@ -16,6 +16,26 @@
  for the strength of our robot as a whole.
  Please don't break.
 
+public void homageToDepricatedSubsystems() {
+
+ For ekatni (intake backwards)
+ for its identity has been lost
+ never to be seen again.
+ I love you <3
+
+ For Z-Target (our auto-aiming system)
+ because somebody thought aimbot was better.
+ despite obvious inferiority
+ 
+ Into true egress
+ for hanger prayed.
+ Lost to new ages
+ to dust it lay.
+
+return "We love you <3";
+}
+ 
+
  We pray to the control systems, and National Instruments,
  for if we do not we will surely perish
  as the RoboRio may not work.
@@ -45,11 +65,10 @@
 
 package frc.robot;
 
-import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoSource;
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.JevoisDriver;
@@ -126,6 +145,16 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
      * place any SmartDashboard methods that should be running even when the robot is disabled here
      */
 
+    SmartDashboard.putNumber("fl", robotContainer.drive.frontLeftModule.getModulePosition());
+    SmartDashboard.putNumber("fr", robotContainer.drive.frontRightModule.getModulePosition());
+    SmartDashboard.putNumber("bl", robotContainer.drive.backLeftModule.getModulePosition());
+    SmartDashboard.putNumber("br", robotContainer.drive.backRightModule.getModulePosition());
+
+    SmartDashboard.putNumber("fl relative", robotContainer.drive.frontLeftModule.getRelativeAngleEncoder());
+    SmartDashboard.putNumber("fr relative", robotContainer.drive.frontRightModule.getRelativeAngleEncoder());
+    SmartDashboard.putNumber("bl relative", robotContainer.drive.backLeftModule.getRelativeAngleEncoder());
+    SmartDashboard.putNumber("br relative", robotContainer.drive.backRightModule.getRelativeAngleEncoder());
+
     
   }
 
@@ -157,30 +186,28 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
 
 
   
-  double distanceToWall;
   /**
    * This function is called periodically during autonomous.
    * 
    */
-  @Override 
+  static double distanceToWall;
+
+  @Override
   public void autonomousPeriodic() {
 
-    //cosine of the angle to tape
-    double angleCos;
-
-    //constantly updates distance to wall
+    // cosine of the angle to tape
+    // constantly updates distance to wall
     synchronized (visionLock) {
-      //if the pipeline hasn't been confirmed to run, it won't run.
+      // if the pipeline hasn't been confirmed to run, it won't run.
       if (pipelineRan) {
-        /*if the pipeline ran, it'll get the values for angle
-          and distance, and then do math and find the distance
-          from the camera to the wall */
-        double y = this.angleToTape;
-        double x = this.distanceToTape;
-        y = Math.toRadians(y);
-
-        angleCos = Math.cos(y);
-        distanceToWall = angleCos * x;
+        /*
+         * if the pipeline ran, it'll get the values for distance, and then do
+         * math and find the distance from the camera to the wall
+         */
+        double x = this.distanceToTape;     
+          //tape is 6ft 9 1/4in or 81 1/4in off the ground
+        distanceToWall = Math.sqrt((x * x) - 6601.5625);
+       
 
       } else {
         System.out.println("Pipeline hasn't run yet, cannot find distance!");
@@ -188,8 +215,8 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
     }
   }
 
-  //output for distanceToWall
-  public double getDistanceToWall() {
+  // output for distanceToWall
+  public static double getDistanceToWall() {
     return distanceToWall;
   }
 

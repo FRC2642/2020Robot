@@ -8,6 +8,9 @@
 package frc.robot.subsystems;
 
 import static frc.robot.Constants.*;
+import static frc.robot.util.GeneralUtil.*;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
@@ -15,29 +18,38 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ControlType;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Ultrasonic;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 
 public class MagazineSubsystem extends SubsystemBase {
   
   CANSparkMax magBeltMotor;
   CANEncoder magEncoder;
   CANPIDController magPID;
-
-  public Solenoid magPis = new Solenoid(kMagazinePistonPort);
-
+  public Solenoid magPis;
   Ultrasonic ultra = new Ultrasonic(kMagazineSonarOutput, kMagazineSonarInput);
+  Timer timer = new Timer();
+
+
 
   int ballCount = 0;
   boolean hasBallEntered = false;
+  boolean hasBallCounted = false;
 
   public MagazineSubsystem() {
     //Magazine Neo Information
     magBeltMotor = new CANSparkMax(ID_MAG_BELT_MOTOR, MotorType.kBrushless);
     magBeltMotor.restoreFactoryDefaults();
-    magBeltMotor.setInverted(false);
+    magBeltMotor.setInverted(true);
     magBeltMotor.setSmartCurrentLimit(kCurrentLimit);
+
+    magPis = new Solenoid(kMagazinePistonPort);
 
     //Magazine PID Controller
     magPID = magBeltMotor.getPIDController();
@@ -46,51 +58,88 @@ public class MagazineSubsystem extends SubsystemBase {
 
     magPID.setFeedbackDevice(magEncoder);
 
+    setPIDGains(magPID, PIDProfile.MAGAZINE);
     //Lifts Magazine belt on startup
-    magPis.set(true);
+    //magPis.set(true);
 
     //Sets sonar to constant pulse
     ultra.setAutomaticMode(true);
   }
 
   //Magazine Conveyor 
-  public void setBeltVelocity(double targetVelocity){
+  public void setBeltVelocity(double targetVelocity) {
     magPID.setReference(targetVelocity, ControlType.kVelocity);
   }
-
-  public void magBeltOn(){
-    setBeltVelocity(kMagBeltSpeed);
+  //Magazine Belt Is Set To Load Speed
+  public void magLoad() {
+    setBeltVelocity(kMagLoadSpeed);
+  }
+  //Magazine Belt Is Set To Shoot Speed
+  public void magShoot() {
+    setBeltVelocity(kMagShootSpeed);
+  }
+  //Magazine Belt Is Set To Idle Speed
+  public void magIdle() {
+    setBeltVelocity(kMagIdleSpeed);
+  }
+  //Magazine Belt Is Set To Stop
+  public void stop() {
+    magPID.setReference(0, ControlType.kVelocity);
   }
 
   //Magazine "Left" and "Right" Belt Lift Pistons
   public void magDisengage(){
-    magPis.set(true);
+    stop();
+    magPis.set(false);
   }
   public void magEngage(){
-    magPis.set(false);
+    magShoot();
+    magPis.set(true);
+
+  }
+
+  double speed;
+  public void test(double speed){
+    this.speed = speed;
+    magBeltMotor.set(speed);
+  }
+
+  public double getSpeed(){
+    return speed;
   }
 
   //Ultrasonic Sonar Ball Counter
-  public void senseBall(){
+  public void senseBall() {
 
-  //Gets the sonar's range in inches
-  double range = ultra.getRangeInches();
+    //Gets the sonar's range in inches
+    double range = ultra.getRangeInches();
 
-    if(range <= 6) {
-      hasBallEntered = true;
-    } else {
-      hasBallEntered = false;
-    }
+      if(range <= 6) {
+        hasBallEntered = true;
+      } else {
+        hasBallEntered = false;
+      }
 
-    if (hasBallEntered = true) {
+
+    if (hasBallEntered && !hasBallCounted) {
       ballCount++;
-    } else {
-
-    }   
-  }
-
+      hasBallCounted = true;
+    }
+  
+      if (ballCount == 5) {
+        timer.start();
+        RobotContainer.auxController.setRumble(RumbleType.kLeftRumble, 1);
+        RobotContainer.auxController.setRumble(RumbleType.kRightRumble, 1);
+      }
+      if (timer.get() > .5) {
+        RobotContainer.auxController.setRumble(RumbleType.kLeftRumble, 0);
+        RobotContainer.auxController.setRumble(RumbleType.kRightRumble, 0);
+      }
+    }
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    SmartDashboard.putNumber("vel", magEncoder.getVelocity());
+
+    SmartDashboard.putNumber("input", speed);
   }
 }

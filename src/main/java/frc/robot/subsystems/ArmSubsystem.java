@@ -9,20 +9,21 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.*;
 
-import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 
-public class ArmSubsystem extends ProfiledPIDSubsystem {
-  static TalonSRX armMotor;
-  public DigitalInput armSwitch = new DigitalInput(kArmLimitSwitch);
+import frc.robot.Robot;
+import frc.robot.RobotContainer;
 
+public class ArmSubsystem extends ProfiledPIDSubsystem {
+
+  public VictorSPX armMotor;
   /**
    * Creates a new ArmSubsystem.
    */
@@ -33,44 +34,60 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
             // The motion profile constraints
             new TrapezoidProfile.Constraints(0, 0)));
 
-    armMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 2);
+    armMotor = new VictorSPX(ID_MAG_TILT_MOTOR);
+           // armMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Absolute, 0, 2);
   }
 
-  public ErrorCode getEncoderValue() {
-    return armMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 2);
+ // public ErrorCode getEncoderValue() {
 
+ // }
+  public void armLift(double d) {
+    //20, 30, 40, and 60 are example numbers, can and will be changed
+    double distance = Robot.getDistanceToWall();
+    distance = distance * kArmAngleConversionFactor;
+    if (distance > 20 && distance < 40) {
+      setGoal(20);
+    } else if (distance > 40 && distance < 60) {
+      setGoal(30);
+    } //add more criterias
   }
-  public void armLift() {
-    //20, 40, and 60 are example numbers
-
-    /*if (getDistanceToWall() > 20 && getDistanceToWall() < 40) {
-      setGoal(value);
-    } else if (getDistanceToWall() > 40 && getDistanceToWall() < 60) {
-      setGoal(difValue)
-    } ...
-    */
-  }
+  public double getArmPos() {
+    int armPos = 0;
+   // armMotor.getSensorCollection().getPulseWidthPosition() & 0xFFF;
+    return armPos;
+}
 
   public void armDown() {
-        if (getArmSwitch()) {
-      ArmSubsystem.armStop();
+        if (getArmPos() == 0) {
+      armStop();
     } else {
       setGoal(0);
     }
   }
-
-  public void armClimbPos() {
-    
-    setGoal(90);
+  public void armTrenchPos() {
+    setGoal(227.555556);
+  }
+  public void armBasePos() {
+    setGoal(512.000001);
+  }
+  public void armClimbPos() { 
+    if(getArmPos() == 1024){
+      armStop();
+    }
+    setGoal(1024);
 
     }
 
-  public static void armStop() {
+  public void moveArm(double speed){
+    armMotor.set(ControlMode.PercentOutput, speed);
+  }
+
+  public void armStop() {
     armMotor.set(ControlMode.PercentOutput, 0);
   }
-  public boolean getArmSwitch() {
-    armSwitch.get();
-    return armSwitch.get();
+
+  public boolean isManualOverride(){
+    return (RobotContainer.auxController.getRawAxis(5) > .2 || RobotContainer.auxController.getRawAxis(5) < -.2);
   }
   
   @Override

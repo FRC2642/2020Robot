@@ -78,6 +78,11 @@ public class GeneralUtil {
         pid.setI(kClimbI);
         pid.setD(kClimbD);
         break;
+      case ALIGN:
+        pid.setFF(kAlignmentFF);
+        pid.setP(kAlignmentP);
+        pid.setI(kAlignmentI);
+        pid.setD(kAlignmentD);
       
     }
     pid.setOutputRange(kMinOutput, kMaxOutput);
@@ -89,7 +94,8 @@ public class GeneralUtil {
         MAGAZINE,
         TILT,
         SHOOTER,
-        CLIMB;
+        CLIMB,
+        ALIGN;
   }
 }
 

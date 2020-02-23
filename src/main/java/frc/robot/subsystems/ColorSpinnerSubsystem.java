@@ -1,10 +1,7 @@
 
-
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.ID_SPINNER_MOTOR;
-import static frc.robot.Constants.kColorSpinnerPistonPort;
-import static frc.robot.Constants.kCurrentLimit;
+import static frc.robot.Constants.*;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -12,8 +9,10 @@ import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -21,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class ColorSpinnerSubsystem extends SubsystemBase {
 
   CANSparkMax colorSpinnerMotor;
-  public Solenoid colorSpinerPiston;
+  public Solenoid colorSpinnerPiston;
   public ColorSensorV3 m_colorSensor;
 
   //creates final RGB values for colors
@@ -31,10 +30,13 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
   final Color kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
   final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
 
-  String colorString;
+  public String colorString;
   ColorMatchResult match;
   Color detectedColor;
+  double slowStopSpeed = 0.4;
+  double slowingSpeed = 0.005; //change this for diffrent slowing of the motor after rotating
   
+  boolean hasCounted;
 
   public ColorSpinnerSubsystem() {
     colorSpinnerMotor = new CANSparkMax(ID_SPINNER_MOTOR, MotorType.kBrushless);
@@ -42,7 +44,7 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
     colorSpinnerMotor.setInverted(false);
     colorSpinnerMotor.setSmartCurrentLimit(kCurrentLimit);
 
-    colorSpinerPiston = new Solenoid(kColorSpinnerPistonPort);
+    colorSpinnerPiston = new Solenoid(kColorSpinnerPistonPort);
 
     m_colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
 
@@ -50,6 +52,8 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
     m_colorMatcher.addColorMatch(kGreenTarget);
     m_colorMatcher.addColorMatch(kRedTarget);
     m_colorMatcher.addColorMatch(kYellowTarget);  
+
+    hasCounted = false;
   }
 
 
@@ -80,24 +84,34 @@ public static boolean Counter() {
     colorSpinnerMotor.set(-.4);
   }
 
-//spins colorspinner motor Clockwise
-  public void spinR(){
-    colorSpinnerMotor.set(.4);
+//slowly spins clockwise
+  public void slowSpinR(){
+    colorSpinnerMotor.set(.1);
+  }
+//slowly pins counter clokewise
+  public void slowSpinL(){
+    colorSpinnerMotor.set(-.1);
   }
 
 //stops motor
   public void stop(){
     colorSpinnerMotor.set(0.0);
   }
+//slow stop
+  public void slowStop(){
+    while (slowStopSpeed != 0);
+    colorSpinnerMotor.set(slowStopSpeed);
+    slowStopSpeed = slowStopSpeed - slowingSpeed;
+  }
 
  //extends piston
   public void extend(){
-    colorSpinerPiston.set(true);
+    colorSpinnerPiston.set(true);
   }
 
 //retracts piston
   public void retract(){
-    colorSpinerPiston.set(false);
+    colorSpinnerPiston.set(false);
   }
 
   public String detectColor(){
@@ -119,14 +133,37 @@ public static boolean Counter() {
 
     return colorString;
   }
+
+  public String getColorString(){
+    return colorString;
+  }
+
+  public void zeroCounter(){
+    counter = 0;
+  }
+
+  public int counter = 0;
+  public void counterUp(){
+    counter++;
+  }
+
+  public int getCounter(){
+    return counter;
+  }
+
+  public boolean getHasCounted(){
+    return hasCounted;
+  }
+
+  public void setHasCounted(boolean hasCounted){
+    this.hasCounted = hasCounted;
+  }
   
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Red", detectedColor.red);
-    SmartDashboard.putNumber("Green", detectedColor.green);
-    SmartDashboard.putNumber("Blue", detectedColor.blue);
-    SmartDashboard.putNumber("Confidence", match.confidence);
-    SmartDashboard.putString("Detected Color", colorString);
+    //SmartDashboard.putNumber("Confidence", match.confidence);
+    SmartDashboard.putString("Detected Color", detectColor());
+    SmartDashboard.putNumber("counter", getCounter());
   }
 }
 
