@@ -106,9 +106,11 @@ public boolean getRightTrigger() {
     righShooterMotor.set(speed);
   }
 
-  public double getSpeed(){
-    return speed;
+  public double getAverageVelocity(){
+    return ((lShooterEncoder.getVelocity() + rShooterEncoder.getVelocity()) / 2);
   }
+
+
 
   public boolean getLTrigger(){
     return (RobotContainer.auxController.getTriggerAxis(Hand.kLeft) > .5);

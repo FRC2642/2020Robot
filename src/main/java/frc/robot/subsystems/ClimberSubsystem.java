@@ -19,6 +19,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
@@ -29,13 +30,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class ClimberSubsystem extends SubsystemBase {
   
   VictorSPX climberMotor;
-
   public Solenoid climberPis = new Solenoid(kClimberPistonPort);
   public DigitalInput climberLimitSwitch = new DigitalInput(kClimberLimitSwitch);
+
+  public boolean isClimbLocked;
 
   public ClimberSubsystem(){
     climberMotor = new VictorSPX(ID_CLIMBER_MOTOR);
     climberMotor.setInverted(true);
+
+    isClimbLocked = getClimbLock();
   }
   
   public void setClimbPower(double power){
@@ -43,36 +47,61 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public void climbUp(){
-    if(!getLimitSwitch()){
-      climberPis.set(false);
       setClimbPower(.7);
-    } else {
-      stop();
-    }
   }
 
-  public void climbDown() {
-    climberPis.set(false);
+  public void climbDown(){
     setClimbPower(-.7);
   }
 
-  public void climb(double speed) {
-    if (speed > .5) {
-      climbUp();
-    } else if (speed < -.5) {
-      climbDown();
+  public void climb(double speed){
+    if(!getClimbLock()){
+      if(speed > .5){
+        climbUp();
+      } else if(speed < -.5){
+        climbDown();
+      } else {
+        stop();
+      }
+
     } else {
       stop();
     }
   }
 
-  public boolean getLimitSwitch() {
+  public boolean getClimbLock(){
+    return !climberPis.get();
+  }
+
+  public void toggleClimbLock(){
+    if(isClimbLocked){
+      setClimbPiston(false);
+      isClimbLocked = false;
+
+    } else if(!isClimbLocked){
+      climberPis.set(true);
+      isClimbLocked = true;
+    }
+  }
+
+  public void setClimbPiston(boolean state){
+    if(state){
+      climberPis.set(true);
+    } else if(!state){
+      climberPis.set(false);
+    }
+  }
+
+  public boolean getLimitSwitch(){
     return climberLimitSwitch.get();
   }
 
   public void stop() {
     climberMotor.set(ControlMode.PercentOutput, 0);
-    climberPis.set(true);
   }
 
+  @Override
+  public void periodic(){
+    SmartDashboard.putBoolean("climb", getClimbLock());
+  }
 }

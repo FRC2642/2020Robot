@@ -74,6 +74,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.util.JevoisDriver;
 
 /**
@@ -131,6 +132,7 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
     //sets resolution of camera
     jevoisCam = new JevoisDriver();
 
+    m_autonomousCommand = robotContainer.getAutonomousCommand();
   }
 
   /**
@@ -149,15 +151,15 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
      * place any SmartDashboard methods that should be running even when the robot is disabled here
      */
 
+    SmartDashboard.putNumber("shooter vel", robotContainer.shooter.getAverageVelocity());
+    SmartDashboard.putNumber("arm pot", robotContainer.arm.getMeasurement());
+    SmartDashboard.putNumber("mag vel", RobotContainer.magazine.getVelocity());
+
     SmartDashboard.putNumber("fl", RobotContainer.drive.frontLeftModule.getModulePosition());
     SmartDashboard.putNumber("fr", RobotContainer.drive.frontRightModule.getModulePosition());
     SmartDashboard.putNumber("bl", RobotContainer.drive.backLeftModule.getModulePosition());
     SmartDashboard.putNumber("br", RobotContainer.drive.backRightModule.getModulePosition());
 
-    SmartDashboard.putNumber("fl relative", RobotContainer.drive.frontLeftModule.getRelativeAngleEncoder());
-    SmartDashboard.putNumber("fr relative", RobotContainer.drive.frontRightModule.getRelativeAngleEncoder());
-    SmartDashboard.putNumber("bl relative", RobotContainer.drive.backLeftModule.getRelativeAngleEncoder());
-    SmartDashboard.putNumber("br relative", RobotContainer.drive.backRightModule.getRelativeAngleEncoder());
     
   }
 
@@ -177,7 +179,6 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = robotContainer.getAutonomousCommand();
 
     findTapeThread.start();
 

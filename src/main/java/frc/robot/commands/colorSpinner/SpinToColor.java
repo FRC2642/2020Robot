@@ -16,7 +16,7 @@ public class SpinToColor extends CommandBase {
 
   ColorSpinnerSubsystem spinner;
   SwerveDriveSubsystem drive;
-  String correctColor;
+  char correctColor;
   String currentColor;
   String colorNeeded;
 
@@ -28,43 +28,29 @@ public class SpinToColor extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    correctColor = DriverStation.getInstance().getGameSpecificMessage();
-    correctColor = correctColor.toUpperCase();
-    if (correctColor == "RED"){
-      colorNeeded = "BLUE";
-    }
-    if (correctColor == "GREEN"){
-      colorNeeded = "YELLOW";
-    }
-    if (correctColor == "BLUE"){
-      colorNeeded = "RED";
-    }
-    if (correctColor == "YELLOW"){
-      colorNeeded = "GREEN";
-    }
 
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (correctColor == "RED" & currentColor == "YELLOW"){
-      spinner.slowSpinL();
-    }
-    else if (correctColor == "GREEN" & currentColor == "RED"){
-      spinner.slowSpinL();
-    }
-    else if (correctColor == "BLUE" & currentColor == "GREEN"){
-      spinner.slowSpinL();
-    }
-    else if (correctColor == "YELLOW" & currentColor == "BLUE"){
-      spinner.slowSpinL();
-    }
-    else{
-      spinner.slowSpinR();
-    }
+
     currentColor = spinner.detectColor();
     currentColor = currentColor.toUpperCase();
+
+    if (colorNeeded == "RED" & currentColor == "YELLOW"){
+      spinner.slowSpinL();
+    } else if (colorNeeded == "GREEN" & currentColor == "RED"){
+      spinner.slowSpinL();
+    } else if (colorNeeded == "BLUE" & currentColor == "GREEN"){
+      spinner.slowSpinL();
+    } else if (colorNeeded == "YELLOW" & currentColor == "BLUE"){
+      spinner.slowSpinL();
+
+    } else{
+      spinner.slowSpinR();
+    }
+
   }
 
   // Called once the command ends or is interrupted.

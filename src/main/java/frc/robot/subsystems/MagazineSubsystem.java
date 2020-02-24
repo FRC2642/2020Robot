@@ -60,7 +60,6 @@ public class MagazineSubsystem extends SubsystemBase {
     //Lifts Magazine belt on startup
     //magPis.set(true);
 
-
   }
 
   //Magazine Conveyor 
@@ -92,7 +91,11 @@ public class MagazineSubsystem extends SubsystemBase {
   public void magEngage(){
     magShoot();
     magPis.set(true);
+  }
 
+  public void runAtIdle(){
+    magIdle();
+    magPis.set(false);
   }
 
   double speed;
@@ -105,15 +108,18 @@ public class MagazineSubsystem extends SubsystemBase {
     return speed;
   }
 
-  public void senseBall() {
 
+  public double getVelocity(){
+    return magEncoder.getVelocity();
+  }
+
+  public void senseBall() {
 
       if(rightSight.get() == true) {
         hasBallEntered = true;
       } else {
         hasBallEntered = false;
       }
-
 
     if (hasBallEntered && !hasBallCounted) {
       ballCount++;
@@ -132,8 +138,6 @@ public class MagazineSubsystem extends SubsystemBase {
     }
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("vel", magEncoder.getVelocity());
-
     SmartDashboard.putNumber("input", speed);
   }
 }
