@@ -29,7 +29,7 @@ import frc.robot.commands.aimbot.AimbotSpinupCommand;
 import frc.robot.commands.aimbot.AimbotTiltCommand;
 import frc.robot.commands.aimbot.ShootCommand;
 import frc.robot.commands.colorSpinner.EndSpinRoutine;
-import frc.robot.commands.colorSpinner.SpinByAmount;
+import frc.robot.commands.colorSpinner.spinByAmount;
 import frc.robot.commands.colorSpinner.SpinToColor;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClimberBarSubsystem;
@@ -60,7 +60,7 @@ public class RobotContainer {
 
   //public final Command intakeCommand = new IntakeCommand(intake, magazine);
   public final Command spinToColor = new SpinToColor(spinner);
-  public final Command spinByAmount = new SpinByAmount(spinner);
+  public final Command spinByAmount = new spinByAmount(spinner);
   public final Command endSpinRoutine = new EndSpinRoutine(spinner, drive); //empty command atm, needs code
  
   public final Command aimbotRotate = new AimbotRotateCommand(drive);
