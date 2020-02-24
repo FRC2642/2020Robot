@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ColorSpinnerSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 
-public class SpinByAmount extends CommandBase {
+public class spinByAmount extends CommandBase {
 
   ColorSpinnerSubsystem spinner;
   SwerveDriveSubsystem drive;
@@ -19,7 +19,7 @@ public class SpinByAmount extends CommandBase {
   String targetColor;
   boolean hasCounted;
 
-  public SpinByAmount(final ColorSpinnerSubsystem colorSub){
+  public spinByAmount(final ColorSpinnerSubsystem colorSub) {
     spinner = colorSub;
     addRequirements(spinner);
 

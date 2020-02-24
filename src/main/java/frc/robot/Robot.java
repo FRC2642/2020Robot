@@ -16,22 +16,25 @@
  for the strength of our robot as a whole.
  Please don't break.
 
-public void depricatedSubsystems() {
+public void homageToDepricatedSubsystems() {
 
- I pray for ekatni (intake backwards)
+ For ekatni (intake backwards)
  for its identity has been lost
  never to be seen again.
  I love you <3
 
- I pray for Z-Target (our auto-aiming system)
+ For Z-Target (our auto-aiming system)
  because somebody thought aimbot was better.
  despite obvious inferiority
  
-}
  Into true egress
  for hanger prayed.
  Lost to new ages
  to dust it lay.
+
+return "We love you <3";
+}
+ 
 
  We pray to the control systems, and National Instruments,
  for if we do not we will surely perish
@@ -62,8 +65,11 @@ public void depricatedSubsystems() {
 
 package frc.robot;
 
+import frc.robot.RobotContainer;
+
 import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.vision.VisionThread;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -102,6 +108,7 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
   public double angleToTape = 0;
   public double distanceToTape = 0;
 
+  public Solenoid lightRing = new Solenoid(0, Constants.kLightRing);
   /*this was suppose to copy the pipeline values and store them
   in separate variables, but I got rid of them because VS code
   didn't like it, and we don't really need it anyway.
@@ -152,6 +159,7 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
     SmartDashboard.putNumber("fr", RobotContainer.drive.frontRightModule.getModulePosition());
     SmartDashboard.putNumber("bl", RobotContainer.drive.backLeftModule.getModulePosition());
     SmartDashboard.putNumber("br", RobotContainer.drive.backRightModule.getModulePosition());
+
     
   }
 
@@ -191,9 +199,13 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
 
+    lightRing.set(true);
+
     // cosine of the angle to tape
     // constantly updates distance to wall
     synchronized (visionLock) {
+
+
       // if the pipeline hasn't been confirmed to run, it won't run.
       if (pipelineRan) {
         /*
@@ -231,6 +243,10 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+
+    lightRing.set(true);
+
+
     /**
      * DO NOT PLACE SMARTDASHBOARD DIAGNOSTICS HERE
      * Place any teleop-only SmartDashboard diagnostics in the appropriate subsystem's periodic() method

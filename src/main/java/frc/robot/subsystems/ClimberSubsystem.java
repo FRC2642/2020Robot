@@ -9,16 +9,14 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.*;
-import static frc.robot.util.GeneralUtil.*;
+//import frc.robot.RobotContainer;
+import static frc.robot.Constants.ID_CLIMBER_MOTOR;
+import static frc.robot.Constants.kClimberLimitSwitch;
+import static frc.robot.Constants.kClimberPistonPort;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import com.revrobotics.CANEncoder;
-import com.revrobotics.CANPIDController;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.ControlType;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -65,6 +63,7 @@ public class ClimberSubsystem extends SubsystemBase {
       } else {
         stop();
       }
+
     } else {
       stop();
     }
@@ -97,7 +96,7 @@ public class ClimberSubsystem extends SubsystemBase {
     return climberLimitSwitch.get();
   }
 
-  public void stop(){
+  public void stop() {
     climberMotor.set(ControlMode.PercentOutput, 0);
   }
 

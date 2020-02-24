@@ -82,7 +82,6 @@ public final class Constants {
        */
     //arm potentiometer
     public static final int kArmPotPort = 0;
-
     
       /**
        * DIO
@@ -90,6 +89,9 @@ public final class Constants {
     //hanger limit switch
     public static final int kClimberLimitSwitch = 8; // not 0
     public static final int kArmLimitSwitch = 1;
+
+    // Right Sight
+    public static final int kRightSight = 2;
 
       /**
        * USB
@@ -159,6 +161,9 @@ public final class Constants {
     /**
      * VISION CONSTANTS
      */
+  
+     //light ring
+  public static final int kLightRing = 7;
 
      //JeVois Camera Number
     public static final int kJevoisCamNumber = 1; //JEVOIS_CAM_NUMBER

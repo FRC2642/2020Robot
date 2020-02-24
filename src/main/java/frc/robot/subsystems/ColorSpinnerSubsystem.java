@@ -9,11 +9,9 @@ import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -55,6 +53,28 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
 
     hasCounted = false;
   }
+
+
+public static boolean Counter() {
+  int counter = 0;
+  int spins = 0;
+  // The contents of this will execute 100 times
+  for(spins = 1; spins <= 7; spins++) 
+    
+      // This increases your counter by 1
+      counter++; 
+      // Since your counter is declared outside of the loop, it is accessible here
+      // so check its value
+      if(counter <= 6) { 
+        return true;
+  
+      }else{
+        return false;
+      }
+  
+      // At this point, the loop is over, so go to the next iteration
+   
+}
 
 //Set speed for Color Spinner direction.
 //spins colorspinner motor Counter Clockwise
