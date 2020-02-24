@@ -29,7 +29,7 @@ import frc.robot.commands.aimbot.AimbotSpinupCommand;
 import frc.robot.commands.aimbot.AimbotTiltCommand;
 import frc.robot.commands.aimbot.ShootCommand;
 import frc.robot.commands.colorSpinner.EndSpinRoutine;
-import frc.robot.commands.colorSpinner.SpinByAmount;
+import frc.robot.commands.colorSpinner.spinByAmount;
 import frc.robot.commands.colorSpinner.SpinToColor;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClimberBarSubsystem;
@@ -54,15 +54,15 @@ public class RobotContainer {
   //public static final MagazineSubsystem magazine = new MagazineSubsystem();
   //public static final ShooterSubsystem shooter = new ShooterSubsystem();
   public static final ColorSpinnerSubsystem spinner = new ColorSpinnerSubsystem();
-  public static final ClimberSubsystem climb = new ClimberSubsystem();
+  //public static final ClimberSubsystem climb = new ClimberSubsystem();
   //public static final ClimberBarSubsystem bar = new ClimberBarSubsystem();
   public static final ArmSubsystem arm = new ArmSubsystem();
 
   //public final Command intakeCommand = new IntakeCommand(intake, magazine);
- /*  public final Command spinToColor = new SpinToColor(spinner);
-  public final Command spinByAmount = new SpinByAmount(spinner);
+  public final Command spinToColor = new SpinToColor(spinner);
+  public final Command spinByAmount = new spinByAmount(spinner);
   public final Command endSpinRoutine = new EndSpinRoutine(spinner, drive); //empty command atm, needs code
- */
+ 
   public final Command aimbotRotate = new AimbotRotateCommand(drive);
   public final Command aimbotTilt = new AimbotTiltCommand(arm);
   //public final Command aimbotSpinup = new AimbotSpinupCommand(shooter);
@@ -106,11 +106,11 @@ public class RobotContainer {
       new RunCommand(magazine::magDisengage, magazine)
     ); */
 
-    climb.setDefaultCommand(
+    /*climb.setDefaultCommand(
       new RunCommand(
         () -> climb.climb(-auxController.getRawAxis(1)), climb
       )
-    );
+    );/*
 
     /* shooter.setDefaultCommand(
       new RunCommand(shooter::stop, shooter)
@@ -148,6 +148,8 @@ public class RobotContainer {
     //toggles field drive and robot drive
     new JoystickButton(driveController, Button.kBack.value)
       .whenPressed(new InstantCommand(drive::toggleIsDriveFieldCentric));
+    new JoystickButton(driveController, Button.kStart.value)
+      .whenHeld(new RunCommand(drive::alignWheels, drive));
     //puts arm in highest/climb position
     new JoystickButton(driveController, Button.kY.value)
     .whenPressed(new InstantCommand(arm::armClimbPos));
@@ -166,10 +168,6 @@ public class RobotContainer {
     /* new JoystickButton(driveController, Button.kBumperRight.value)
     .whenHeld(new RunCommand(shooter::setShooterSpeed, shooter));
  */
-    //manual buttons, maybe taken out
-    new JoystickButton(driveController, Button.kStart.value)
-    .whenPressed(new InstantCommand(drive::toggleIsAimingMode));
-
 
     //intakes balls
     //leftTrigger.whileActiveContinuous(intakeCommand);
@@ -184,12 +182,12 @@ public class RobotContainer {
   
     //-=+=-AUX Controller Buttons-=+=-//
 
-  /*   //spins color spinner to certain color
+     //spins color spinner to certain color
     new JoystickButton(auxController, Button.kA.value)
-    .whenPressed(spinToColor.andThen(endSpinRoutine));
+    .whenPressed(spinToColor);//.andThen(endSpinRoutine));
     //spins color spinner by set ammount
     new JoystickButton(auxController, Button.kY.value)
-    .whenPressed(spinByAmount.andThen(endSpinRoutine));*/
+    .whenPressed(spinByAmount);//.andThen(endSpinRoutine));
     //extends the color spinner
     new JoystickButton(auxController, Button.kBumperRight.value)
     .whenPressed(new InstantCommand(spinner::extend));
@@ -197,9 +195,6 @@ public class RobotContainer {
     new JoystickButton(auxController, Button.kBumperLeft.value)
     .whenPressed(new InstantCommand(spinner::retract));
  
-
-    new JoystickButton(auxController, Button.kA.value)
-    .whenHeld(new RunCommand(drive::alignWheels, drive));
 
     //auxLeftTrigger.whileActiveContinuous(new RunCommand(() -> shooter.setShooterSpeed(kShooterRPM)));
   }

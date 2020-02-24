@@ -37,10 +37,10 @@ public class IntakeSubsystem extends SubsystemBase {
   public void intakeIn() {
     intakeMotor.set(-.6);
 
-    if(timerStarted = false){
+    if(timerStarted == false){
     timer.start();
     }
-
+    
     if(timer.get() < .3){
       if(intakePiston.get() != Value.kReverse){
         intakePiston.set(Value.kReverse);

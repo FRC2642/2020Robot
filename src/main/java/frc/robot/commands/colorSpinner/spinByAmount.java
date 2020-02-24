@@ -11,47 +11,43 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ColorSpinnerSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 
-public class SpinByAmount extends CommandBase {
+public class spinByAmount extends CommandBase {
 
-  public boolean notDetected = true;
   ColorSpinnerSubsystem spinner;
   SwerveDriveSubsystem drive;
-  public String Color;
-  double spin; 
-  public int counter = 0; 
 
-  public SpinByAmount(final ColorSpinnerSubsystem colorSub){
+  String targetColor;
+  boolean hasCounted;
+
+  public spinByAmount(final ColorSpinnerSubsystem colorSub) {
     spinner = colorSub;
     addRequirements(spinner);
+
   }
-  //creates a counter that detects how many times the wheel spins
-  public boolean spinnerCounter(){ 
-      counter++;
-      if(counter >= 7)
-        return false;
-      else{
-        return true;
-      }
-    }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Color = spinner.detectColor();
-    notDetected = true;
+    targetColor = spinner.detectColor();
+    spinner.zeroCounter();
+    System.out.println(spinner.getCounter());
+    hasCounted = true;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     spinner.spinL();
-    if (spinner.detectColor() == Color & !notDetected){
-      spinnerCounter();
-      notDetected = true;
+
+    //System.out.println(spinner.getCounter());
+
+    if ((spinner.detectColor() == targetColor) && !spinner.getHasCounted()) {
+      spinner.counterUp();
+      spinner.setHasCounted(true);
+    } else if (spinner.detectColor() != targetColor) {
+      spinner.setHasCounted(false);
     }
-    else if(spinner.detectColor() != Color){
-      notDetected = false;
-    }
+    
     }
  
   
@@ -60,22 +56,13 @@ public class SpinByAmount extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(final boolean interrupted) {
+    spinner.stop();
+    spinner.zeroCounter();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() { 
-    if (counter >= 7){ //if it has spun the desired amount of times it stops
-      spinner.slowStop();
-
-      return true;
-    }
-    else{
-      return false;
-    }
-
-
-    
-
+    return (spinner.getCounter() >= 8); //if it has spun the desired amount of times it stop
   }
 }
