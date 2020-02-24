@@ -80,9 +80,7 @@ public final class Constants {
       /**
        * ANALOG
        */
-    //sonar
-    public static final int kMagazineSonarInput = 0;
-    public static final int kMagazineSonarOutput = 1;
+      
     
       /**
        * DIO
@@ -90,7 +88,8 @@ public final class Constants {
     //hanger limit switch
     public static final int kClimberLimitSwitch = 2; // not 0
     public static final int kArmLimitSwitch = 1;
-    //Right SIght
+
+    // Right Sight
     public static final int kRightSight = 2;
 
       /**
