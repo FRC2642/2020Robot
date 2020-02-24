@@ -134,13 +134,13 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     odometry = new SwerveDriveOdometry(kinematics, getRobotYawInRotation2d());
 
-    TrajectoryConfig config =
+     TrajectoryConfig config =
       new TrajectoryConfig(Constants.kMaxMPS, Constants.kMaxAcceleration)
         // Add kinematics to ensure max speed is actually obeyed
         .setKinematics(kinematics);
 
     
-    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+     Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
       // Start at the origin facing the +X direction
       new Pose2d(0, 0, new Rotation2d(0)),
       // Pass through these two interior waypoints, making an 's' curve path
@@ -426,6 +426,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     Pose2d pose2d = getPoseMeters();
     Translation2d poseTrans2d = pose2d.getTranslation();
     double pose = poseTrans2d.getX();
+    pose /= kMaxSpeedConversionFactor;
     return Units.metersToFeet(pose);
   }
 

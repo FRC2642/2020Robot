@@ -146,7 +146,12 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
 
     SmartDashboard.putNumber("shooter vel", robotContainer.shooter.getAverageVelocity());
     SmartDashboard.putNumber("arm pot", robotContainer.arm.getMeasurement());
+    SmartDashboard.putNumber("mag vel", RobotContainer.magazine.getVelocity());
 
+    SmartDashboard.putNumber("fl", RobotContainer.drive.frontLeftModule.getModulePosition());
+    SmartDashboard.putNumber("fr", RobotContainer.drive.frontRightModule.getModulePosition());
+    SmartDashboard.putNumber("bl", RobotContainer.drive.backLeftModule.getModulePosition());
+    SmartDashboard.putNumber("br", RobotContainer.drive.backRightModule.getModulePosition());
     
   }
 

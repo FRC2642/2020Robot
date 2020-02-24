@@ -11,6 +11,7 @@ import static frc.robot.Constants.*;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.controller.PIDController;
@@ -83,7 +84,7 @@ public class RobotContainer {
     configureButtonBindings();
 
     drive.setDefaultCommand(new RunCommand(
-      () -> drive.drive( // .5, 0, 0),
+      () -> drive.drive( //0, 0, 0),
         -(driveController.getRawAxis(1)) * .7, 
         driveController.getRawAxis(0) * .7, 
         driveController.getRawAxis(4) * .7),
@@ -103,7 +104,7 @@ public class RobotContainer {
      );
 
     magazine.setDefaultCommand(
-      new RunCommand(magazine::runAtIdle, magazine)
+      new RunCommand(magazine::stop, magazine)
     );
 
     climb.setDefaultCommand(
@@ -158,7 +159,9 @@ public class RobotContainer {
     .whenPressed(new InstantCommand(arm::armBasePos));
     //puts arm in lowest/trench position
     new JoystickButton(driveController, Button.kA.value)
-    .whenPressed(new InstantCommand(arm::armTrenchPos));
+    //.whenPressed(new InstantCommand(arm::armTrenchPos));
+    .whenPressed(new RunCommand(() -> drive.drive(.3, 0.0, 0.0), drive
+    ));
     //activates aiming mode
    /*  new JoystickButton(driveController, Button.kBumperRight.value)
     .whenHeld(aimbotRotate.alongWith(
@@ -184,7 +187,8 @@ public class RobotContainer {
 
      //spins color spinner to certain color
     new JoystickButton(auxController, Button.kA.value)
-    .whenPressed(spinToColor);//.andThen(endSpinRoutine));
+    .whenPressed(spinToColor);//.andThen(endSpinRoutine));.
+    
     //spins color spinner by set ammount
     new JoystickButton(auxController, Button.kY.value)
     .whenPressed(spinByAmount);//.andThen(endSpinRoutine));
@@ -194,6 +198,9 @@ public class RobotContainer {
     //retracts the color spinner 
     new JoystickButton(auxController, Button.kBumperLeft.value)
     .whenPressed(new InstantCommand(spinner::retract));
+    //toggle climb lock
+    new JoystickButton(auxController, Button.kStickLeft.value)
+    .whenPressed(new InstantCommand(climb::toggleClimbLock));
  
 
     //auxLeftTrigger.whileActiveContinuous(new RunCommand(() -> shooter.setShooterSpeed(kShooterRPM)));
@@ -220,7 +227,7 @@ public class RobotContainer {
     drive
   );
 
-    return swerveControllerCommand.andThen(() -> drive.drive(0, 0, 0)); */
+    return swerveControllerCommand.andThen(() -> drive.drive(0, 0, 0));   */
     return null;
   }
 }

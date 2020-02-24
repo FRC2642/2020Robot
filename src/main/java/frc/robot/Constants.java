@@ -88,7 +88,7 @@ public final class Constants {
        * DIO
        */
     //hanger limit switch
-    public static final int kClimberLimitSwitch = 2; // not 0
+    public static final int kClimberLimitSwitch = 8; // not 0
     public static final int kArmLimitSwitch = 1;
 
       /**
@@ -106,7 +106,7 @@ public final class Constants {
     public static final double kRelativeRotationsPerModuleRotation = 18.05; //relative rots
     public static final double kModuleDegreesToRelativeRotations 
                                = kRelativeRotationsPerModuleRotation / 360.0; //rots / degrees
-    public static final double kMaxSpeedConversionFactor = 8.31; //gear ratio conversion
+    public static final double kMaxSpeedConversionFactor = 8.667; //gear ratio conversion
     public static final double kShooterRPMConversionFactor = 18.84954;
     //value isn't accurate, change later
    public static final double kArmAngleConversionFactor = 10.0;
@@ -142,15 +142,15 @@ public final class Constants {
     //motor neutral deadband
     public static final double kMotorNeutralDeadband = .15;
     //mag belt speed
-    public static final double kMagShootSpeed = 6500;
-    public static final double kMagLoadSpeed = 5000;
-    public static final double kMagIdleSpeed = 2000;
+    public static final double kMagShootSpeed = 6500; //RPM
+    public static final double kMagLoadSpeed = 5000; //RPM
+    public static final double kMagIdleSpeed = 2000; //RPM
     //swerve max speeds
     public static final double kMaxModuleRPM = 12.0 * kMaxSpeedConversionFactor; //desired module rotation speed * gear ratio conversion
     public static final double kMaxMPS = 12.0 * kMaxSpeedConversionFactor; //desired movement speed * gear ratio conversion
     public static final double kMaxAcceleration = 1.2192;
     //shooter rpm
-    public static final double kShooterRPM = 2500; //RPM
+    public static final double kShooterRPM = 4350; //RPM
     //tilt presets
     public static final double kTrenchPos = 0.0;
     public static final double kNormalPos = 0.0;
@@ -208,13 +208,13 @@ public final class Constants {
     //PIDF values for closed-loop velocity control for the magazine belt
     public static final double kMagFF = .5 / 5400;
     public static final double kMagP = 0.0;
-    public static final double kMagI = 0.0;
+    public static final double kMagI = kMagFF / 500;
     public static final double kMagD = 0.0;
     //PIDF values for closed-loop velocity control for the shooter wheels
     public static final double kShooterFF = .5 / 2700.0;
     public static final double kShooterP = 0.0;
-    public static final double kShooterI = 0.0;
-    public static final double kShooterD = 0.0;
+    public static final double kShooterI = kShooterFF / 10000;
+    public static final double kShooterD = 0.08;
 
     //PID values for profiled closed-loop position control for the arm tilt motor
     public static final double kTiltP = 0.0;

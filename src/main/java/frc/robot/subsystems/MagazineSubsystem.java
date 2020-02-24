@@ -110,6 +110,10 @@ public class MagazineSubsystem extends SubsystemBase {
     return speed;
   }
 
+  public double getVelocity(){
+    return magEncoder.getVelocity();
+  }
+
   //Ultrasonic Sonar Ball Counter
   public void senseBall() {
 
@@ -133,8 +137,6 @@ public class MagazineSubsystem extends SubsystemBase {
     }
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("vel", magEncoder.getVelocity());
-
     SmartDashboard.putNumber("input", speed);
   }
 }
