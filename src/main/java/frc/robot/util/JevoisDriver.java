@@ -13,7 +13,7 @@ package frc.robot.util;
 	
 	public class JevoisDriver implements Runnable {
 	
-		private static final String TapePrefix = "TAPE";
+		private static final String TapePrefix = "D3";
 	
 		private UsbCamera _jevoisCam;
 		private Thread _stream;
@@ -22,12 +22,14 @@ package frc.robot.util;
 		private String[] parts;
 		private boolean detectsTape;
 				
-		public String id;
+		public String id; // chang 
 		public int w;
 		public int h;
-		public int hlist;
-		public int rvecs;
-		public int tvecs;
+		public double hlist;
+		public double rvecs;
+		public double tvecs;
+		public double x;
+		public double y;
 	
 
 	
@@ -45,7 +47,7 @@ package frc.robot.util;
 			if (_stream.isAlive()) {
 				try {
 					_jevoisCam = CameraServer.getInstance().startAutomaticCapture();
-					_jevoisCam.setVideoMode(VideoMode.PixelFormat.kYUYV, 640, 480, 30);
+					_jevoisCam.setVideoMode(VideoMode.PixelFormat.kYUYV, 640, 480, 20);
 				} catch (Exception e) {
 					DriverStation.reportError("Jevois Cam failed to connect!", e.getStackTrace());
 				}
@@ -95,9 +97,10 @@ package frc.robot.util;
 			try {
 				w = Integer.parseInt(tokens[1]);
 				h = Integer.parseInt(tokens[2]);
-				hlist = Integer.parseInt(tokens[3]);
-				rvecs = Integer.parseInt(tokens[4]);
-				tvecs = Integer.parseInt(tokens[5]);
+				hlist = Double.parseDouble(tokens[3]);
+				rvecs = Double.parseDouble(tokens[4]);
+				tvecs = Double.parseDouble(tokens[5]);
+				x = Double.parseDouble(tokens[6]);
 
 			} catch(NumberFormatException ex) {
 			}
@@ -106,15 +109,19 @@ package frc.robot.util;
 		public void VisionTarget(String ida,
 							int wa,
 							int ha,
-							int hlista,
-							int rvecsa,
-							int tvecsa) {
+							double hlista,
+							double rvecsa,
+							double tvecsa,
+							double xa,
+							double ya) {
 			id = ida;
 			w = wa;
 			h = ha;
 			hlist = hlista;
 			rvecs = rvecsa;
 			tvecs = tvecsa;
+			x = xa;
+			y = ya;
 
 		}
 	
@@ -125,7 +132,11 @@ package frc.robot.util;
 			System.out.println("hlist = " + hlist);
 			System.out.println("rvecs = " + rvecs);
 			System.out.println("tvecs = " + tvecs);
+			System.out.println("x = " + x);
+			System.out.println("y = " + y);
+
 
 			
 		}
+
 	}
