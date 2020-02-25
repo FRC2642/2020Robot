@@ -81,6 +81,7 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
   //non-profiled methods
 
   public void moveArm(double speed){
+    disable();
     armMotor.set(ControlMode.PercentOutput, speed);
   }
 
