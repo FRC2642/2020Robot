@@ -1,4 +1,4 @@
-package frc.robot.util.library;
+package frc.robot.util;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants;
