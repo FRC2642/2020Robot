@@ -168,6 +168,14 @@ class PIRATEVIS:
             str2 += " OK"
             hlist.append(hull)
 
+        #for c in contours finding center
+
+         for s in squares:        
+            br = cv2.boundingRect(s)
+            #Target "x" and "y" center 
+            x = br[0] + (br[2]/2)
+            y = br[1] + (br[3]/2)
+
         if len(str2) > len(beststr2):  beststr2 = str2
         
         # Display any results requested by the users:
@@ -291,8 +299,12 @@ class PIRATEVIS:
                             1, jevois.YUYV.LightGreen)
 
             i += 1
+    ####################################################################################################
+    #find center of bounding rectangle
+
+    
             
-    # ###################################################################################################
+    ####################################################################################################
     ## Process function with no USB output
     def processNoUSB(self, inframe):
         # Get the next camera image (may block until it is captured) as OpenCV BGR:
@@ -351,7 +363,7 @@ class PIRATEVIS:
         (rvecs, tvecs) = self.estimatePose(hlist)
 
         # Send all serial messages:
-        self.sendSerial(w, h, hlist, rvecs, tvecs)
+        self.sendSerial(w, h, hlist, rvecs, tvecs, x, y)
 
         # Draw all detections in 3D:
         self.drawDetections(outimg, hlist, rvecs, tvecs)
