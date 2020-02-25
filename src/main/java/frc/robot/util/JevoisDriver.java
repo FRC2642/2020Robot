@@ -114,6 +114,7 @@ package frc.robot.util;
 							double tvecsa,
 							double xa,
 							double ya) {
+
 			id = ida;
 			w = wa;
 			h = ha;
@@ -134,9 +135,10 @@ package frc.robot.util;
 			System.out.println("tvecs = " + tvecs);
 			System.out.println("x = " + x);
 			System.out.println("y = " + y);
-
-
-			
+	
 		}
-
+    
+		public double getDistFromTarget(){
+			return hlist;
+		}
 	}
