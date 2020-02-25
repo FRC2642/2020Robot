@@ -76,6 +76,9 @@ public final class Constants {
 
     //climb piston port
     public static final int kClimberPistonPort = 4;
+ 
+     //light ring
+    public static final int kLightRing = 7;
 
       /**
        * ANALOG
@@ -154,16 +157,13 @@ public final class Constants {
     //shooter rpm
     public static final double kShooterRPM = 4350; //RPM
     //tilt presets
-    public static final double kTrenchPos = 0.0;
+    public static final double kTrenchPos = .207;
     public static final double kNormalPos = 0.0;
-    public static final double kClimbPos = 0.0;
+    public static final double kClimbPos = .814;
 
     /**
      * VISION CONSTANTS
      */
-  
-     //light ring
-  public static final int kLightRing = 7;
 
      //JeVois Camera Number
     public static final int kJevoisCamNumber = 1; //JEVOIS_CAM_NUMBER

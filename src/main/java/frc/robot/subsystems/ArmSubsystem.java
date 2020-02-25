@@ -42,7 +42,7 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
 
     armMotor = new VictorSPX(ID_MAG_TILT_MOTOR);
 
-    armPot = new AnalogPotentiometer(kArmPotPort);//, 90, 0); //range of 90 degrees 
+    armPot = new AnalogPotentiometer(kArmPotPort, 90, 0);
 
     //armFF = new ArmFeedforward(kTiltFFStatic, kTiltFFGrav, kTiltFFVel);
   }
@@ -60,6 +60,11 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
   public void armClimbPos() { 
     enable();
     setGoal(kClimbPos);
+  }
+
+  public void goToPosition(double position){
+    enable();
+    setGoal(position);
   }
   
   @Override
@@ -79,7 +84,7 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
     armMotor.set(ControlMode.PercentOutput, speed);
   }
 
-  public void armStop() {
+  public void stop() {
     armMotor.set(ControlMode.PercentOutput, 0);
   }
 

@@ -104,7 +104,7 @@ public class RobotContainer {
      );
 
     magazine.setDefaultCommand(
-      new RunCommand(magazine::stop, magazine)
+      new RunCommand(magazine::stopAtIdle, magazine)
     );
 
     climb.setDefaultCommand(

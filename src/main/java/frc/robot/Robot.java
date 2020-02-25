@@ -65,6 +65,8 @@ return "We love you <3";
 
 package frc.robot;
 
+import static frc.robot.Constants.*;
+
 import frc.robot.RobotContainer;
 
 import edu.wpi.cscore.VideoSource;
@@ -100,7 +102,7 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
   public final Object visionLock = new Object();
 
   //Jevois driver
-  JevoisDriver jevoisCam;
+  public static JevoisDriver jevoisCam;
 
 
   // The pipeline outputs we want
@@ -108,7 +110,7 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
   public double angleToTape = 0;
   public double distanceToTape = 0;
 
-  public Solenoid lightRing = new Solenoid(0, Constants.kLightRing);
+  public Solenoid lightRing = new Solenoid(0, kLightRing);
   /*this was suppose to copy the pipeline values and store them
   in separate variables, but I got rid of them because VS code
   didn't like it, and we don't really need it anyway.
@@ -131,8 +133,6 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
     //takes a picture with the camera
     //sets resolution of camera
     jevoisCam = new JevoisDriver();
-
-    m_autonomousCommand = robotContainer.getAutonomousCommand();
   }
 
   /**
@@ -181,6 +181,8 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
   public void autonomousInit() {
 
     findTapeThread.start();
+    
+    m_autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

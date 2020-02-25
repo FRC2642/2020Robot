@@ -1,7 +1,9 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.*;
+import static frc.robot.Constants.ID_SPINNER_MOTOR;
+import static frc.robot.Constants.kColorSpinnerPistonPort;
+import static frc.robot.Constants.kCurrentLimit;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -11,6 +13,7 @@ import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -161,7 +164,6 @@ public static boolean Counter() {
   public void periodic() {
     //SmartDashboard.putNumber("Confidence", match.confidence);
     SmartDashboard.putString("Detected Color", detectColor());
-    SmartDashboard.putNumber("counter", getCounter());
   }
 }
 

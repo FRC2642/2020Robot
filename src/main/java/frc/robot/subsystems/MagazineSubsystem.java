@@ -84,7 +84,7 @@ public class MagazineSubsystem extends SubsystemBase {
   }
 
   //Magazine "Left" and "Right" Belt Lift Pistons
-  public void magDisengage(){
+  public void stopAtIdle(){
     stop();
     magPis.set(false);
   }

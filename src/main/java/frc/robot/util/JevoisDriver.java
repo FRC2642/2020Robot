@@ -25,8 +25,8 @@ package frc.robot.util;
 		public String id;
 		public int w;
 		public int h;
-		public int hlist;
-		public int rvecs;
+		public double hlist;
+		public double rvecs;
 		public int tvecs;
 	
 
@@ -95,8 +95,8 @@ package frc.robot.util;
 			try {
 				w = Integer.parseInt(tokens[1]);
 				h = Integer.parseInt(tokens[2]);
-				hlist = Integer.parseInt(tokens[3]);
-				rvecs = Integer.parseInt(tokens[4]);
+				hlist = Double.parseDouble(tokens[3]);
+				rvecs = Double.parseDouble(tokens[4]);
 				tvecs = Integer.parseInt(tokens[5]);
 
 			} catch(NumberFormatException ex) {
@@ -106,8 +106,8 @@ package frc.robot.util;
 		public void VisionTarget(String ida,
 							int wa,
 							int ha,
-							int hlista,
-							int rvecsa,
+							double hlista,
+							double rvecsa,
 							int tvecsa) {
 			id = ida;
 			w = wa;
@@ -127,5 +127,9 @@ package frc.robot.util;
 			System.out.println("tvecs = " + tvecs);
 
 			
+		}
+
+		public double getDistFromTarget(){
+			return hlist;
 		}
 	}

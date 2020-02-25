@@ -8,7 +8,10 @@
 package frc.robot.commands.aimbot;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+
+import frc.robot.Robot;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.util.JevoisDriver;
 
 public class AimbotTiltCommand extends CommandBase {
   
@@ -28,6 +31,9 @@ public class AimbotTiltCommand extends CommandBase {
   @Override
   public void execute() {
     
+    double targetAngle = Robot.jevoisCam.getDistFromTarget();
+
+    arm.goToPosition(targetAngle);
     //tilt goes a certain angle based on the distance to the target
 
   }
@@ -35,6 +41,7 @@ public class AimbotTiltCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    arm.stop();
   }
 
   // Returns true when the command should end.
