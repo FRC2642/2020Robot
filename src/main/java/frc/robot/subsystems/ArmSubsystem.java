@@ -42,7 +42,7 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
 
     armMotor = new VictorSPX(ID_MAG_TILT_MOTOR);
 
-    armPot = new AnalogPotentiometer(kArmPotPort, 90, 0);
+    armPot = new AnalogPotentiometer(kArmPotPort);
 
     //armFF = new ArmFeedforward(kTiltFFStatic, kTiltFFGrav, kTiltFFVel);
   }

@@ -7,6 +7,9 @@
 
 package frc.robot.commands.aimbot;
 
+import static frc.robot.Constants.*;
+
+import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import frc.robot.Robot;
@@ -31,9 +34,13 @@ public class AimbotTiltCommand extends CommandBase {
   @Override
   public void execute() {
     
-    double targetAngle = Robot.jevoisCam.getDistFromTarget();
+    double dist = Robot.jevoisCam.getDistFromTarget(); //m
+    
+    //calculates pot value based on distance from base of target 
+    //angle increases as distance decreases
+    double targetPos = kArmAngleConversionFactor / dist;
 
-    arm.goToPosition(targetAngle);
+    arm.goToPosition(targetPos);
     //tilt goes a certain angle based on the distance to the target
 
   }
