@@ -65,18 +65,16 @@ return "We love you <3";
 
 package frc.robot;
 
-import static frc.robot.Constants.*;
-
-import frc.robot.RobotContainer;
+import static frc.robot.Constants.kLightRing;
 
 import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.vision.VisionThread;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.util.JevoisDriver;
 
 /**
@@ -89,6 +87,7 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
 
   public Command m_autonomousCommand;
   public RobotContainer robotContainer;
+  public PowerDistributionPanel pdp;
     
   public VideoSource usbCamera;
     
@@ -133,6 +132,7 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
     //takes a picture with the camera
     //sets resolution of camera
     jevoisCam = new JevoisDriver();
+    pdp = new PowerDistributionPanel();
   }
 
   /**
@@ -160,7 +160,7 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
     SmartDashboard.putNumber("bl", RobotContainer.drive.backLeftModule.getModulePosition());
     SmartDashboard.putNumber("br", RobotContainer.drive.backRightModule.getModulePosition());
 
-    
+
   }
 
   /**

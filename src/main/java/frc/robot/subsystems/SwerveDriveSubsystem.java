@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.SwerveModule;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
@@ -428,6 +429,23 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     double pose = poseTrans2d.getX();
     pose /= kMaxSpeedConversionFactor;
     return Units.metersToFeet(pose);
+  }
+
+  /**
+   * TARGET ACQUISITON FOR AIMING
+   */
+  /** */
+
+
+  public double getTargetX(){
+    double target = Robot.jevoisCam.getCenterOfVisionTarget();
+    return target;
+  }
+
+  public double getCurrentX(){
+    double width = Robot.jevoisCam.getCamWidth();
+    double center = width / 2;
+    return center;
   }
 
   /**

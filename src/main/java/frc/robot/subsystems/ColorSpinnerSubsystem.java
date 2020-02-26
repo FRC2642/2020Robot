@@ -1,9 +1,7 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.ID_SPINNER_MOTOR;
-import static frc.robot.Constants.kColorSpinnerPistonPort;
-import static frc.robot.Constants.kCurrentLimit;
+import static frc.robot.Constants.*;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -11,6 +9,7 @@ import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,6 +22,7 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
   CANSparkMax colorSpinnerMotor;
   public Solenoid colorSpinnerPiston;
   public ColorSensorV3 m_colorSensor;
+  public DigitalInput limitSwitch;
 
   //creates final RGB values for colors
   final ColorMatch m_colorMatcher = new ColorMatch();
@@ -48,6 +48,8 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
     colorSpinnerPiston = new Solenoid(kColorSpinnerPistonPort);
 
     m_colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
+
+    limitSwitch = new DigitalInput(kColorSpinnerLimitSwitch);
 
     m_colorMatcher.addColorMatch(kBlueTarget);
     m_colorMatcher.addColorMatch(kGreenTarget);

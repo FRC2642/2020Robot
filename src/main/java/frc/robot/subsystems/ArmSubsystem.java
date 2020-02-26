@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.controller.ArmFeedforward;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Robot;
@@ -43,6 +44,8 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
     armMotor = new VictorSPX(ID_MAG_TILT_MOTOR);
 
     armPot = new AnalogPotentiometer(kArmPotPort);
+
+    //enable();
 
     //armFF = new ArmFeedforward(kTiltFFStatic, kTiltFFGrav, kTiltFFVel);
   }
@@ -98,4 +101,19 @@ public class ArmSubsystem extends ProfiledPIDSubsystem {
     double realOutput = (outputVoltage / RobotController.getBatteryVoltage());
     armMotor.set(ControlMode.PercentOutput, realOutput);
    }
+
+   public double getPot(){
+     return armPot.get();
+   }
+
+   @Override
+  public boolean isEnabled() {
+    // TODO Auto-generated method stub
+    return super.isEnabled();
+  }
+
+  @Override
+  public void periodic(){
+    SmartDashboard.putBoolean("arm enabled", isEnabled());
+  }
 }

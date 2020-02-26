@@ -80,10 +80,6 @@ public final class Constants {
      //light ring
     public static final int kLightRing = 7;
 
-    //light ring
-    public static final int kLightRing = 7;
-
-
       /**
        * ANALOG
        */
@@ -94,11 +90,12 @@ public final class Constants {
        * DIO
        */
     //hanger limit switch
-    public static final int kClimberLimitSwitch = 8; // not 0
+    public static final int kClimberLimitSwitch = 0; // not 0
     public static final int kArmLimitSwitch = 1;
+    public static final int kColorSpinnerLimitSwitch = 2;
 
     // Right Sight
-    public static final int kRightSight = 2;
+    public static final int kRightSight = 3;
 
       /**
        * USB
@@ -161,7 +158,7 @@ public final class Constants {
     public static final double kShooterRPM = 4350; //RPM
     //tilt presets
     public static final double kTrenchPos = .207;
-    public static final double kNormalPos = 0.0;
+    public static final double kNormalPos = .450;
     public static final double kClimbPos = .814;
 
     /**
@@ -192,12 +189,12 @@ public final class Constants {
     public static final double kShooterD = 0.08;
 
     //PID values for profiled closed-loop position control for the arm tilt motor
-    public static final double kTiltP = 0.0;
+    public static final double kTiltP = 0.4;
     public static final double kTiltI = 0.00;
     public static final double kTiltD = 0.0;
 
-    public static final double kTiltMaxVel = 0.0; 
-    public static final double kTiltMaxAccel = 0.0;
+    public static final double kTiltMaxVel = 8.0; 
+    public static final double kTiltMaxAccel = 1.0;
 
     public static final double kTiltFFStatic = 0.8; //volts to get past idle
     public static final double kTiltFFGrav = 0.0; //volts to compensate for gravity (cosine)

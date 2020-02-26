@@ -68,6 +68,7 @@ public class MagazineSubsystem extends SubsystemBase {
   }
   //Magazine Belt Is Set To Load Speed
   public void magLoad() {
+    senseBall();
     setBeltVelocity(kMagLoadSpeed);
   }
   //Magazine Belt Is Set To Shoot Speed
@@ -136,8 +137,20 @@ public class MagazineSubsystem extends SubsystemBase {
         RobotContainer.auxController.setRumble(RumbleType.kRightRumble, 0);
       }
     }
+
+  public double getMotorCurrent(){
+    return magBeltMotor.getOutputCurrent();
+  }
+
+  public int getBallCount() {
+    return ballCount;
+  }
+
   @Override
   public void periodic() {
     SmartDashboard.putNumber("input", speed);
+    SmartDashboard.putNumber("magCurrent", getMotorCurrent());
+
+    SmartDashboard.putNumber("ballCount", getBallCount());
   }
 }

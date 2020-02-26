@@ -7,33 +7,28 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.*;
+import static frc.robot.Constants.kAuxControllerPort;
+import static frc.robot.Constants.kDriveControllerPort;
 
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
-import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.aimbot.AimbotRotateCommand;
 import frc.robot.commands.aimbot.AimbotSpinupCommand;
 import frc.robot.commands.aimbot.AimbotTiltCommand;
 import frc.robot.commands.aimbot.ShootCommand;
+import frc.robot.commands.armTilt.ArmToBasePosition;
 import frc.robot.commands.colorSpinner.EndSpinRoutine;
-import frc.robot.commands.colorSpinner.spinByAmount;
 import frc.robot.commands.colorSpinner.SpinToColor;
+import frc.robot.commands.colorSpinner.spinByAmount;
+import frc.robot.commands.intake.IntakeCommand;
+import frc.robot.commands.intake.IntakeOutCommand;
 import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.ClimberBarSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ColorSpinnerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -59,7 +54,10 @@ public class RobotContainer {
   //public static final ClimberBarSubsystem bar = new ClimberBarSubsystem();
   public static final ArmSubsystem arm = new ArmSubsystem();
 
+  //COMMANDS 
   public final Command intakeCommand = new IntakeCommand(intake, magazine);
+  public final Command intakeOutCommand = new IntakeOutCommand(intake, magazine);
+
   public final Command spinToColor = new SpinToColor(spinner);
   public final Command spinByAmount = new spinByAmount(spinner);
   public final Command endSpinRoutine = new EndSpinRoutine(spinner, drive); //empty command atm, needs code
@@ -69,6 +67,9 @@ public class RobotContainer {
   public final Command aimbotSpinup = new AimbotSpinupCommand(shooter);
   public final Command shoot = new ShootCommand(magazine);
 
+  public final Command armToBasePosition = new ArmToBasePosition(arm);
+
+  //CONTROLLERS STUFF
   public static XboxController driveController = new XboxController(kDriveControllerPort);
   public static XboxController auxController = new XboxController(kAuxControllerPort);
 
@@ -156,12 +157,10 @@ public class RobotContainer {
     .whenPressed(new InstantCommand(arm::armClimbPos));
     //puts arm in midway position
     new JoystickButton(driveController, Button.kB.value)
-    .whenPressed(new InstantCommand(arm::armBasePos));
+    .whenPressed(armToBasePosition);
     //puts arm in lowest/trench position
     new JoystickButton(driveController, Button.kA.value)
-    //.whenPressed(new InstantCommand(arm::armTrenchPos));
-    .whenPressed(new RunCommand(() -> drive.drive(.3, 0.0, 0.0), drive
-    ));
+    .whenPressed(new InstantCommand(arm::armTrenchPos));
     //activates aiming mode
    /*  new JoystickButton(driveController, Button.kBumperRight.value)
     .whenHeld(aimbotRotate.alongWith(
@@ -171,6 +170,8 @@ public class RobotContainer {
     new JoystickButton(driveController, Button.kBumperRight.value)
     .whenHeld(new RunCommand(shooter::setShooterSpeed, shooter));
 
+    new JoystickButton(driveController, Button.kBumperLeft.value)
+    .whenHeld(intakeOutCommand);
 
     //intakes balls
     leftTrigger.whileActiveContinuous(intakeCommand);

@@ -36,20 +36,12 @@ public class IntakeSubsystem extends SubsystemBase {
   //extends and runs intake
   public void intakeIn() {
     intakeMotor.set(-.6);
+    intakePiston.set(Value.kForward);
+  }
 
-    if(timerStarted == false){
-    timer.start();
-    }
-    
-    if(timer.get() < .3){
-      if(intakePiston.get() != Value.kReverse){
-        intakePiston.set(Value.kReverse);
-      }
-    } else {
-      if(intakePiston.get() != Value.kOff){
-        intakePiston.set(Value.kOff);
-      }
-    }
+  public void intakeOut(){
+    intakeMotor.set(.6);
+    intakePiston.set(Value.kReverse);
   }
 
   //stops intake
