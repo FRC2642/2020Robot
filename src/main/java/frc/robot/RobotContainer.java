@@ -28,6 +28,8 @@ import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.ArmSubsystem;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -48,7 +50,7 @@ public class RobotContainer {
   public static XboxController auxController = new XboxController(kAuxControllerPort);
   public static Trigger leftTrigger = new Trigger(intake::getLeftTrigger);
   public static Trigger rightTrigger = new Trigger(shooter::getRightTrigger);
-
+  public static SwerveControllerCommand swerveControllerCommand;
   
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -108,6 +110,7 @@ public class RobotContainer {
               -driveController.getRawAxis(1), -driveController.getRawAxis(5)),
               drive)
     );*/ 
+
   }
 
   /**
@@ -120,6 +123,10 @@ public class RobotContainer {
     //instantiates drive toggle button
     new JoystickButton(driveController, Button.kBack.value)
       .whenPressed(new InstantCommand(drive::toggleIsDriveFieldCentric));
+
+    new JoystickButton(driveController, Button.kBumperLeft.value)
+      .whenPressed(swerveControllerCommand.andThen(magazine.getDefaultCommand(), 
+      shooter.getDefaultCommand()));
 
     /**
      * Everything below here requires reworking.
@@ -146,7 +153,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
 
     SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-    drive.exampleTrajectory,
+    drive.centerTrajectory,
     drive::getPoseMeters, 
     drive.kinematics,
 
@@ -159,6 +166,9 @@ public class RobotContainer {
     drive
   );
 
-    return swerveControllerCommand.andThen(() -> drive.drive(0, 0, 0));
+   return swerveControllerCommand.andThen(() -> drive.drive(0, 0, 0));
+
+   
+  
   }
 }
