@@ -65,18 +65,17 @@ return "We love you <3";
 
 package frc.robot;
 
-import static frc.robot.Constants.*;
-
-import frc.robot.RobotContainer;
+import static frc.robot.Constants.kLightRing;
 
 import edu.wpi.cscore.VideoSource;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.vision.VisionThread;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.util.JevoisDriver;
 
 /**
@@ -89,6 +88,7 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
 
   public Command m_autonomousCommand;
   public RobotContainer robotContainer;
+  public PowerDistributionPanel pdp;
     
   public VideoSource usbCamera;
     
@@ -133,6 +133,9 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
     //takes a picture with the camera
     //sets resolution of camera
     jevoisCam = new JevoisDriver();
+    pdp = new PowerDistributionPanel();
+
+    //CameraServer.getInstance().startAutomaticCapture(0);
   }
 
   /**
@@ -147,12 +150,14 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
     
     CommandScheduler.getInstance().run();
 
+    //jevoisCam.printSystemOut();
+
     /**
      * place any SmartDashboard methods that should be running even when the robot is disabled here
      */
 
     SmartDashboard.putNumber("shooter vel", robotContainer.shooter.getAverageVelocity());
-    SmartDashboard.putNumber("arm pot", robotContainer.arm.getMeasurement());
+    SmartDashboard.putNumber("arm pot", robotContainer.arm.getPot());
     SmartDashboard.putNumber("mag vel", RobotContainer.magazine.getVelocity());
 
     SmartDashboard.putNumber("fl", RobotContainer.drive.frontLeftModule.getModulePosition());
@@ -160,7 +165,11 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
     SmartDashboard.putNumber("bl", RobotContainer.drive.backLeftModule.getModulePosition());
     SmartDashboard.putNumber("br", RobotContainer.drive.backRightModule.getModulePosition());
 
+    SmartDashboard.putNumber("fl rel", RobotContainer.drive.frontLeftModule.getRelativeAngleEncoder());
     
+    SmartDashboard.putNumber("fl offset", RobotContainer.drive.frontLeftModule.getDashboardOffset());
+
+    //SmartDashboard.putString("targetColor", value)
   }
 
   /**

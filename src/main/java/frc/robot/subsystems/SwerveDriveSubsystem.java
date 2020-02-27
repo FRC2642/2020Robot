@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.SwerveModule;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
@@ -63,6 +64,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public boolean isDriveFieldCentric;
   public boolean isAimingMode;
   public boolean areAllWheelsAligned;
+
+  public boolean isSlowDrive = false;
 
   /**
    * Creates a new SwerveDriveSubsystem.
@@ -165,6 +168,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     isDriveFieldCentric = true;
     isAimingMode = false;
     areAllWheelsAligned = false;
+    isSlowDrive = false;
   }
 
   /**
@@ -359,7 +363,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     return areAllWheelsAligned;
   }
 
-  public void toggleIsDriveFieldCentric(){
+  public void toggleDriveFieldCentric(){
     isDriveFieldCentric = !isDriveFieldCentric;
   }
 
@@ -367,12 +371,21 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     return isDriveFieldCentric;
   }
 
-  public void toggleIsAimingMode(){
+  public void toggleAimingMode(){
     isAimingMode = !isAimingMode;
   }
 
   public boolean getIsAimingMode(){
     return isAimingMode;
+  }
+
+  public void setSlowDrive(boolean state){
+    isSlowDrive = state;
+  }
+
+  public boolean getIsSlowDrive(){
+    boolean rv = isSlowDrive;
+    return rv;
   }
 
   //inverts spark
@@ -428,6 +441,26 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     double pose = poseTrans2d.getX();
     pose /= kMaxSpeedConversionFactor;
     return Units.metersToFeet(pose);
+  }
+
+  public void doNothing(){
+  }
+
+  /**
+   * TARGET ACQUISITON FOR AIMING
+   */
+  /** */
+
+
+  public double getTargetX(){
+    double target = Robot.jevoisCam.getCenterOfVisionTarget();
+    return target;
+  }
+
+  public double getCurrentX(){
+    double width = Robot.jevoisCam.getCamWidth();
+    double center = width / 2;
+    return center;
   }
 
   /**

@@ -31,34 +31,29 @@ public class IntakeSubsystem extends SubsystemBase {
     intakePiston = new DoubleSolenoid(kIntakePistonPort1, kIntakePistonPort2);
   }
 
-  Timer timer = new Timer();
-  boolean timerStarted = false;
   //extends and runs intake
   public void intakeIn() {
     intakeMotor.set(-.6);
-
-    if(timerStarted == false){
-    timer.start();
-    }
-    
-    if(timer.get() < .3){
-      if(intakePiston.get() != Value.kReverse){
-        intakePiston.set(Value.kReverse);
-      }
+    if(intakePiston.get() != Value.kReverse){
+      intakePiston.set(Value.kReverse);
     } else {
-      if(intakePiston.get() != Value.kOff){
-        intakePiston.set(Value.kOff);
-      }
+      intakePiston.set(Value.kOff);
     }
+  }
+
+  public void intakeOut(){
+    intakeMotor.set(.6);
+    intakePiston.set(Value.kReverse);
+  }
+
+  public void intakePistonOut(){
+    intakePiston.set(Value.kReverse);
   }
 
   //stops intake
   public void stop() {
     intakeMotor.set(0);
     intakePiston.set(Value.kForward);
-    timerStarted = false;
-    timer.stop();
-    timer.reset();
   }
     
   public boolean getLeftTrigger() {
