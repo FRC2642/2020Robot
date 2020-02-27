@@ -54,6 +54,11 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public AHRS navx;
   public TrajectoryConfig config;
   public Trajectory centerTrajectory;
+  public Trajectory leftTrajectory;
+  public Trajectory rightTrajectory1;
+  public Trajectory rightTrajectory2;
+
+  
  
   public boolean isDriveFieldCentric;
 
@@ -139,12 +144,43 @@ public class SwerveDriveSubsystem extends SubsystemBase {
               new Pose2d(0, 0, new Rotation2d(0)),
               // Pass through these two interior waypoints, making an 's' curve path
               List.of(
-                  new Translation2d(3.1148019999999996, 0)
-              ),
+                  new Translation2d(3.1496, 0)),
               // End 3 meters straight ahead of where we started, facing forward
-              new Pose2d(3.1148019999999996, 0, new Rotation2d(0)),
-              config
-    );
+              new Pose2d(3.1496, 0, new Rotation2d(0)),
+              config);
+
+            Trajectory leftTrajectory = TrajectoryGenerator.generateTrajectory(
+              new Pose2d(0,0, new Rotation2d(0)), 
+                
+                List.of(
+                  new Translation2d(3.1496, 0),
+                  new Translation2d(0, -2.64282819922)
+              ),
+              new Pose2d(3.1496,-2.64282819922, new Rotation2d(0)), 
+              config);
+            
+              //not final yet maybe possibly :\ ????
+            Trajectory rightTrajectory1 = TrajectoryGenerator.generateTrajectory(
+                new Pose2d(0, 0, new Rotation2d(0)),
+                
+                List.of(
+                    new Translation2d(2.200402, 0)),
+                
+                    new Pose2d(2.200402, 0, new Rotation2d(0)),
+                config);
+            
+            Trajectory rightTrajectory2 = TrajectoryGenerator.generateTrajectory(
+                  new Pose2d(2.200402, 0, new Rotation2d(0)),
+                  
+                  List.of(
+                      new Translation2d(2.7432, 0)),
+                  
+                      new Pose2d(4.943602, 0, new Rotation2d(0)),
+                  config);
+            
+        
+                   
+                  
     
     
             //instantiates navx
