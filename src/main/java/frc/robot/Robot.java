@@ -147,12 +147,14 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
     
     CommandScheduler.getInstance().run();
 
+    //jevoisCam.printSystemOut();
+
     /**
      * place any SmartDashboard methods that should be running even when the robot is disabled here
      */
 
     SmartDashboard.putNumber("shooter vel", robotContainer.shooter.getAverageVelocity());
-    SmartDashboard.putNumber("arm pot", robotContainer.arm.getMeasurement());
+    SmartDashboard.putNumber("arm pot", robotContainer.arm.getPot());
     SmartDashboard.putNumber("mag vel", RobotContainer.magazine.getVelocity());
 
     SmartDashboard.putNumber("fl", RobotContainer.drive.frontLeftModule.getModulePosition());
@@ -160,7 +162,11 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
     SmartDashboard.putNumber("bl", RobotContainer.drive.backLeftModule.getModulePosition());
     SmartDashboard.putNumber("br", RobotContainer.drive.backRightModule.getModulePosition());
 
+    SmartDashboard.putNumber("fl rel", RobotContainer.drive.frontLeftModule.getRelativeAngleEncoder());
+    
+    SmartDashboard.putNumber("fl offset", RobotContainer.drive.frontLeftModule.getDashboardOffset());
 
+    //SmartDashboard.putString("targetColor", value)
   }
 
   /**

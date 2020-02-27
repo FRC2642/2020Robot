@@ -109,7 +109,7 @@ public final class Constants {
     public static final double kAnglePositionConversionFactor = 359.0 / 3.3; //degrees / volts
     public static final double kRPMToMPSConversionFactor = (1.0 / 60) * (4 * Math.PI) * .0254;
     public static final double kDriveVelocityConversionFactor = kRPMToMPSConversionFactor;
-    public static final double kRelativeRotationsPerModuleRotation = 18.05; //relative rots
+    public static final double kRelativeRotationsPerModuleRotation = 17.738054; //18.05; //relative rots 
     public static final double kModuleDegreesToRelativeRotations 
                                = kRelativeRotationsPerModuleRotation / 360.0; //rots / degrees
     public static final double kMaxSpeedConversionFactor = 8.667; //gear ratio conversion
@@ -127,16 +127,16 @@ public final class Constants {
 
     public static final double kGyroOffset = 180.0;
     //absolute encoder offsets (swerve)
-    public static final double kFrontLeftAngleOffset = 159.5;
-    public static final double kFrontRightAngleOffset = 45.3;
-    public static final double kBackLeftAngleOffset = 130.6;
-    public static final double kBackRightAngleOffset = 57.8;
+    public static final double kFrontLeftAngleOffset = 0.0;//159.5;
+    public static final double kFrontRightAngleOffset = 0.0;//45.3;
+    public static final double kBackLeftAngleOffset = 0.0;//130.6;
+    public static final double kBackRightAngleOffset = 0.0;//57.8;
 
     //Dashboard reading offsets (swerve)
-    public static final double kFrontLeftAngleDashboardOffset = 212.5;
-    public static final double kFrontRightAngleDashboardOffset = 73.0;
-    public static final double kBackLeftAngleDashboardOffset = 185.0;
-    public static final double kBackRightAngleDashboardOffset = 33.0;
+    public static final double kFrontLeftAngleDashboardOffset = 344.5;//212.5;
+    public static final double kFrontRightAngleDashboardOffset = 241.4;//73.0;
+    public static final double kBackLeftAngleDashboardOffset = 45.8;//185.0;
+    public static final double kBackRightAngleDashboardOffset = 272.4;//33.0;
 
 
     /**
@@ -148,7 +148,7 @@ public final class Constants {
     public static final double kMotorNeutralDeadband = .15;
     //mag belt speed
     public static final double kMagShootSpeed = 6500; //RPM
-    public static final double kMagLoadSpeed = 5000; //RPM
+    public static final double kMagLoadSpeed = 6000; //RPM
     public static final double kMagIdleSpeed = 2000; //RPM
     //swerve max speeds
     public static final double kMaxModuleRPM = 12.0 * kMaxSpeedConversionFactor; //desired module rotation speed * gear ratio conversion
@@ -157,9 +157,9 @@ public final class Constants {
     //shooter rpm
     public static final double kShooterRPM = 4350; //RPM
     //tilt presets
-    public static final double kTrenchPos = .207;
-    public static final double kNormalPos = .450;
-    public static final double kClimbPos = .814;
+    public static final double kTrenchPos = 20.8;
+    public static final double kNormalPos = 45.0;
+    public static final double kClimbPos = 81.4;
 
     /**
      * PID GAINS AND CONSTANTS AND PROFILING CONSTANTS
@@ -168,9 +168,9 @@ public final class Constants {
     public static final double kMinOutput = -1.0;
     public static final double kMaxOutput = 1.0;                                           
     //PIDF values for closed-loop velocity control for drive modules
-    public static final double kDriveFF = .5 / 16.171; //approx .03127
+    public static final double kDriveFF = .5 / 16.171; 
     public static final double kDriveP = 0.0;
-    public static final double kDriveI = kDriveFF / 4000.0;
+    public static final double kDriveI = kDriveFF / 1500.0;
     public static final double kDriveD = 0.0;
     //PIDF values for closed-loop position control for angle modules
     public static final double kAngleFF = 0.0;
@@ -189,16 +189,12 @@ public final class Constants {
     public static final double kShooterD = 0.08;
 
     //PID values for profiled closed-loop position control for the arm tilt motor
-    public static final double kTiltP = 0.4;
-    public static final double kTiltI = 0.00;
+    public static final double kTiltP = .3;
+    public static final double kTiltI = 0.0;
     public static final double kTiltD = 0.0;
 
-    public static final double kTiltMaxVel = 8.0; 
-    public static final double kTiltMaxAccel = 1.0;
-
-    public static final double kTiltFFStatic = 0.8; //volts to get past idle
-    public static final double kTiltFFGrav = 0.0; //volts to compensate for gravity (cosine)
-    public static final double kTiltFFVel = 0.0; //volts to hold at given velocity
+    public static final double kTiltMaxVel = 12; 
+    public static final double kTiltMaxAccel = 3;
 
     /**
      * AUTO TRAJECTORY PID GAINS

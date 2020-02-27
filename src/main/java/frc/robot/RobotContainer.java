@@ -7,14 +7,14 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.kAuxControllerPort;
-import static frc.robot.Constants.kDriveControllerPort;
+import static frc.robot.Constants.*;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -23,9 +23,12 @@ import frc.robot.commands.aimbot.AimbotSpinupCommand;
 import frc.robot.commands.aimbot.AimbotTiltCommand;
 import frc.robot.commands.aimbot.ShootCommand;
 import frc.robot.commands.armTilt.ArmToBasePosition;
+import frc.robot.commands.armTilt.ArmToClimbPosition;
+import frc.robot.commands.armTilt.ArmToSetPosition;
+import frc.robot.commands.armTilt.ArmToTrenchPosition;
 import frc.robot.commands.colorSpinner.EndSpinRoutine;
 import frc.robot.commands.colorSpinner.SpinToColor;
-import frc.robot.commands.colorSpinner.spinByAmount;
+import frc.robot.commands.colorSpinner.SpinByAmount;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.IntakeOutCommand;
 import frc.robot.subsystems.ArmSubsystem;
@@ -59,7 +62,7 @@ public class RobotContainer {
   public final Command intakeOutCommand = new IntakeOutCommand(intake, magazine);
 
   public final Command spinToColor = new SpinToColor(spinner);
-  public final Command spinByAmount = new spinByAmount(spinner);
+  public final Command spinByAmount = new SpinByAmount(spinner);
   public final Command endSpinRoutine = new EndSpinRoutine(spinner, drive); //empty command atm, needs code
  
   public final Command aimbotRotate = new AimbotRotateCommand(drive);
@@ -67,7 +70,13 @@ public class RobotContainer {
   public final Command aimbotSpinup = new AimbotSpinupCommand(shooter);
   public final Command shoot = new ShootCommand(magazine);
 
+ /*  public final Command armToTrenchPosition = new ArmToTrenchPosition(arm);
   public final Command armToBasePosition = new ArmToBasePosition(arm);
+  public final Command armToClimbPosition = new ArmToClimbPosition(arm); */
+
+  public final Command armToTrenchPosition = new ArmToSetPosition(kTrenchPos, arm);
+  public final Command armToBasePosition = new ArmToSetPosition(kNormalPos ,arm);
+  public final Command armToClimbPosition = new ArmToSetPosition(kClimbPos, arm);
 
   //CONTROLLERS STUFF
   public static XboxController driveController = new XboxController(kDriveControllerPort);
@@ -84,6 +93,7 @@ public class RobotContainer {
 
     configureButtonBindings();
 
+    //add conditional command that runs either normal or slow based on color piston state
     drive.setDefaultCommand(new RunCommand(
       () -> drive.drive( //0, 0, 0),
         -(driveController.getRawAxis(1)) * .7, 
@@ -95,7 +105,7 @@ public class RobotContainer {
      arm.setDefaultCommand(
       new RunCommand(
         () -> arm.moveArm(
-          (-auxController.getRawAxis(5) * .5)
+          (-auxController.getRawAxis(5) * .75)
        ), arm
       )
     );
@@ -154,13 +164,13 @@ public class RobotContainer {
       .whenHeld(new RunCommand(drive::alignWheels, drive));
     //puts arm in highest/climb position
     new JoystickButton(driveController, Button.kY.value)
-    .whenPressed(new InstantCommand(arm::armClimbPos));
+    .whenPressed(armToClimbPosition, true);
     //puts arm in midway position
     new JoystickButton(driveController, Button.kB.value)
-    .whenPressed(armToBasePosition);
+    .whenPressed(armToBasePosition, true);
     //puts arm in lowest/trench position
     new JoystickButton(driveController, Button.kA.value)
-    .whenPressed(new InstantCommand(arm::armTrenchPos));
+    .whenPressed(armToTrenchPosition, true);
     //activates aiming mode
    /*  new JoystickButton(driveController, Button.kBumperRight.value)
     .whenHeld(aimbotRotate.alongWith(
@@ -195,7 +205,9 @@ public class RobotContainer {
     .whenPressed(spinByAmount);//.andThen(endSpinRoutine));
     //extends the color spinner
     new JoystickButton(auxController, Button.kBumperRight.value)
-    .whenPressed(new InstantCommand(spinner::extend));
+    .whenPressed(new InstantCommand(spinner::extend)
+    //add state toggle to trigger slow drive
+      .alongWith());
     //retracts the color spinner 
     new JoystickButton(auxController, Button.kBumperLeft.value)
     .whenPressed(new InstantCommand(spinner::retract));

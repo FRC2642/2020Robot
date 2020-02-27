@@ -12,15 +12,16 @@ import frc.robot.subsystems.ColorSpinnerSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import edu.wpi.first.wpilibj.DriverStation;
 
-public class SpinToColor extends CommandBase {
+public class PositionControlCommand extends CommandBase {
 
   ColorSpinnerSubsystem spinner;
   SwerveDriveSubsystem drive;
-  char correctColor;
-  String currentColor;
-  String colorNeeded;
 
-  public SpinToColor(final ColorSpinnerSubsystem colorSub) {
+ /*  char correctColor;
+  String currentColor;
+  String colorNeeded; */
+
+  public PositionControlCommand(final ColorSpinnerSubsystem colorSub) {
     spinner = colorSub;
     addRequirements(spinner);
   }
@@ -28,13 +29,16 @@ public class SpinToColor extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
+    spinner.setTargetColor();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
 
+    spinner.slowSpinR();
+    spinner.getCurrentColorChar();
+/* 
     currentColor = spinner.detectColor();
     currentColor = currentColor.toUpperCase();
 
@@ -49,18 +53,20 @@ public class SpinToColor extends CommandBase {
 
     } else{
       spinner.slowSpinR();
-    }
+    } */
 
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    spinner.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (currentColor == colorNeeded);
+    return spinner.isAtColor();
+    /* return (currentColor == colorNeeded); */
   }
 }

@@ -13,107 +13,75 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.controller.ArmFeedforward;
-import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
-public class ArmSubsystem extends ProfiledPIDSubsystem {
+public class ArmSubsystem extends SubsystemBase {
 
   public VictorSPX armMotor;
-
   public AnalogPotentiometer armPot;
 
-  //public ArmFeedforward armFF;
+  public double input;
 
-
-  /**
-   * Creates a new ArmSubsystem.
-   */
   public ArmSubsystem() {
-    super(
-        // The ProfiledPIDController used by the subsystem
-        new ProfiledPIDController(kTiltP, kTiltI, kTiltD,
-            // The motion profile constraints
-            new TrapezoidProfile.Constraints(kTiltMaxVel, kTiltMaxAccel)));
-
-    armMotor = new VictorSPX(ID_MAG_TILT_MOTOR);
-
-    armPot = new AnalogPotentiometer(kArmPotPort);
-
-    //enable();
-
-    //armFF = new ArmFeedforward(kTiltFFStatic, kTiltFFGrav, kTiltFFVel);
-  }
-
-  public void armTrenchPos() {
-    enable();
-    setGoal(kTrenchPos);
-  }
-
-  public void armBasePos() {
-    enable();
-    setGoal(kNormalPos);
-  }
-
-  public void armClimbPos() { 
-    enable();
-    setGoal(kClimbPos);
-  }
-
-  public void goToPosition(double position){
-    enable();
-    setGoal(position);
-  }
   
-  @Override
-  public void useOutput(double output, TrapezoidProfile.State setpoint) {
-    // Use the output (and optionally the setpoint) here
-    
+    armMotor = new VictorSPX(ID_MAG_TILT_MOTOR);
+    armMotor.setInverted(false);
+
+    armPot = new AnalogPotentiometer(kArmPotPort, 100);
   }
 
-  @Override
-  public double getMeasurement() {
-    return armPot.get();
-  }
-
-  //non-profiled methods
-
+  //basic motor methods
   public void moveArm(double speed){
-    disable();
-    armMotor.set(ControlMode.PercentOutput, speed);
+    if(getPot() <= kTrenchPos && speed < 0){
+      stop();
+    } else if(getPot() >= kClimbPos && speed > 0){
+      stop();
+    } else {    
+      setPower(speed); 
+    }
   }
 
   public void stop() {
     armMotor.set(ControlMode.PercentOutput, 0);
   }
 
+  public void setPower(double input){
+    if(input > .6){
+      armMotor.set(ControlMode.PercentOutput, .6);
+    }
+    armMotor.set(ControlMode.PercentOutput, input);
+
+    this.input = input;
+  }
+
+  //aiming inputs
   public boolean isManualOverride(){
     return (RobotContainer.auxController.getRawAxis(5) > .2 || RobotContainer.auxController.getRawAxis(5) < -.2);
   }
 
-  public void setVoltage(double outputVoltage){
+  public double getPot(){
+    return armPot.get();
+  }
+
+  public double getAngleFromVision(){
     
-    double realOutput = (outputVoltage / RobotController.getBatteryVoltage());
-    armMotor.set(ControlMode.PercentOutput, realOutput);
-   }
+    double dist = Robot.jevoisCam.getDistFromTarget(); //m
+    //calculates pot value based on distance from base of target 
+    //angle increases as distance decreases
+    double targetPos = kArmAngleConversionFactor / dist;
 
-   public double getPot(){
-     return armPot.get();
-   }
+    return targetPos;
+  }
 
-   @Override
-  public boolean isEnabled() {
-    // TODO Auto-generated method stub
-    return super.isEnabled();
+  public double getMotorPower(){
+    return input;
   }
 
   @Override
   public void periodic(){
-    SmartDashboard.putBoolean("arm enabled", isEnabled());
+    SmartDashboard.putBoolean("arm manual override", isManualOverride());
   }
 }

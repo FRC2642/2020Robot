@@ -33,8 +33,8 @@ MagazineSubsystem magazine;
   @Override
   public void execute() {
 
-    intake.intakeOut();;
-    magazine.magLoad();
+    intake.intakeOut();
+    magazine.ejectBall();
   }
 
   //Called once the command ends or is interrupted.

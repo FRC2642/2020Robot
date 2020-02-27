@@ -16,18 +16,18 @@ import frc.robot.subsystems.ArmSubsystem;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class ArmToBasePosition extends PIDCommand {
+public class ArmToTrenchPosition extends PIDCommand {
   
   public static ArmSubsystem arm;
 
-  public ArmToBasePosition(ArmSubsystem armSub) {
+  public ArmToTrenchPosition(ArmSubsystem armSub) {
     super(
         // The controller that the command will use
         new PIDController(kTiltP, kTiltI, kTiltD),
         // This should return the measurement
         () -> arm.getPot(),
         // This should return the setpoint (can also be a constant)
-        () -> kNormalPos,
+        () -> kTrenchPos,
         // This uses the output
         output -> {
           arm.moveArm(output);

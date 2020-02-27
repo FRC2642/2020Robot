@@ -9,40 +9,44 @@ package frc.robot.commands.armTilt;
 
 import static frc.robot.Constants.*;
 
-import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj2.command.PIDCommand;
+import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
+import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import frc.robot.subsystems.ArmSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class ArmToBasePosition extends PIDCommand {
+public class ArmToSetPosition extends ProfiledPIDCommand {
   
-  public static ArmSubsystem arm;
+  public static ArmSubsystem arm; 
 
-  public ArmToBasePosition(ArmSubsystem armSub) {
+  public ArmToSetPosition(double target, ArmSubsystem armSub) {
     super(
-        // The controller that the command will use
-        new PIDController(kTiltP, kTiltI, kTiltD),
+        // The ProfiledPIDController used by the command
+        new ProfiledPIDController(
+            // The PID gains
+            kTiltP, kTiltI, kTiltD,
+            // The motion profile constraints
+            new TrapezoidProfile.Constraints(kTiltMaxVel, kTiltMaxAccel)),
         // This should return the measurement
         () -> arm.getPot(),
-        // This should return the setpoint (can also be a constant)
-        () -> kNormalPos,
+        // This should return the goal (can also be a constant)
+        () -> new TrapezoidProfile.State(target, 0),
         // This uses the output
-        output -> {
+        (output, setpoint) -> {
           arm.moveArm(output);
-          // Use the output here
+          // Use the output (and setpoint, if desired) here
         });
-            
+
     arm = armSub;
     addRequirements(arm);
-    // Use addRequirements() here to declare subsystem dependencies.
-    // Configure additional PID options by calling `getController` here.
+    
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return arm.isManualOverride();
+    return (arm.isManualOverride() );// || getController().atSetpoint());
   }
 }

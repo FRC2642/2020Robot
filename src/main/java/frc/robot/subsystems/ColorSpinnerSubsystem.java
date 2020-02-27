@@ -10,6 +10,7 @@ import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -38,6 +39,7 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
   double slowingSpeed = 0.005; //change this for diffrent slowing of the motor after rotating
   
   boolean hasCounted;
+  char targetColor;
 
   public ColorSpinnerSubsystem() {
     colorSpinnerMotor = new CANSparkMax(ID_SPINNER_MOTOR, MotorType.kBrushless);
@@ -141,6 +143,15 @@ public static boolean Counter() {
     return colorString;
   }
 
+  public char getCurrentColorChar(){
+    String color = detectColor();
+    return color.charAt(0);
+  }
+
+  /**
+   * counter for rotation control
+   */
+  /** */
   public void zeroCounter(){
     counter = 0;
   }
@@ -161,11 +172,36 @@ public static boolean Counter() {
   public void setHasCounted(boolean hasCounted){
     this.hasCounted = hasCounted;
   }
+
+
+  /**
+   * position control
+   */
+  /** */
+  public void setTargetColor(){
+    char goal = DriverStation.getInstance().getGameSpecificMessage().charAt(0);
+    if(goal == 'Y'){
+      targetColor = 'G';
+    } else if (goal == 'G'){
+      targetColor = 'Y';
+    } else if(goal == 'B'){
+      targetColor = 'R';
+    } else if (goal == 'R'){
+      targetColor = 'B';
+    }
+  }
+
+  public boolean isAtColor(){
+    char currentColor = getCurrentColorChar();
+    return targetColor == currentColor;
+  }
   
   @Override
   public void periodic() {
     //SmartDashboard.putNumber("Confidence", match.confidence);
     SmartDashboard.putString("Detected Color", detectColor());
+    SmartDashboard.putNumber("targetColor", targetColor);
+    SmartDashboard.putBoolean("atColor", isAtColor());
   }
 }
 

@@ -102,7 +102,7 @@ public class SwerveModule {
   /** */
   public double getTargetVelocity(SwerveModuleState state){
     targetVelocity = state.speedMetersPerSecond;
-    //System.out.println("target velocity = " + targetVelocity);
+
     return targetVelocity;
   }
 
@@ -110,7 +110,6 @@ public class SwerveModule {
     targetAngle = state.angle;
 
     targetMotorAngle = realignAndOffsetEncoder(targetAngle.getDegrees());
-    //System.out.println("targetAngle = " + targetMotorAngle);
 
     return targetAngle;
   }
@@ -126,7 +125,6 @@ public class SwerveModule {
 
   public void setModuleAngle(Rotation2d targetAngle){
 
-   // if(!RobotContainer.drive.getAreAllWheelsAligned()){
       double target = targetAngle.getDegrees();
       target *= kModuleDegreesToRelativeRotations;
       double current = getRelativeAngleEncoder();
@@ -155,8 +153,6 @@ public class SwerveModule {
       trueTargetAngle = target;
 
       anglePID.setReference(target, ControlType.kPosition); 
-    //} else {
-      //stop();
   }
 
   /**
@@ -253,19 +249,10 @@ public class SwerveModule {
   }
 
   public double getModulePosition(){
-    double angle = getAbsoluteAngleEncoderWithOffset() + dashboardOffset;
-    if(angle > 360){
-      angle -= 360;
-    }
-    return angle;
-  }
-
-  
-  public double getModulePosition(double dashboardOffset){
-    double angle = getAbsoluteAngleEncoderWithOffset() + dashboardOffset;
-    if(angle > 360){
-      angle -= 360;
-    }
+    double angle = getAbsoluteAngleEncoderWithOffset() - dashboardOffset;
+    if(angle < 0){
+      angle += 360;
+    } 
     return angle;
   }
 

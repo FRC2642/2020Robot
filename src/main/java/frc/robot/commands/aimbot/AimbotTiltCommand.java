@@ -33,14 +33,8 @@ public class AimbotTiltCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
-    double dist = Robot.jevoisCam.getDistFromTarget(); //m
-    
-    //calculates pot value based on distance from base of target 
-    //angle increases as distance decreases
-    double targetPos = kArmAngleConversionFactor / dist;
 
-    arm.goToPosition(targetPos);
+    //arm.goToPosition(targetPos);
     //tilt goes a certain angle based on the distance to the target
 
   }
