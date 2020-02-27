@@ -1,4 +1,3 @@
-
 /*----------------------------------------------------------------------------*/
 /* Copyright (c) 2019 FIRST. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
@@ -6,23 +5,24 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands;
+package frc.robot.commands.aimbot;
 
-import frc.robot.Constants;
+import static frc.robot.Constants.*;
+
+import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj.Ultrasonic;
 
-public class MagazineCommand extends CommandBase {
+import frc.robot.Robot;
+import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.util.JevoisDriver;
 
-  Ultrasonic ultra = new Ultrasonic(Constants.kMagazineSonarOutput, Constants.kMagazineSonarInput);
-
-  int ballCount = 0;
-  boolean hasBallEntered = false;
+public class AimbotTiltCommand extends CommandBase {
   
-  public MagazineCommand() {
+  ArmSubsystem arm;
 
-  //sets sonar to send constant pulse
-  ultra.setAutomaticMode(true);
+  public AimbotTiltCommand(ArmSubsystem armSub) {
+    arm = armSub;
+    addRequirements(arm);
   }
 
   // Called when the command is initially scheduled.
@@ -33,11 +33,16 @@ public class MagazineCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
+    //arm.goToPosition(targetPos);
+    //tilt goes a certain angle based on the distance to the target
+
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    arm.stop();
   }
 
   // Returns true when the command should end.

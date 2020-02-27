@@ -16,10 +16,25 @@
  for the strength of our robot as a whole.
  Please don't break.
 
- I pray for ekatni (intake backwards)
+public void homageToDepricatedSubsystems() {
+
+ For ekatni (intake backwards)
  for its identity has been lost
  never to be seen again.
  I love you <3
+
+ For Z-Target (our auto-aiming system)
+ because somebody thought aimbot was better.
+ despite obvious inferiority
+ 
+ Into true egress
+ for hanger prayed.
+ Lost to new ages
+ to dust it lay.
+
+return "We love you <3";
+}
+ 
 
  We pray to the control systems, and National Instruments,
  for if we do not we will surely perish
@@ -50,9 +65,15 @@
 
 package frc.robot;
 
+import static frc.robot.Constants.kLightRing;
+
 import edu.wpi.cscore.VideoSource;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.vision.VisionThread;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.JevoisDriver;
@@ -67,6 +88,7 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
 
   public Command m_autonomousCommand;
   public RobotContainer robotContainer;
+  public PowerDistributionPanel pdp;
     
   public VideoSource usbCamera;
     
@@ -80,7 +102,7 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
   public final Object visionLock = new Object();
 
   //Jevois driver
-  JevoisDriver jevoisCam;
+  public static JevoisDriver jevoisCam;
 
 
   // The pipeline outputs we want
@@ -88,6 +110,7 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
   public double angleToTape = 0;
   public double distanceToTape = 0;
 
+  public Solenoid lightRing = new Solenoid(0, kLightRing);
   /*this was suppose to copy the pipeline values and store them
   in separate variables, but I got rid of them because VS code
   didn't like it, and we don't really need it anyway.
@@ -110,7 +133,9 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
     //takes a picture with the camera
     //sets resolution of camera
     jevoisCam = new JevoisDriver();
+    pdp = new PowerDistributionPanel();
 
+    //CameraServer.getInstance().startAutomaticCapture(0);
   }
 
   /**
@@ -125,11 +150,26 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
     
     CommandScheduler.getInstance().run();
 
+    //jevoisCam.printSystemOut();
+
     /**
      * place any SmartDashboard methods that should be running even when the robot is disabled here
      */
 
+    SmartDashboard.putNumber("shooter vel", robotContainer.shooter.getAverageVelocity());
+    SmartDashboard.putNumber("arm pot", robotContainer.arm.getPot());
+    SmartDashboard.putNumber("mag vel", RobotContainer.magazine.getVelocity());
+
+    SmartDashboard.putNumber("fl", RobotContainer.drive.frontLeftModule.getModulePosition());
+    SmartDashboard.putNumber("fr", RobotContainer.drive.frontRightModule.getModulePosition());
+    SmartDashboard.putNumber("bl", RobotContainer.drive.backLeftModule.getModulePosition());
+    SmartDashboard.putNumber("br", RobotContainer.drive.backRightModule.getModulePosition());
+
+    SmartDashboard.putNumber("fl rel", RobotContainer.drive.frontLeftModule.getRelativeAngleEncoder());
     
+    SmartDashboard.putNumber("fl offset", RobotContainer.drive.frontLeftModule.getDashboardOffset());
+
+    //SmartDashboard.putString("targetColor", value)
   }
 
   /**
@@ -148,9 +188,10 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = robotContainer.getAutonomousCommand();
 
     findTapeThread.start();
+    
+    m_autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -169,9 +210,13 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
 
+    lightRing.set(true);
+
     // cosine of the angle to tape
     // constantly updates distance to wall
     synchronized (visionLock) {
+
+
       // if the pipeline hasn't been confirmed to run, it won't run.
       if (pipelineRan) {
         /*
@@ -209,6 +254,10 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+
+    lightRing.set(true);
+
+
     /**
      * DO NOT PLACE SMARTDASHBOARD DIAGNOSTICS HERE
      * Place any teleop-only SmartDashboard diagnostics in the appropriate subsystem's periodic() method

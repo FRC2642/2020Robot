@@ -13,12 +13,24 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-//import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.aimbot.AimbotRotateCommand;
+import frc.robot.commands.aimbot.AimbotSpinupCommand;
+import frc.robot.commands.aimbot.AimbotTiltCommand;
+import frc.robot.commands.aimbot.ShootCommand;
+import frc.robot.commands.armTilt.ArmToSetPosition;
+import frc.robot.commands.colorSpinner.EndSpinRoutine;
+import frc.robot.commands.colorSpinner.PositionControlCommand;
+import frc.robot.commands.colorSpinner.RotationControlCommand;
+import frc.robot.commands.intake.IntakeCommand;
+import frc.robot.commands.intake.IntakeOutCommand;
+import frc.robot.subsystems.ArmSubsystem;
+
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ColorSpinnerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -29,91 +41,113 @@ import frc.robot.subsystems.ArmSubsystem;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 
+
 /**
- * This class is where the bulk of the robot should be declared.  Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls).  Instead, the structure of the robot
- * (including subsystems, commands, and button mappings) should be declared here.
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a "declarative" paradigm, very little robot logic should
+ * actually be handled in the {@link Robot} periodic methods (other than the
+ * scheduler calls). Instead, the structure of the robot (including subsystems,
+ * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
 
   public static final SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
   public static final IntakeSubsystem intake = new IntakeSubsystem();
   public static final MagazineSubsystem magazine = new MagazineSubsystem();
-  public static final ShooterSubsystem shooter = new ShooterSubsystem(); 
+  public static final ShooterSubsystem shooter = new ShooterSubsystem();
   public static final ColorSpinnerSubsystem spinner = new ColorSpinnerSubsystem();
   public static final ClimberSubsystem climb = new ClimberSubsystem();
+  //public static final ClimberBarSubsystem bar = new ClimberBarSubsystem();
   public static final ArmSubsystem arm = new ArmSubsystem();
 
+  //COMMANDS 
+  public final Command intakeCommand = new IntakeCommand(intake, magazine);
+  public final Command intakeOutCommand = new IntakeOutCommand(intake, magazine);
+
+  public final Command positionControl = new PositionControlCommand(spinner);
+  public final Command rotationControl = new RotationControlCommand(spinner);
+  public final Command endSpinRoutine = new EndSpinRoutine(spinner, drive); //empty command atm, needs code
+ 
+  public final Command aimbotRotate = new AimbotRotateCommand(drive);
+  public final Command aimbotTilt = new AimbotTiltCommand(arm);
+  public final Command aimbotSpinup = new AimbotSpinupCommand(shooter);
+  public final Command shoot = new ShootCommand(magazine);
+
+ /*  public final Command armToTrenchPosition = new ArmToTrenchPosition(arm);
+  public final Command armToBasePosition = new ArmToBasePosition(arm);
+  public final Command armToClimbPosition = new ArmToClimbPosition(arm); */
+
+  public final Command armToTrenchPosition = new ArmToSetPosition(kTrenchPos, arm);
+  public final Command armToBasePosition = new ArmToSetPosition(kNormalPos ,arm);
+  public final Command armToClimbPosition = new ArmToSetPosition(kClimbPos, arm);
+
+  //CONTROLLERS STUFF
   public static XboxController driveController = new XboxController(kDriveControllerPort);
   public static XboxController auxController = new XboxController(kAuxControllerPort);
+
   public static Trigger leftTrigger = new Trigger(intake::getLeftTrigger);
   public static Trigger rightTrigger = new Trigger(shooter::getRightTrigger);
+  public static Trigger auxLeftTrigger = new Trigger(shooter::getLTrigger);
+  
   public static SwerveControllerCommand swerveControllerCommandCenter;
   public static SwerveControllerCommand swerveControllerCommandLeft;
   public static SwerveControllerCommand swerveControllerCommandRight1;
   public static SwerveControllerCommand swerveControllerCommandRight2;
 
-  
   /**
-   * The container for the robot.  Contains subsystems, OI devices, and commands.
+   * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
 
     configureButtonBindings();
-   
-    drive.setDefaultCommand(
+    drive.setSlowDrive(false);
+
+    //add conditional command that runs either normal or slow based on color piston state
+     drive.setDefaultCommand(  
       new RunCommand(
-        () -> drive.drive(
-          //.5, 0, 0),
-             -(driveController.getRawAxis(1)) * .7, 
+        () -> drive.drive( 
+          -(driveController.getRawAxis(1)) * .7, 
           driveController.getRawAxis(0) * .7, 
-          driveController.getRawAxis(4)),  
+          driveController.getRawAxis(4) * .7),
           drive)
-      );
+      ); 
     
-    /* arm.setDefaultCommand(
+     arm.setDefaultCommand(
       new RunCommand(
-        () -> arm.armLift(
-          (auxController.getRawAxis(5) * .5)
-       )
+        () -> arm.moveArm(
+          (-auxController.getRawAxis(5) * .75)
+       ), arm
       )
     );
 
     intake.setDefaultCommand(
-      new RunCommand(
-        () -> intake.stop()
-       )
+      new RunCommand(intake::stop, intake)
      );
 
     magazine.setDefaultCommand(
-      new RunCommand (
-        () -> magazine.stop()
-      )
+      new RunCommand(magazine::stopAtIdle, magazine)
     );
 
     climb.setDefaultCommand(
-      new RunCommand (
-        () -> climb.stop()
+      new RunCommand(
+        () -> climb.climb(-auxController.getRawAxis(1)), climb
       )
     );
 
-    spinner.setDefaultCommand(
+    shooter.setDefaultCommand(
+      new RunCommand(shooter::stop, shooter)
+    );
+
+   /*  bar.setDefaultCommand(
       new RunCommand(
-        () -> spinner.stop()
+        () -> bar.move(auxController.getRawAxis(0))
       )
     ); */
 
-    
-    
-    //manually drives motors, leave out unless testing 
-    /*drive.setDefaultCommand(
-      new RunCommand(
-        () -> drive.motorTest(drive.frontRightModule,
-              -driveController.getRawAxis(1), -driveController.getRawAxis(5)),
-              drive)
-    );*/ 
 
+    spinner.setDefaultCommand(
+      new RunCommand(spinner::stop, spinner)
+    );
   }
 
   /**
@@ -124,9 +158,9 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     //instantiates drive toggle button
-    new JoystickButton(driveController, Button.kBack.value)
-      .whenPressed(new InstantCommand(drive::toggleIsDriveFieldCentric));
 
+    //-=+=-DRIVE Controller Buttons-=+=-//
+/*
     new JoystickButton(driveController, Button.kBumperLeft.value)
       .whenPressed(swerveControllerCommandCenter.andThen(
       (new RunCommand(magazine::magLoad, magazine)), 
@@ -153,22 +187,80 @@ public class RobotContainer {
       (new RunCommand(magazine::magShoot)),
       (new RunCommand(shooter::shoot))
     ));
-
-    /**
-     * Everything below here requires reworking.
-     */
-    //toggles aiming mode
-    /* new JoystickButton(driveController, Button.kStart.value)
-      .whenPressed(new InstantCommand(drive::toggleIsAimingMode, drive));
-    //rotates ColorSpinner motor left/Counter Clockwise
-    new JoystickButton(auxController, Button.kX.value)
-      .whenHeld(new RunCommand(spinner::spinL, spinner));
-    //rotates ColorSpinner motor right/Clockwise
-    new JoystickButton(auxController, Button.kB.value)
-      .whenHeld(new RunCommand(spinner::spinR, spinner));
-    //magazine belt
+*/
+    //toggles field drive and robot drive
+    new JoystickButton(driveController, Button.kBack.value)
+      .whenPressed(new InstantCommand(drive::toggleDriveFieldCentric));
+    //aligns swerve wheels 
+    new JoystickButton(driveController, Button.kStart.value)
+      .whenHeld(new RunCommand(drive::alignWheels, drive));
+    //extends pistons without wheels
+    new JoystickButton(driveController, Button.kX.value)
+    .whenHeld(new RunCommand(intake::intakePistonOut));
+    //puts arm in highest/climb position
+    new JoystickButton(driveController, Button.kY.value)
+    .whenPressed(armToClimbPosition, true);
+    //puts arm in midway position
+    new JoystickButton(driveController, Button.kB.value)
+    .whenPressed(armToBasePosition, true);
+    //puts arm in lowest/trench position
     new JoystickButton(driveController, Button.kA.value)
-        .whenHeld(new RunCommand(magazine::magBeltOn, magazine)); */
+    .whenPressed(armToTrenchPosition, true);
+    //activates aiming mode
+   /*  new JoystickButton(driveController, Button.kBumperRight.value)
+    .whenHeld(aimbotRotate.alongWith(
+      new ConditionalCommand(aimbotTilt, arm.getDefaultCommand(), () -> !arm.isManualOverride()),
+      aimbotSpinup
+    )); */
+    new JoystickButton(driveController, Button.kBumperRight.value)
+    .whenHeld(new RunCommand(shooter::setShooterSpeed, shooter));
+
+    new JoystickButton(driveController, Button.kBumperLeft.value)
+    .whenHeld(intakeOutCommand);
+
+    //intakes balls
+    leftTrigger.whileActiveContinuous(intakeCommand);
+    //activates shooting mode
+    rightTrigger.whileActiveContinuous(
+      new RunCommand(magazine::magEngage, magazine));
+
+      //new RunCommand(drive::lockWheels)
+      //.alongWith(shoot));
+
+//-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-// 
+  
+    //-=+=-AUX Controller Buttons-=+=-//
+
+     //spins color spinner to certain color
+    new JoystickButton(auxController, Button.kA.value)
+    .whenPressed(positionControl);
+    //spins color spinner by set ammount
+    new JoystickButton(auxController, Button.kY.value)
+    .whenPressed(rotationControl);
+    //extends the color spinner
+    new JoystickButton(auxController, Button.kBumperRight.value)
+    .whenPressed(new InstantCommand(spinner::extend)
+      .alongWith(
+        new FunctionalCommand(
+          () -> drive.setSlowDrive(true),
+          () -> drive.drive( 
+            -(driveController.getRawAxis(1)) * .7, 
+            driveController.getRawAxis(0) * .7, 
+            driveController.getRawAxis(4) * .7), 
+          (interupted) -> drive.doNothing(),
+          () -> drive.getIsSlowDrive(), 
+          drive)
+      ));
+    //retracts the color spinner 
+    new JoystickButton(auxController, Button.kBumperLeft.value)
+    .whenPressed(new InstantCommand(spinner::retract)
+      .alongWith(
+        new InstantCommand( () -> drive.setSlowDrive(false) )
+      ));
+    //toggle climb lock
+    new JoystickButton(auxController, Button.kStickLeft.value)
+    .whenPressed(new InstantCommand(climb::toggleClimbLock));
+ 
   }
 
   /**
@@ -178,6 +270,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
 
+/*
     SwerveControllerCommand swerveControllerCommandCenter = new SwerveControllerCommand(
     drive.centerTrajectory,
     drive::getPoseMeters, 
@@ -233,10 +326,7 @@ public class RobotContainer {
     drive::setModuleStates,
     drive
   );
-
-   return swerveControllerCommandCenter.andThen(() -> drive.drive(0, 0, 0));
-
-   
-  
+    return swerveControllerCommand.andThen(() -> drive.drive(0, 0, 0));   */
+    return null;
   }
 }

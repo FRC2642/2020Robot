@@ -9,86 +9,79 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.*;
 
-import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
-import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
-
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
 
-public class ArmSubsystem extends ProfiledPIDSubsystem {
-  static TalonSRX armMotor;
-  public DigitalInput armSwitch = new DigitalInput(kArmLimitSwitch);
+public class ArmSubsystem extends SubsystemBase {
 
-  /**
-   * Creates a new ArmSubsystem.
-   */
+  public VictorSPX armMotor;
+  public AnalogPotentiometer armPot;
+
+  public double input;
+
   public ArmSubsystem() {
-    super(
-        // The ProfiledPIDController used by the subsystem
-        new ProfiledPIDController(0, 0, 0,
-            // The motion profile constraints
-            new TrapezoidProfile.Constraints(0, 0)));
+  
+    armMotor = new VictorSPX(ID_MAG_TILT_MOTOR);
+    armMotor.setInverted(true);
 
-    armMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 2);
+    armPot = new AnalogPotentiometer(kArmPotPort, 100);
   }
 
-  public ErrorCode getEncoderValue() {
-    return armMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 2);
-
-  }
-  public void armLift(double d) {
-    //20, 30, 40, and 60 are example numbers, can and will be changed
-    double distance = Robot.getDistanceToWall();
-    distance = distance * kArmAngleConversionFactor;
-    if (distance > 20 && distance < 40) {
-      setGoal(20);
-    } else if (distance > 40 && distance < 60) {
-      setGoal(30);
-    } //add more criterias
-  }
-  public ErrorCode getArmPos() {
-    return getEncoderValue();
-  }
-  public void armBasePos() {
-    setGoal(45);
-  }
-
-  public void armDown() {
-        if (getArmSwitch()) {
-      ArmSubsystem.armStop();
-    } else {
-      setGoal(0);
+  //basic motor methods
+  public void moveArm(double speed){
+    if(getPot() <= kTrenchPos && speed < 0){
+      stop();
+    } else if(getPot() >= kClimbPos && speed > 0){
+      stop();
+    } else {    
+      setPower(speed); 
     }
   }
 
-  public void armClimbPos() { 
-    
-    setGoal(90);
-
-    }
-
-  public static void armStop() {
+  public void stop() {
     armMotor.set(ControlMode.PercentOutput, 0);
   }
-  public boolean getArmSwitch() {
-    armSwitch.get();
-    return armSwitch.get();
+
+  public void setPower(double input){
+    if(input > .6){
+      armMotor.set(ControlMode.PercentOutput, .6);
+    }
+    armMotor.set(ControlMode.PercentOutput, input);
+
+    this.input = input;
   }
-  
-  @Override
-  public void useOutput(double output, TrapezoidProfile.State setpoint) {
-    // Use the output (and optionally the setpoint) here
+
+  //aiming inputs
+  public boolean isManualOverride(){
+    return (RobotContainer.auxController.getRawAxis(5) > .2 || RobotContainer.auxController.getRawAxis(5) < -.2);
+  }
+
+  public double getPot(){
+    return armPot.get();
+  }
+
+  public double getAngleFromVision(){
+    
+    double dist = Robot.jevoisCam.getDistFromTarget(); //m
+    //calculates pot value based on distance from base of target 
+    //angle increases as distance decreases
+    double targetPos = kArmAngleConversionFactor / dist;
+
+    return targetPos;
+  }
+
+  public double getMotorPower(){
+    return input;
   }
 
   @Override
-  public double getMeasurement() {
-    // Return the process variable measurement here
-    return 0;
+  public void periodic(){
+    SmartDashboard.putBoolean("arm manual override", isManualOverride());
   }
 }
