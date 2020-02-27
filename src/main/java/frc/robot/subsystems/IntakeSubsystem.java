@@ -46,6 +46,10 @@ public class IntakeSubsystem extends SubsystemBase {
     intakePiston.set(Value.kReverse);
   }
 
+  public void intakePistonOut(){
+    intakePiston.set(Value.kReverse);
+  }
+
   //stops intake
   public void stop() {
     intakeMotor.set(0);

@@ -68,6 +68,7 @@ package frc.robot;
 import static frc.robot.Constants.kLightRing;
 
 import edu.wpi.cscore.VideoSource;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -133,6 +134,8 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
     //sets resolution of camera
     jevoisCam = new JevoisDriver();
     pdp = new PowerDistributionPanel();
+
+    //CameraServer.getInstance().startAutomaticCapture(0);
   }
 
   /**

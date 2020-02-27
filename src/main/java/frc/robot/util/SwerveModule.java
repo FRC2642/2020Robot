@@ -109,7 +109,8 @@ public class SwerveModule {
   public Rotation2d getTargetAngle(SwerveModuleState state){
     targetAngle = state.angle;
 
-    targetMotorAngle = realignAndOffsetEncoder(targetAngle.getDegrees());
+    //targetMotorAngle = realignAndOffsetEncoder(targetAngle.getDegrees());
+    targetMotorAngle = offsetEncoder(targetAngle.getDegrees());
 
     return targetAngle;
   }
@@ -155,20 +156,20 @@ public class SwerveModule {
       anglePID.setReference(target, ControlType.kPosition); 
   }
 
-  /**
+   /**
    * Realigns a target angle in the -180 to 180 degree range into the 0 to 360 degree range
    * and applys offset to the angle
    * 
    * @param encoderAngle angle in -180 to 180 degree range
    * @return Offset angle in 0 to 360 degree range
    */
-  public double realignAndOffsetEncoder(double encoderAngle){
+ /*  public double realignAndOffsetEncoder(double encoderAngle){
   
     double realignedAngle = realignEncoderRange(encoderAngle);
     realignedAngle = offsetEncoder(encoderAngle);
 
     return realignedAngle;
-  }
+  }  */
   
   /**
    * Realigns a target angle in the -180 to 180 degree range into the 0 to 360 degree range
@@ -176,14 +177,14 @@ public class SwerveModule {
    * @param encoderAngle angle in -180 to 180 degree range
    * @return angle in 0 to 360 degree range
    */
-  public double realignEncoderRange(double encoderAngle){
+/*   public double realignEncoderRange(double encoderAngle){
 
     double realignedAngle = encoderAngle;
     if(realignedAngle < 0){
       realignedAngle += 360;
     }
     return realignedAngle;
-  }
+  } */
 
   /**
    * Applies an offset to the target angle
@@ -194,11 +195,12 @@ public class SwerveModule {
   public double offsetEncoder(double encoderAngle){
   
     double realignedAngle = encoderAngle;
-    //System.out.println("offset = " + angleOffset);
-    realignedAngle = ((realignedAngle + absoluteOffset) % 360);
+
+    realignedAngle = ((realignedAngle - dashboardOffset) % 360);
     if(realignedAngle < 0){
       realignedAngle += 360;
     }
+    
     return realignedAngle;
   }
 
@@ -244,12 +246,8 @@ public class SwerveModule {
     return absoluteAngleEncoder.getPosition();
   }
 
-  public double getAbsoluteAngleEncoderWithOffset(){
-    return offsetEncoder(getAbsoluteAngleEncoder());
-  }
-
   public double getModulePosition(){
-    double angle = getAbsoluteAngleEncoderWithOffset() - dashboardOffset;
+    double angle = getAbsoluteAngleEncoder() - dashboardOffset;
     if(angle < 0){
       angle += 360;
     } 

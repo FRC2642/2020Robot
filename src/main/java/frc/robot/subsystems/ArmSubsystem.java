@@ -28,7 +28,7 @@ public class ArmSubsystem extends SubsystemBase {
   public ArmSubsystem() {
   
     armMotor = new VictorSPX(ID_MAG_TILT_MOTOR);
-    armMotor.setInverted(false);
+    armMotor.setInverted(true);
 
     armPot = new AnalogPotentiometer(kArmPotPort, 100);
   }
