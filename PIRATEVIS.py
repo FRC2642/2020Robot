@@ -17,8 +17,8 @@ class PIRATEVIS:
         self.HSVmax = np.array([ 80, 255, 255], dtype=np.uint8)
 
         # Measure your U-shaped object (in meters) and set its size here:
-        self.owm = 40 * .0254 # width in meters
-        self.ohm = 17 * .0254 # height in meters
+        self.owm = 0.280 # width in meters
+        self.ohm = 0.175 # height in meters
 
         # Other processing parameters:
         self.epsilon = 0.015               # Shape smoothing factor (higher for smoother)
@@ -219,7 +219,7 @@ class PIRATEVIS:
         
     # ###################################################################################################
     ## Send serial messages, one per object
-    def sendSerial(self, w, h, hlist, rvecs, tvecs):
+    def sendAllSerial(self, w, h, hlist, rvecs, tvecs):
         idx = 0
         for c in hlist:
             # Compute quaternion: FIXME need to check!
