@@ -36,6 +36,7 @@ public class ClimberSubsystem extends SubsystemBase {
   public boolean isClimbLocked;
 
   public ClimberSubsystem(){
+
     climberMotor = new VictorSPX(ID_CLIMBER_MOTOR);
     climberMotor.setInverted(false);
 

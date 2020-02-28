@@ -30,12 +30,17 @@ import frc.robot.commands.colorSpinner.RotationControlCommand;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.IntakeOutCommand;
 import frc.robot.subsystems.ArmSubsystem;
+
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ColorSpinnerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.MagazineSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
+import frc.robot.subsystems.ArmSubsystem;
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -83,6 +88,11 @@ public class RobotContainer {
   public static Trigger leftTrigger = new Trigger(intake::getLeftTrigger);
   public static Trigger rightTrigger = new Trigger(shooter::getRightTrigger);
   public static Trigger auxLeftTrigger = new Trigger(shooter::getLTrigger);
+  
+  public static SwerveControllerCommand swerveControllerCommandCenter;
+  public static SwerveControllerCommand swerveControllerCommandLeft;
+  public static SwerveControllerCommand swerveControllerCommandRight1;
+  public static SwerveControllerCommand swerveControllerCommandRight2;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -134,6 +144,7 @@ public class RobotContainer {
       )
     ); */
 
+
     spinner.setDefaultCommand(
       new RunCommand(spinner::stop, spinner)
     );
@@ -149,7 +160,34 @@ public class RobotContainer {
     //instantiates drive toggle button
 
     //-=+=-DRIVE Controller Buttons-=+=-//
+/*
+    new JoystickButton(driveController, Button.kBumperLeft.value)
+      .whenPressed(swerveControllerCommandCenter.andThen(
+      (new RunCommand(magazine::magLoad, magazine)), 
+      (new RunCommand(intake::intakeIn, intake)),
+      (new RunCommand(magazine::magShoot)), 
+      (new RunCommand(shooter::shoot))
+      ));
 
+    new JoystickButton(driveController, Button.kBack.value)
+    .whenPressed(swerveControllerCommandLeft.andThen(
+      (new RunCommand(magazine::magLoad, magazine)), 
+      (new RunCommand(intake::intakeIn, intake)),
+      (new RunCommand(magazine::magShoot)), 
+      (new RunCommand(shooter::shoot))
+    ));
+
+    new JoystickButton(driveController, Button.kBack.value)
+    .whenPressed(new RunCommand(magazine::magShoot).andThen(
+      (new RunCommand(shooter::shoot, shooter)),
+      (swerveControllerCommandRight1),
+      (new RunCommand(magazine::magLoad)), 
+      (new RunCommand(intake::intakeIn, intake)),
+      (swerveControllerCommandRight2), 
+      (new RunCommand(magazine::magShoot)),
+      (new RunCommand(shooter::shoot))
+    ));
+*/
     //toggles field drive and robot drive
     new JoystickButton(driveController, Button.kBack.value)
       .whenPressed(new InstantCommand(drive::toggleDriveFieldCentric));
@@ -232,8 +270,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
 
-    /*SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-    drive.exampleTrajectory,
+/*
+    SwerveControllerCommand swerveControllerCommandCenter = new SwerveControllerCommand(
+    drive.centerTrajectory,
     drive::getPoseMeters, 
     drive.kinematics,
 
@@ -246,6 +285,47 @@ public class RobotContainer {
     drive
   );
 
+  SwerveControllerCommand swerveControllerCommandLeft = new SwerveControllerCommand(
+    drive.leftTrajectory,
+    drive::getPoseMeters, 
+    drive.kinematics,
+
+    //Position controllers
+    new PIDController(Constants.kPXController, 0, 0),
+    new PIDController(Constants.kPYController, 0, 0),
+    new ProfiledPIDController(Constants.kPThetaController, 0, 0,
+                              Constants.kThetaControllerConstraints),
+    drive::setModuleStates,
+    drive
+  );
+
+  SwerveControllerCommand swerveControllerCommandRight1 = new SwerveControllerCommand(
+    drive.rightTrajectory1,
+    drive::getPoseMeters, 
+    drive.kinematics,
+
+    //Position controllers
+    new PIDController(Constants.kPXController, 0, 0),
+    new PIDController(Constants.kPYController, 0, 0),
+    new ProfiledPIDController(Constants.kPThetaController, 0, 0,
+                              Constants.kThetaControllerConstraints),
+    drive::setModuleStates,
+    drive
+  );
+
+  SwerveControllerCommand swerveControllerCommandRight2 = new SwerveControllerCommand(
+    drive.rightTrajectory2,
+    drive::getPoseMeters, 
+    drive.kinematics,
+
+    //Position controllers
+    new PIDController(Constants.kPXController, 0, 0),
+    new PIDController(Constants.kPYController, 0, 0),
+    new ProfiledPIDController(Constants.kPThetaController, 0, 0,
+                              Constants.kThetaControllerConstraints),
+    drive::setModuleStates,
+    drive
+  );
     return swerveControllerCommand.andThen(() -> drive.drive(0, 0, 0));   */
     return null;
   }
