@@ -17,6 +17,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ControlType;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -95,8 +96,8 @@ public boolean getRightTrigger() {
   }
 
   public void setShooterSpeed(){
-    lShooterPID.setReference(kShooterRPM, ControlType.kVelocity);
-    rShooterPID.setReference(kShooterRPM, ControlType.kVelocity);
+    lShooterPID.setReference(kInitLineShooterRPM, ControlType.kVelocity);
+    rShooterPID.setReference(kInitLineShooterRPM, ControlType.kVelocity);
   }
 
   double speed;
@@ -110,13 +111,20 @@ public boolean getRightTrigger() {
     return ((lShooterEncoder.getVelocity() + rShooterEncoder.getVelocity()) / 2);
   }
 
-
+  public boolean isAtTargetVelocity(){
+    return getAverageVelocity() >= kInitLineShooterRPM;
+  }
 
   public boolean getLTrigger(){
     return (RobotContainer.auxController.getTriggerAxis(Hand.kLeft) > .5);
   }
 
+  public boolean getRTrigger(){
+    return (RobotContainer.auxController.getTriggerAxis(Hand.kRight) > .5);
+  }
+
   @Override
   public void periodic() {
+    SmartDashboard.putBoolean("atTargetVelocity", isAtTargetVelocity());
   }
 }

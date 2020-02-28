@@ -84,7 +84,7 @@ public final class Constants {
        * ANALOG
        */
     //arm potentiometer
-    public static final int kArmPotPort = 0;
+    public static final int kArmPotPort = 3;
     
       /**
        * DIO
@@ -125,7 +125,7 @@ public final class Constants {
     public static final double kXDistanceFromCenter = kRobotLength / 2;
     public static final double kYDistanceFromCenter = kRobotWidth / 2;
 
-    public static final double kGyroOffset = 180.0;
+    public static final double kGyroOffset = 0.0;//180.0;
     //absolute encoder offsets (swerve)
     public static final double kFrontLeftAngleOffset = 0.0;//159.5;
     public static final double kFrontRightAngleOffset = 0.0;//45.3;
@@ -147,7 +147,7 @@ public final class Constants {
     //motor neutral deadband
     public static final double kMotorNeutralDeadband = .15;
     //mag belt speed
-    public static final double kMagShootSpeed = 6500; //RPM
+    public static final double kMagShootSpeed = 2000; //RPM
     public static final double kMagLoadSpeed = 6000; //RPM
     public static final double kMagIdleSpeed = 2000; //RPM
     //swerve max speeds
@@ -155,10 +155,13 @@ public final class Constants {
     public static final double kMaxMPS = 12.0 * kMaxSpeedConversionFactor; //desired movement speed * gear ratio conversion
     public static final double kMaxAcceleration = 1.2192;
     //shooter rpm
-    public static final double kShooterRPM = 4350; //RPM
+    public static final double kFrontTrenchShooterRPM = 1800; //RPM
+    public static final double kInitLineShooterRPM = 1800; //RPM
+    public static final double kLongShotShooterRPM = 4500; //RPM
     //tilt presets
-    public static final double kTrenchPos = 20.8;
-    public static final double kNormalPos = 45.0;
+    public static final double kTrenchPos = 19.3;
+    public static final double kInitLineShootPos = 30.0;
+    public static final double kTrenchShootPos = 25.0;
     public static final double kClimbPos = 81.4;
 
     /**
@@ -218,12 +221,6 @@ public final class Constants {
     //controller ports 
     public static final int kDriveControllerPort = 0;
     public static final int kAuxControllerPort = 1;
-
-     //Constraint for the motion profilied robot angle controller
-     public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
-     new TrapezoidProfile.Constraints(kMaxAngularSpeedRadiansPerSecond,
-       kMaxAngularSpeedRadiansPerSecondSquared);
-
 
 
     //practice auto stuff

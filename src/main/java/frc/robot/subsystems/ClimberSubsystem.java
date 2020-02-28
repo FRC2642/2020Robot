@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 
 
 /**
@@ -95,6 +96,10 @@ public class ClimberSubsystem extends SubsystemBase {
 
   public boolean getLimitSwitch(){
     return climberLimitSwitch.get();
+  }
+
+  public boolean getUpDPad(){
+    return RobotContainer.auxController.getPOV() == 0;
   }
 
   public void stop() {

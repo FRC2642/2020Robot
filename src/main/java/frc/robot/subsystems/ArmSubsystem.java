@@ -35,11 +35,13 @@ public class ArmSubsystem extends SubsystemBase {
 
   //basic motor methods
   public void moveArm(double speed){
-    if(getPot() <= kTrenchPos && speed < 0){
+     if(getPot() <= kTrenchPos && speed < 0){
+      System.out.println("low");
       stop();
     } else if(getPot() >= kClimbPos && speed > 0){
+      System.out.println("high");
       stop();
-    } else {    
+    } else {     
       setPower(speed); 
     }
   }
