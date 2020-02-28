@@ -17,8 +17,8 @@ class PIRATEVIS:
         self.HSVmax = np.array([ 80, 255, 255], dtype=np.uint8)
 
         # Measure your U-shaped object (in meters) and set its size here:
-        self.owm = 40 * .0254 # width in meters
-        self.ohm = 17 * .0254 # height in meters
+        self.owm = 0.280 # width in meters
+        self.ohm = 0.175 # height in meters
 
         # Other processing parameters:
         self.epsilon = 0.015               # Shape smoothing factor (higher for smoother)
@@ -79,8 +79,16 @@ class PIRATEVIS:
         str2 = ""
         beststr2 = ""
         
+        #name squares
+        squares = []
+        badPolys = []
+        
         # Identify the "good" objects:
         for c in contours:
+        
+            #name squares
+            squares = []
+            badPolys = []
             # Keep track of our best detection so far:
             if len(str2) > len(beststr2): beststr2 = str2
             str2 = ""
@@ -168,17 +176,17 @@ class PIRATEVIS:
             str2 += " OK"
             hlist.append(hull)
 
-        #for c in contours finding center
+            #for c in contours finding center
 
-         for s in squares:        
-            br = cv2.boundingRect(s)
-            #Target "x" and "y" center 
-            x = br[0] + (br[2]/2)
-            y = br[1] + (br[3]/2)
+        for s in squares:        
+              br = cv2.boundingRect(s)
+              #Target "x" and "y" center 
+              x = br[0] + (br[2]/2)
+              y = br[1] + (br[3]/2)
 
         if len(str2) > len(beststr2):  beststr2 = str2
-        
-        # Display any results requested by the users:
+         
+         # Display any results requested by the users:
         if outimg is not None and outimg.valid():
             if (outimg.width == w * 2): jevois.pasteGreyToYUYV(imgth, outimg, w, 0)
             jevois.writeText(outimg, str + beststr2, 3, h+1, jevois.YUYV.White, jevois.Font.Font6x10)
@@ -211,7 +219,7 @@ class PIRATEVIS:
         
     # ###################################################################################################
     ## Send serial messages, one per object
-    def sendSerial(self, w, h, hlist, rvecs, tvecs):
+    def sendAllSerial(self, w, h, hlist, rvecs, tvecs):
         idx = 0
         for c in hlist:
             # Compute quaternion: FIXME need to check!
@@ -227,10 +235,10 @@ class PIRATEVIS:
             i = axis * math.sin(theta)
             q = (r, i[0], i[1], i[2])
 
-         """   jevois.sendSerial("D3 {} {} {} {} {} {} {} {} {} {} FIRST".
+            jevois.sendSerial("D3 {} {} {} {} {} {} {} {} {} {} FIRST".
                               format(np.asscalar(tv[0]), np.asscalar(tv[1]), np.asscalar(tv[2]),  # position
-                                     self.owm, self.ohm, 1.0,                                     # size
-                                     r, np.asscalar(i[0]), np.asscalar(i[1]), np.asscalar(i[2]))) # pose"""
+                                     (self.owm / 2), (self.ohm / 2), 1.0,                         # center 
+                                     r, np.asscalar(i[0]), np.asscalar(i[1]), np.asscalar(i[2]))) # pose
             idx += 1
                               
     # ###################################################################################################
