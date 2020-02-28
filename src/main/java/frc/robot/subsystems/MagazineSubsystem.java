@@ -129,6 +129,21 @@ public class MagazineSubsystem extends SubsystemBase {
     }
   }
 
+  public void toggleTopBelt(){
+
+    System.out.println("run");
+
+    if(!magPis.get()){
+
+      System.out.println("down");
+      magPis.set(false);
+
+    } else if(magPis.get()){
+      System.out.println("up");
+      magPis.set(true);
+    }
+  }
+
 
   public double getVelocity(){
     return magEncoder.getVelocity();

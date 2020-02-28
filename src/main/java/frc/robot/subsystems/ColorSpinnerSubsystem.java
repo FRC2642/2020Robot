@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
+import frc.robot.RobotContainer;
 
 public class ColorSpinnerSubsystem extends SubsystemBase {
 
@@ -194,6 +196,14 @@ public static boolean Counter() {
   public boolean isAtColor(){
     char currentColor = getCurrentColorChar();
     return targetColor == currentColor;
+  }
+
+  public boolean getLDPad(){
+    return RobotContainer.auxController.getPOV() == 270;
+  }
+
+  public boolean getRDPad(){
+    return RobotContainer.auxController.getPOV() == 90;
   }
   
   @Override

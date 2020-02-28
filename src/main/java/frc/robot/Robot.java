@@ -135,7 +135,7 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
     jevoisCam = new JevoisDriver();
     pdp = new PowerDistributionPanel();
 
-    //CameraServer.getInstance().startAutomaticCapture(0);
+    CameraServer.getInstance().startAutomaticCapture(0);
   }
 
   /**
@@ -150,7 +150,7 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
     
     CommandScheduler.getInstance().run();
 
-    //jevoisCam.printSystemOut();
+    jevoisCam.printSystemOut();
 
     /**
      * place any SmartDashboard methods that should be running even when the robot is disabled here
@@ -159,15 +159,6 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
     SmartDashboard.putNumber("shooter vel", robotContainer.shooter.getAverageVelocity());
     SmartDashboard.putNumber("arm pot", robotContainer.arm.getPot());
     SmartDashboard.putNumber("mag vel", RobotContainer.magazine.getVelocity());
-
-    SmartDashboard.putNumber("fl", RobotContainer.drive.frontLeftModule.getModulePosition());
-    SmartDashboard.putNumber("fr", RobotContainer.drive.frontRightModule.getModulePosition());
-    SmartDashboard.putNumber("bl", RobotContainer.drive.backLeftModule.getModulePosition());
-    SmartDashboard.putNumber("br", RobotContainer.drive.backRightModule.getModulePosition());
-
-    SmartDashboard.putNumber("fl rel", RobotContainer.drive.frontLeftModule.getRelativeAngleEncoder());
-    
-    SmartDashboard.putNumber("fl offset", RobotContainer.drive.frontLeftModule.getDashboardOffset());
 
     //SmartDashboard.putString("targetColor", value)
   }
@@ -189,7 +180,7 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    findTapeThread.start();
+    //findTapeThread.start();
     
     m_autonomousCommand = robotContainer.getAutonomousCommand();
 
@@ -247,6 +238,8 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
+    lightRing.set(true);
+
   }
 
   /**
@@ -254,9 +247,6 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-
-    lightRing.set(true);
-
 
     /**
      * DO NOT PLACE SMARTDASHBOARD DIAGNOSTICS HERE

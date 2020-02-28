@@ -513,7 +513,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("naxv angle", getRobotYaw());
     SmartDashboard.putBoolean("isDriveFieldCentric", getIsDriveFieldCentric());
     SmartDashboard.putString("positionOnField", odometry.getPoseMeters().toString());
 
@@ -522,7 +521,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     } catch(RuntimeException e){ 
     }
 
-    SmartDashboard.putNumber("driveVelocity", frontLeftModule.getDriveVelocity());
     SmartDashboard.putNumber("poseXInFeet", getPoseXInFeet());
 
   }

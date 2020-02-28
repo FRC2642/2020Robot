@@ -13,10 +13,10 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.aimbot.AimbotRotateCommand;
@@ -30,16 +30,12 @@ import frc.robot.commands.colorSpinner.RotationControlCommand;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.IntakeOutCommand;
 import frc.robot.subsystems.ArmSubsystem;
-
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ColorSpinnerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.MagazineSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
-import frc.robot.subsystems.ArmSubsystem;
-import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 
 
 /**
@@ -78,7 +74,8 @@ public class RobotContainer {
   public final Command armToClimbPosition = new ArmToClimbPosition(arm); */
 
   public final Command armToTrenchPosition = new ArmToSetPosition(kTrenchPos, arm);
-  public final Command armToBasePosition = new ArmToSetPosition(kNormalPos ,arm);
+  public final Command armToInitLineShootPosition = new ArmToSetPosition(kInitLineShootPos ,arm);
+  public final Command armToTrenchShootPosition = new ArmToSetPosition(kTrenchShootPos, arm);
   public final Command armToClimbPosition = new ArmToSetPosition(kClimbPos, arm);
 
   //CONTROLLERS STUFF
@@ -87,7 +84,12 @@ public class RobotContainer {
 
   public static Trigger leftTrigger = new Trigger(intake::getLeftTrigger);
   public static Trigger rightTrigger = new Trigger(shooter::getRightTrigger);
+
   public static Trigger auxLeftTrigger = new Trigger(shooter::getLTrigger);
+  public static Trigger auxRightTrigger = new Trigger(shooter::getRTrigger);
+  public static Trigger auxLDPad = new Trigger(spinner::getLDPad);
+  public static Trigger auxRDPad = new Trigger(spinner::getRDPad);
+  public static Trigger auxUpDPad = new Trigger(climb::getUpDPad);
   
   public static SwerveControllerCommand swerveControllerCommandCenter;
   public static SwerveControllerCommand swerveControllerCommandLeft;
@@ -106,9 +108,9 @@ public class RobotContainer {
      drive.setDefaultCommand(  
       new RunCommand(
         () -> drive.drive( 
-          -(driveController.getRawAxis(1)) * .7, 
-          driveController.getRawAxis(0) * .7, 
-          driveController.getRawAxis(4) * .7),
+          -(driveController.getRawAxis(1)) * .5, 
+          driveController.getRawAxis(0) * .5, 
+          driveController.getRawAxis(4) * .5),
           drive)
       ); 
     
@@ -197,15 +199,7 @@ public class RobotContainer {
     //extends pistons without wheels
     new JoystickButton(driveController, Button.kX.value)
     .whenHeld(new RunCommand(intake::intakePistonOut));
-    //puts arm in highest/climb position
-    new JoystickButton(driveController, Button.kY.value)
-    .whenPressed(armToClimbPosition, true);
-    //puts arm in midway position
-    new JoystickButton(driveController, Button.kB.value)
-    .whenPressed(armToBasePosition, true);
-    //puts arm in lowest/trench position
-    new JoystickButton(driveController, Button.kA.value)
-    .whenPressed(armToTrenchPosition, true);
+
     //activates aiming mode
    /*  new JoystickButton(driveController, Button.kBumperRight.value)
     .whenHeld(aimbotRotate.alongWith(
@@ -213,7 +207,7 @@ public class RobotContainer {
       aimbotSpinup
     )); */
     new JoystickButton(driveController, Button.kBumperRight.value)
-    .whenHeld(new RunCommand(shooter::setShooterSpeed, shooter));
+    .whenPressed(new InstantCommand(magazine::toggleTopBelt, magazine));
 
     new JoystickButton(driveController, Button.kBumperLeft.value)
     .whenHeld(intakeOutCommand);
@@ -231,12 +225,34 @@ public class RobotContainer {
   
     //-=+=-AUX Controller Buttons-=+=-//
 
-     //spins color spinner to certain color
-    new JoystickButton(auxController, Button.kA.value)
-    .whenPressed(positionControl);
-    //spins color spinner by set ammount
+    //Y = 30 Thornes, 1800 RPM
+    //B = 25 T, 1800
+    //A = ??
+
     new JoystickButton(auxController, Button.kY.value)
-    .whenPressed(rotationControl);
+     .whileHeld(new RunCommand(
+      () -> shooter.setShooterSpeed(kInitLineShooterRPM), shooter)
+      .alongWith(armToInitLineShootPosition)
+      ); 
+
+    new JoystickButton(auxController, Button.kB.value)
+      .whileHeld(new RunCommand(
+       () -> shooter.setShooterSpeed(kFrontTrenchShooterRPM), shooter)
+       .alongWith(armToTrenchShootPosition)
+       ); 
+    
+    new JoystickButton(auxController, Button.kX.value)
+     .whileHeld(new RunCommand(
+      () -> shooter.setShooterSpeed(kTrenchPos), shooter)
+      .alongWith(armToTrenchPosition)
+      ); 
+    
+   /*  new JoystickButton(auxController, Button.kA.value)
+     .whileHeld(new RunCommand(
+      () -> shooter.setShooterSpeed(kInitLineShooterRPM), shooter)
+      .alongWith(armToInitLineShootPosition)
+      );  */
+
     //extends the color spinner
     new JoystickButton(auxController, Button.kBumperRight.value)
     .whenPressed(new InstantCommand(spinner::extend)
@@ -261,6 +277,13 @@ public class RobotContainer {
     new JoystickButton(auxController, Button.kStickLeft.value)
     .whenPressed(new InstantCommand(climb::toggleClimbLock));
  
+    auxRightTrigger.whileActiveContinuous(new RunCommand(shooter::setShooterSpeed, shooter));
+
+    auxLDPad.whenActive(rotationControl);
+    auxRDPad.whenActive(positionControl);
+    auxUpDPad.whenActive(armToClimbPosition);
+
+
   }
 
   /**
