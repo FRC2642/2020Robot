@@ -240,7 +240,7 @@ public class SwerveModule {
 
   public double getDriveVelocity(){
     double vel = driveEncoder.getVelocity();
-    vel *= kMaxSpeedConversionFactor;
+    vel /= kMaxSpeedConversionFactor;
     return Units.metersToFeet(vel);
   }
 

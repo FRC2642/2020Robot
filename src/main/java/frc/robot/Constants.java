@@ -76,25 +76,25 @@ public final class Constants {
 
     //climb piston port
     public static final int kClimberPistonPort = 4;
-
-    //light ring
+ 
+     //light ring
     public static final int kLightRing = 7;
 
 
       /**
        * ANALOG
        */
-    //sonar
-    public static final int kMagazineSonarInput = 0;
-    public static final int kMagazineSonarOutput = 1;
+    //arm potentiometer
+    public static final int kArmPotPort = 0;
     
       /**
        * DIO
        */
     //hanger limit switch
-    public static final int kClimberLimitSwitch = 2; // not 0
+    public static final int kClimberLimitSwitch = 8; // not 0
     public static final int kArmLimitSwitch = 1;
-    //Right SIght
+
+    // Right Sight
     public static final int kRightSight = 2;
 
       /**
@@ -112,7 +112,7 @@ public final class Constants {
     public static final double kRelativeRotationsPerModuleRotation = 18.05; //relative rots
     public static final double kModuleDegreesToRelativeRotations 
                                = kRelativeRotationsPerModuleRotation / 360.0; //rots / degrees
-    public static final double kMaxSpeedConversionFactor = 8.31; //gear ratio conversion
+    public static final double kMaxSpeedConversionFactor = 8.667; //gear ratio conversion
     public static final double kShooterRPMConversionFactor = 18.84954;
     //value isn't accurate, change later
    public static final double kArmAngleConversionFactor = 10.0;
@@ -148,25 +148,22 @@ public final class Constants {
     //motor neutral deadband
     public static final double kMotorNeutralDeadband = .15;
     //mag belt speed
-    public static final double kMagShootSpeed = 6500;
-    public static final double kMagLoadSpeed = 5000;
-    public static final double kMagIdleSpeed = 2000;
+    public static final double kMagShootSpeed = 6500; //RPM
+    public static final double kMagLoadSpeed = 5000; //RPM
+    public static final double kMagIdleSpeed = 2000; //RPM
     //swerve max speeds
     public static final double kMaxModuleRPM = 12.0 * kMaxSpeedConversionFactor; //desired module rotation speed * gear ratio conversion
     public static final double kMaxMPS = 12.0 * kMaxSpeedConversionFactor; //desired movement speed * gear ratio conversion
     public static final double kMaxAcceleration = 1.2192;
     //shooter rpm
-    public static final double kShooterRPM = 2500; //RPM
-  
-    /**
-     * ENCODER SOFT LIMITS
-     */
-
-    public static final double kClimberUpperLimit = 3000.0; //TEMP VAL
-    public static final double kClimberLowerLimit = 0.0; //TEMP VAL
+    public static final double kShooterRPM = 4350; //RPM
+    //tilt presets
+    public static final double kTrenchPos = .207;
+    public static final double kNormalPos = 0.0;
+    public static final double kClimbPos = .814;
 
     /**
-     * PID GAINS AND OTHER PID CONSTANTS
+     * PID GAINS AND CONSTANTS AND PROFILING CONSTANTS
      */
     //PID constants
     public static final double kMinOutput = -1.0;
@@ -184,47 +181,48 @@ public final class Constants {
     //PIDF values for closed-loop velocity control for the magazine belt
     public static final double kMagFF = .5 / 5400;
     public static final double kMagP = 0.0;
-    public static final double kMagI = 0.0;
+    public static final double kMagI = kMagFF / 500;
     public static final double kMagD = 0.0;
-    //PIDF values for closed-loop position control for the arm tilt motor
-    public static final double kTiltFF = 0.0;
-    public static final double kTiltP = 0.0;
-    public static final double kTiltI = 0.00;
-    public static final double kTiltD = 0.0;
     //PIDF values for closed-loop velocity control for the shooter wheels
     public static final double kShooterFF = .5 / 2700.0;
     public static final double kShooterP = 0.0;
-    public static final double kShooterI = 0.0;
-    public static final double kShooterD = 0.0;
-    //PIDF values for closed-loop position control for the climbing motor
-    public static final double kClimbFF = 0.0;
-    public static final double kClimbP = 0.0;
-    public static final double kClimbI = 0.0;
-    public static final double kClimbD = 0.0;
-    //PIDF values for initial alignment of the wheels
-    public static final double kAlignmentFF = 0.0;
-    public static final double kAlignmentP = 0.0;
-    public static final double kAlignmentI = 0.0;
-    public static final double kAlignmentD = 0.0;
-    
-  /**
+    public static final double kShooterI = kShooterFF / 10000;
+    public static final double kShooterD = 0.08;
+
+    //PID values for profiled closed-loop position control for the arm tilt motor
+    public static final double kTiltP = 0.0;
+    public static final double kTiltI = 0.00;
+    public static final double kTiltD = 0.0;
+
+    public static final double kTiltMaxVel = 0.0; 
+    public static final double kTiltMaxAccel = 0.0;
+
+    public static final double kTiltFFStatic = 0.8; //volts to get past idle
+    public static final double kTiltFFGrav = 0.0; //volts to compensate for gravity (cosine)
+    public static final double kTiltFFVel = 0.0; //volts to hold at given velocity
+
+    /**
+     * AUTO TRAJECTORY PID GAINS
+     */
+
+    //PID Controllers for auto command
+    public static final double kPXController = .3;
+    public static final double kPYController = .4;
+    public static final double kPThetaController = .5;
+    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
+    public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
+  
+    //Constraint for the motion profilied robot angle controller
+    public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
+      new TrapezoidProfile.Constraints(kMaxAngularSpeedRadiansPerSecond,
+        kMaxAngularSpeedRadiansPerSecondSquared);
+
+    /**
      * CONTROLLER PORTS
      */
     //controller ports 
     public static final int kDriveControllerPort = 0;
     public static final int kAuxControllerPort = 1;
-    //PID Controllers for auto command
-    public static final double kPXController = .3;
-    public static final double kPYController = .4;
-    public static final double kPThetaController = .5;
 
-    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
-    public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
- 
-
-     //Constraint for the motion profilied robot angle controller
-     public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
-     new TrapezoidProfile.Constraints(kMaxAngularSpeedRadiansPerSecond,
-       kMaxAngularSpeedRadiansPerSecondSquared);
 }
 

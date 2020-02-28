@@ -65,6 +65,10 @@ return "We love you <3";
 
 package frc.robot;
 
+import static frc.robot.Constants.*;
+
+import frc.robot.RobotContainer;
+
 import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -72,6 +76,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.util.JevoisDriver;
 
 /**
@@ -97,7 +102,7 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
   public final Object visionLock = new Object();
 
   //Jevois driver
-  JevoisDriver jevoisCam;
+  public static JevoisDriver jevoisCam;
 
 
   // The pipeline outputs we want
@@ -105,7 +110,7 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
   public double angleToTape = 0;
   public double distanceToTape = 0;
 
-  public Solenoid lightRing = new Solenoid(0, Constants.kLightRing);
+  public Solenoid lightRing = new Solenoid(0, kLightRing);
   /*this was suppose to copy the pipeline values and store them
   in separate variables, but I got rid of them because VS code
   didn't like it, and we don't really need it anyway.
@@ -128,7 +133,6 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
     //takes a picture with the camera
     //sets resolution of camera
     jevoisCam = new JevoisDriver();
-
   }
 
   /**
@@ -147,15 +151,14 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
      * place any SmartDashboard methods that should be running even when the robot is disabled here
      */
 
-    SmartDashboard.putNumber("fl", robotContainer.drive.frontLeftModule.getModulePosition());
-    SmartDashboard.putNumber("fr", robotContainer.drive.frontRightModule.getModulePosition());
-    SmartDashboard.putNumber("bl", robotContainer.drive.backLeftModule.getModulePosition());
-    SmartDashboard.putNumber("br", robotContainer.drive.backRightModule.getModulePosition());
+    SmartDashboard.putNumber("shooter vel", robotContainer.shooter.getAverageVelocity());
+    SmartDashboard.putNumber("arm pot", robotContainer.arm.getMeasurement());
+    SmartDashboard.putNumber("mag vel", RobotContainer.magazine.getVelocity());
 
-    SmartDashboard.putNumber("fl relative", robotContainer.drive.frontLeftModule.getRelativeAngleEncoder());
-    SmartDashboard.putNumber("fr relative", robotContainer.drive.frontRightModule.getRelativeAngleEncoder());
-    SmartDashboard.putNumber("bl relative", robotContainer.drive.backLeftModule.getRelativeAngleEncoder());
-    SmartDashboard.putNumber("br relative", robotContainer.drive.backRightModule.getRelativeAngleEncoder());
+    SmartDashboard.putNumber("fl", RobotContainer.drive.frontLeftModule.getModulePosition());
+    SmartDashboard.putNumber("fr", RobotContainer.drive.frontRightModule.getModulePosition());
+    SmartDashboard.putNumber("bl", RobotContainer.drive.backLeftModule.getModulePosition());
+    SmartDashboard.putNumber("br", RobotContainer.drive.backRightModule.getModulePosition());
 
     
   }
@@ -176,9 +179,10 @@ public class Robot<MyFindTapePipeline> extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = robotContainer.getAutonomousCommand();
 
     findTapeThread.start();
+    
+    m_autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

@@ -9,18 +9,17 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.*;
-import static frc.robot.util.GeneralUtil.*;
+//import frc.robot.RobotContainer;
+import static frc.robot.Constants.ID_CLIMBER_MOTOR;
+import static frc.robot.Constants.kClimberLimitSwitch;
+import static frc.robot.Constants.kClimberPistonPort;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import com.revrobotics.CANEncoder;
-import com.revrobotics.CANPIDController;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.ControlType;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
@@ -31,13 +30,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class ClimberSubsystem extends SubsystemBase {
   
   VictorSPX climberMotor;
-
   public Solenoid climberPis = new Solenoid(kClimberPistonPort);
   public DigitalInput climberLimitSwitch = new DigitalInput(kClimberLimitSwitch);
+
+  public boolean isClimbLocked;
 
   public ClimberSubsystem(){
     climberMotor = new VictorSPX(ID_CLIMBER_MOTOR);
     climberMotor.setInverted(true);
+
+    isClimbLocked = getClimbLock();
   }
   
   public void setClimbPower(double power){
@@ -45,26 +47,48 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public void climbUp(){
-    if(!getLimitSwitch()){
-      climberPis.set(false);
       setClimbPower(.7);
+  }
+
+  public void climbDown(){
+    setClimbPower(-.7);
+  }
+
+  public void climb(double speed){
+    if(!getClimbLock()){
+      if(speed > .5){
+        climbUp();
+      } else if(speed < -.5){
+        climbDown();
+      } else {
+        stop();
+      }
+
     } else {
       stop();
     }
   }
 
-  public void climbDown(){
-    climberPis.set(false);
-    setClimbPower(-.7);
+  public boolean getClimbLock(){
+    return !climberPis.get();
   }
 
-  public void climb(double speed){
-    if(speed > .5){
-      climbUp();
-    } else if(speed < -.5){
-      climbDown();
-    } else {
-      stop();
+  public void toggleClimbLock(){
+    if(isClimbLocked){
+      setClimbPiston(false);
+      isClimbLocked = false;
+
+    } else if(!isClimbLocked){
+      climberPis.set(true);
+      isClimbLocked = true;
+    }
+  }
+
+  public void setClimbPiston(boolean state){
+    if(state){
+      climberPis.set(true);
+    } else if(!state){
+      climberPis.set(false);
     }
   }
 
@@ -72,9 +96,12 @@ public class ClimberSubsystem extends SubsystemBase {
     return climberLimitSwitch.get();
   }
 
-  public void stop(){
+  public void stop() {
     climberMotor.set(ControlMode.PercentOutput, 0);
-    climberPis.set(true);
   }
 
+  @Override
+  public void periodic(){
+    SmartDashboard.putBoolean("climb", getClimbLock());
+  }
 }
