@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.SwerveModule;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
@@ -58,11 +59,18 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
   public AHRS navx;
   public TrajectoryConfig config;
-  public Trajectory exampleTrajectory;
+  public Trajectory centerTrajectory;
+  public Trajectory leftTrajectory;
+  public Trajectory rightTrajectory1;
+  public Trajectory rightTrajectory2;
+
+  
  
   public boolean isDriveFieldCentric;
   public boolean isAimingMode;
   public boolean areAllWheelsAligned;
+
+  public boolean isSlowDrive = false;
 
   /**
    * Creates a new SwerveDriveSubsystem.
@@ -139,20 +147,44 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         // Add kinematics to ensure max speed is actually obeyed
         .setKinematics(kinematics);
 
-    
-     Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-      // Start at the origin facing the +X direction
-      new Pose2d(0, 0, new Rotation2d(0)),
-      // Pass through these two interior waypoints, making an 's' curve path
-      List.of(
-        new Translation2d(1, 1),
-          new Translation2d(2, -1)
-      ),
-      // End 3 meters straight ahead of where we started, facing forward
-      new Pose2d(3, 0, new Rotation2d(0)),
-      config
-    );
-    
+      Trajectory centerTrajectory = TrajectoryGenerator.generateTrajectory(
+              // Start at the origin facing the +X direction
+              new Pose2d(0, 0, new Rotation2d(0)),
+              // Pass through these two interior waypoints, making an 's' curve path
+              List.of(
+                  new Translation2d(3.1496, 0)),
+              // End 3 meters straight ahead of where we started, facing forward
+              new Pose2d(3.1496, 0, new Rotation2d(0)),
+              config);
+
+      Trajectory leftTrajectory = TrajectoryGenerator.generateTrajectory(
+              new Pose2d(0,0, new Rotation2d(0)), 
+                
+                List.of(
+                  new Translation2d(3.1496, 0),
+                  new Translation2d(0, -2.64282819922)
+              ),
+              new Pose2d(3.1496,-2.64282819922, new Rotation2d(0)), 
+              config);
+            
+              //not final yet maybe possibly :\ ????
+      Trajectory rightTrajectory1 = TrajectoryGenerator.generateTrajectory(
+                new Pose2d(0, 0, new Rotation2d(0)),
+                
+                List.of(
+                    new Translation2d(2.200402, 0)),
+                
+                    new Pose2d(2.200402, 0, new Rotation2d(0)),
+                config);
+            
+      Trajectory rightTrajectory2 = TrajectoryGenerator.generateTrajectory(
+                  new Pose2d(2.200402, 0, new Rotation2d(0)),
+                  
+                  List.of(
+                      new Translation2d(2.7432, 0)),
+                  
+                      new Pose2d(4.943602, 0, new Rotation2d(0)),
+                  config);
     
     //instantiates navx
     try{
@@ -165,6 +197,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     isDriveFieldCentric = true;
     isAimingMode = false;
     areAllWheelsAligned = false;
+    isSlowDrive = false;
   }
 
   /**
@@ -359,7 +392,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     return areAllWheelsAligned;
   }
 
-  public void toggleIsDriveFieldCentric(){
+  public void toggleDriveFieldCentric(){
     isDriveFieldCentric = !isDriveFieldCentric;
   }
 
@@ -367,12 +400,21 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     return isDriveFieldCentric;
   }
 
-  public void toggleIsAimingMode(){
+  public void toggleAimingMode(){
     isAimingMode = !isAimingMode;
   }
 
   public boolean getIsAimingMode(){
     return isAimingMode;
+  }
+
+  public void setSlowDrive(boolean state){
+    isSlowDrive = state;
+  }
+
+  public boolean getIsSlowDrive(){
+    boolean rv = isSlowDrive;
+    return rv;
   }
 
   //inverts spark
@@ -428,6 +470,26 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     double pose = poseTrans2d.getX();
     pose /= kMaxSpeedConversionFactor;
     return Units.metersToFeet(pose);
+  }
+
+  public void doNothing(){
+  }
+
+  /**
+   * TARGET ACQUISITON FOR AIMING
+   */
+  /** */
+
+
+  public double getTargetX(){
+    double target = Robot.jevoisCam.getCenterOfVisionTarget();
+    return target;
+  }
+
+  public double getCurrentX(){
+    double width = Robot.jevoisCam.getCamWidth();
+    double center = width / 2;
+    return center;
   }
 
   /**

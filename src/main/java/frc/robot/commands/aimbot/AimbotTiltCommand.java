@@ -7,6 +7,9 @@
 
 package frc.robot.commands.aimbot;
 
+import static frc.robot.Constants.*;
+
+import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import frc.robot.Robot;
@@ -30,10 +33,8 @@ public class AimbotTiltCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
-    double targetAngle = Robot.jevoisCam.getDistFromTarget();
 
-    arm.goToPosition(targetAngle);
+    //arm.goToPosition(targetPos);
     //tilt goes a certain angle based on the distance to the target
 
   }

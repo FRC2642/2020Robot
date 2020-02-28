@@ -36,8 +36,9 @@ public class ClimberSubsystem extends SubsystemBase {
   public boolean isClimbLocked;
 
   public ClimberSubsystem(){
+
     climberMotor = new VictorSPX(ID_CLIMBER_MOTOR);
-    climberMotor.setInverted(true);
+    climberMotor.setInverted(false);
 
     isClimbLocked = getClimbLock();
   }
@@ -55,7 +56,7 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public void climb(double speed){
-    if(!getClimbLock()){
+    if(getClimbLock()){
       if(speed > .5){
         climbUp();
       } else if(speed < -.5){

@@ -133,4 +133,12 @@ package frc.robot.util;
 			
 			
 		}
+
+		public double getCenterOfVisionTarget(){
+			return x;
+		}
+
+		public double getCamWidth(){
+			return w;
+		}
 	}
