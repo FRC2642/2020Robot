@@ -7,30 +7,23 @@
 
 package frc.robot.util;
 
-import static frc.robot.Constants.kAngleD;
-import static frc.robot.Constants.kAngleFF;
-import static frc.robot.Constants.kAngleI;
-import static frc.robot.Constants.kAngleP;
-import static frc.robot.Constants.kAnglePositionConversionFactor;
-import static frc.robot.Constants.kDriveD;
-import static frc.robot.Constants.kDriveFF;
-import static frc.robot.Constants.kDriveI;
-import static frc.robot.Constants.kDriveP;
-import static frc.robot.Constants.kDriveVelocityConversionFactor;
-import static frc.robot.Constants.kMaxOutput;
-import static frc.robot.Constants.kMinOutput;
+import static frc.robot.Constants.*;
+import static frc.robot.util.GeneralUtil.*;
 
 import com.revrobotics.CANAnalog;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.ControlType;
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.util.Units;
+import frc.robot.util.GeneralUtil.PIDProfile;
 
 /**
- * This class assigns motors to a given swerve module on the robot (eg frontLeft, etc) and
+ * This class assigns motors to a given swerve module on the robot (eg frontLeft, etc)
  * and uses information from an instance of a SwerveModuleState object to set the modular wheel angle
  * and modular velocity to the desired value.
  */
@@ -43,10 +36,11 @@ public class SwerveModule {
   CANAnalog absoluteAngleEncoder;
 
   double targetVelocity;
-  Rotation2d targetAngle;
   double targetMotorAngle;
-  double angleOffset;
-  double trueTargetAngle;
+
+  boolean isWheelAligned;
+
+  double moduleOffset;
 
   /**
    * Constructs a SwerveModule with an assigned angle and drive motor and an offset value
@@ -55,7 +49,7 @@ public class SwerveModule {
    * @param angleMotor Spark MAX used to rotate module wheel
    * @param angleOffset Angular offset (degrees)
    */
-  public SwerveModule(CANSparkMax driveMotor, CANSparkMax angleMotor, double angleOffset){
+  public SwerveModule(CANSparkMax driveMotor, CANSparkMax angleMotor, double moduleOffset){
     //creates reference to assigned motor
     this.driveMotor = driveMotor;
     this.angleMotor = angleMotor;
@@ -69,124 +63,88 @@ public class SwerveModule {
     drivePID = driveMotor.getPIDController();
     anglePID = angleMotor.getPIDController();
 
-    //assigns analog enconder to angle PID
-    anglePID.setFeedbackDevice(absoluteAngleEncoder);
-
+    //assigns angle encoder to PID
+    //anglePID.setFeedbackDevice(absoluteAngleEncoder);
+    anglePID.setFeedbackDevice(relativeAngleEncoder);
+    
     //sets PID constants
-    setPIDTerms(drivePID, true);
-    setPIDTerms(anglePID, false);
+    setPIDGains(drivePID, PIDProfile.DRIVE);
+    setPIDGains(anglePID, PIDProfile.ANGLE);
 
-    //assigns angle offset value
-    this.angleOffset = angleOffset;
+    //assigns absolute encoder offset values
+    this.moduleOffset = moduleOffset;
 
     //sets conversion factors (native unit into usable unit)
     absoluteAngleEncoder.setPositionConversionFactor(kAnglePositionConversionFactor); //voltage into degrees
     driveEncoder.setVelocityConversionFactor(kDriveVelocityConversionFactor); //rpm into MPS  
+
+    //disables soft limits on Spark MAXs
+    angleMotor.enableSoftLimit(SoftLimitDirection.kForward, false);
+    angleMotor.enableSoftLimit(SoftLimitDirection.kReverse, false);
+
+    isWheelAligned = false;
+
+    zeroEncoder();
   }
 
   /**
-   * Gets a target velocity from a SwerveModuleState object
-   * 
-   * @param state What SwerveModuleState object to read
-   * @return Target velocity in m/s
+   * METHODS
    */
+
+  /** */
   public double getTargetVelocity(SwerveModuleState state){
     targetVelocity = state.speedMetersPerSecond;
-    //System.out.println("target velocity = " + targetVelocity);
+
     return targetVelocity;
   }
 
-  /**
-   * Gets a target angle from a SwerveModuleState object
-   * 
-   * @param state What SwerveModuleState object to read
-   * @return Target angle in degrees
-   */
   public Rotation2d getTargetAngle(SwerveModuleState state){
-    targetAngle = state.angle;
+    Rotation2d targetAngle = state.angle;
 
-    targetMotorAngle = realignAndOffsetEncoder(targetAngle.getDegrees());
-    //System.out.println("targetAngle = " + targetMotorAngle);
+    //targetMotorAngle = realignAndOffsetEncoder(targetAngle.getDegrees());
+    targetMotorAngle = offsetEncoder(targetAngle.getDegrees());
 
     return targetAngle;
   }
 
-  /**
-   * Feeds a desired modular velocity into the closed-loop velocity controller
-   * 
-   * @param targetVelocity desired velocity of the module in meters/second
-   */
+
   public void setModuleVelocity(double targetVelocity){
+
     //System.out.println("velocity = " + targetVelocity);
+  
     drivePID.setReference(targetVelocity, ControlType.kVelocity);
+    
   }
 
-  /**
-   * Feeds a desired modular wheel angle into the closed-loop position controller
-   * 
-   * @param targetAngle
-   */
   public void setModuleAngle(Rotation2d targetAngle){
 
-    trueTargetAngle = targetAngle.getDegrees();  
-    trueTargetAngle = realignAndOffsetEncoder(trueTargetAngle);
+      double target = targetAngle.getDegrees();
+      target *= kModuleDegreesToRelativeRotations;
+      double current = getRelativeAngleEncoder();
+
+      //adjusts target to be in appropriate range of rotation based on current position
+      if(Math.abs(current) > kRelativeRotationsPerModuleRotation){
+        double rotError = 0.0;
+        if(current > 0){
+          rotError = Math.floor(current / kRelativeRotationsPerModuleRotation);
+        } else if(current < 0){
+          rotError = Math.ceil(current / kRelativeRotationsPerModuleRotation);
+        }
+        target += (rotError * kRelativeRotationsPerModuleRotation);
+      }
       
-    //calculates error for optimization purposes
-    double error = trueTargetAngle - getAbsoluteAngleEncoder();
-    //System.out.println("error = " + error);
+      double error = target - current;
 
-    anglePID.setReference(trueTargetAngle, ControlType.kPosition);
-    }
+      //increases target by rotation if taking a inefficient path
+      if(Math.abs(error) > kRelativeRotationsPerModuleRotation / 2){
+        if(current > 0){
+          target += kRelativeRotationsPerModuleRotation;
+        } else if(current < 0){
+          target -= kRelativeRotationsPerModuleRotation;
+        }
+      }
 
-  /**
-   * Sets PID terms for swerve module controllers
-   * 
-   * @param pid the PID controller to set values for
-   * @param drive is module a drive module (if false, angle module)
-   */
-  public void setPIDTerms(CANPIDController pid, boolean isDrive){
-    if(isDrive){
-      pid.setP(kDriveP);
-      pid.setI(kDriveI);
-      pid.setD(kDriveD);
-      pid.setFF(kDriveFF);
-    } else {
-      pid.setP(kAngleP);
-      pid.setI(kAngleI);
-      pid.setD(kAngleD);
-      pid.setFF(kAngleFF);
-    }
-    pid.setOutputRange(kMinOutput, kMaxOutput);
-  }
-
-  /**
-   * Realigns a target angle in the -180 to 180 degree range into the 0 to 360 degree range
-   * and applys offset to the angle
-   * 
-   * @param encoderAngle angle in -180 to 180 degree range
-   * @return Offset angle in 0 to 360 degree range
-   */
-  public double realignAndOffsetEncoder(double encoderAngle){
-  
-    double realignedAngle = realignEncoder(encoderAngle);
-    realignedAngle = offsetEncoder(encoderAngle);
-
-    return realignedAngle;
-  }
-
-  /**
-   * Realigns a target angle in the -180 to 180 degree range into the 0 to 360 degree range
-   * 
-   * @param encoderAngle angle in -180 to 180 degree range
-   * @return angle in 0 to 360 degree range
-   */
-  public double realignEncoder(double encoderAngle){
-
-    double realignedAngle = encoderAngle;
-    if(realignedAngle < 0){
-      realignedAngle += 360;
-    }
-    return realignedAngle;
+      anglePID.setReference(target, ControlType.kPosition); 
   }
 
   /**
@@ -198,12 +156,40 @@ public class SwerveModule {
   public double offsetEncoder(double encoderAngle){
   
     double realignedAngle = encoderAngle;
-    //System.out.println("offset = " + angleOffset);
-    realignedAngle = ((realignedAngle + angleOffset) % 360);
+
+    realignedAngle = ((realignedAngle - moduleOffset) % 360);
     if(realignedAngle < 0){
       realignedAngle += 360;
     }
+    
     return realignedAngle;
+  }
+
+  /**
+   * Aligns the module's relative encoder onboard the SparkMax using the absolute encoder position
+   */
+  public void zeroModules(){
+    //if(!getIsWheelAligned()){
+      zeroEncoder();
+      
+      double moduleAngle = getModulePosition();
+      double relativeAngle = moduleAngle * kModuleDegreesToRelativeRotations;
+      setEncoder(relativeAngle);
+      //isWheelAligned = true;
+    //}
+  }
+
+  public void zeroEncoder(){
+    setEncoder(0.0);
+  }
+
+  public void setEncoder(double position){
+    relativeAngleEncoder.setPosition(position);
+  }
+
+  public void stop(){
+    setModuleVelocity(0);
+    driveMotor.set(0);
   }
 
   /**
@@ -215,27 +201,25 @@ public class SwerveModule {
    */
 
   public double getDriveVelocity(){
-    return driveEncoder.getVelocity();
+    double vel = driveEncoder.getVelocity();
+    vel /= kMaxSpeedConversionFactor;
+    return Units.metersToFeet(vel);
   }
 
   public double getAbsoluteAngleEncoder(){
     return absoluteAngleEncoder.getPosition();
   }
 
-  public double getAbsoluteAngleEncoderWithOffset(){
-    return offsetEncoder(getAbsoluteAngleEncoder());
+  public double getModulePosition(){
+    double angle = getAbsoluteAngleEncoder() - moduleOffset;
+    if(angle < 0){
+      angle += 360;
+    } 
+    return angle;
   }
 
   public double getRelativeAngleEncoder(){
     return relativeAngleEncoder.getPosition();
-  }
-
-  public double[] getAbsoluteAndRelativeAngleEncoderPositions() {
-    
-    double absoluteEncoderPosition = getAbsoluteAngleEncoderWithOffset();
-    double relativeEncoderPosition = getRelativeAngleEncoder();
-    double[] encoderPositions = {absoluteEncoderPosition, relativeEncoderPosition};
-    return encoderPositions;
   }
 
   /**
@@ -250,8 +234,12 @@ public class SwerveModule {
     return targetMotorAngle;
   }
 
-  public double getModuleAngle(){
-    return trueTargetAngle;
+  public double getDashboardOffset(){
+    return moduleOffset;
+  }
+
+  public boolean getIsWheelAligned(){
+    return isWheelAligned;
   }
 
   /**
@@ -278,6 +266,7 @@ public class SwerveModule {
     angleMotor.set(input);
   }
 
+  //uses absolute encoder
   public void setAngleSetpoint(double xInput, double yInput){
     Rotation2d targetAngle = new Rotation2d(xInput, yInput);
     System.out.println(targetAngle);
