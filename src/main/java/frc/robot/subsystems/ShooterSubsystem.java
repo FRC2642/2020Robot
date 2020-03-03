@@ -8,7 +8,7 @@
 package frc.robot.subsystems;
 
 import static frc.robot.Constants.*;
-import static frc.robot.util.GeneralUtil.*;
+import static frc.robot.util.GeneralUtil.setPIDGains;
 
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
@@ -17,11 +17,11 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ControlType;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.util.GeneralUtil.PIDProfile;
 
@@ -32,89 +32,85 @@ public class ShooterSubsystem extends SubsystemBase {
    */
 
   CANSparkMax leftShooterMotor;
-  CANSparkMax righShooterMotor;
+  CANSparkMax rightShooterMotor;
   //declare PIDs
-  CANEncoder lShooterEncoder;
-  CANEncoder rShooterEncoder;
-  CANPIDController lShooterPID;
-  CANPIDController rShooterPID;
+  CANEncoder leftShooterEncoder;
+  CANEncoder rightShooterEncoder;
+  CANPIDController shooterPID;
+
+  double targetVelocity;
 
   public ShooterSubsystem() {
     //declare motors
     leftShooterMotor = new CANSparkMax(ID_LEFT_SHOOTER_MOTOR, MotorType.kBrushless);
-    righShooterMotor = new CANSparkMax(ID_RIGHT_SHOOTER_MOTOR, MotorType.kBrushless);
+    rightShooterMotor = new CANSparkMax(ID_RIGHT_SHOOTER_MOTOR, MotorType.kBrushless);
     //reset motor
     leftShooterMotor.restoreFactoryDefaults();
-    righShooterMotor.restoreFactoryDefaults();
+    rightShooterMotor.restoreFactoryDefaults();
     //set to not inverted
-    leftShooterMotor.setInverted(false);
-    righShooterMotor.setInverted(true);
+    leftShooterMotor.setInverted(true);
+    rightShooterMotor.setInverted(true);
     //set current limit
     leftShooterMotor.setSmartCurrentLimit(kCurrentLimit);
-    righShooterMotor.setSmartCurrentLimit(kCurrentLimit);
+    rightShooterMotor.setSmartCurrentLimit(kCurrentLimit);
+
     //PID
-    lShooterPID = leftShooterMotor.getPIDController();
-    rShooterPID = righShooterMotor.getPIDController();
-    lShooterEncoder = leftShooterMotor.getEncoder();
-    rShooterEncoder = righShooterMotor.getEncoder();
-    lShooterPID.setFeedbackDevice(lShooterEncoder);
-    rShooterPID.setFeedbackDevice(rShooterEncoder);
-    rShooterPID.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput);
-    lShooterPID.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput);
+    shooterPID = leftShooterMotor.getPIDController();
+    leftShooterEncoder = leftShooterMotor.getEncoder();
+    rightShooterEncoder = rightShooterMotor.getEncoder();
 
-    setPIDGains(lShooterPID, PIDProfile.SHOOTER);
-    setPIDGains(rShooterPID, PIDProfile.SHOOTER);
+    shooterPID.setFeedbackDevice(leftShooterEncoder);
+    shooterPID.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput);
+
+    setPIDGains(shooterPID, PIDProfile.SHOOTER);
+
+    rightShooterMotor.follow(leftShooterMotor, true);
+
+    targetVelocity = kDefaultShooterRPM;
   }
 
-  //sets speed for shooter
-  public void shoot() {
- //20, 30, 40, and 60 are example numbers, can and will be changed
- //gets distance to wall from JeVois camera
- double distance = Robot.getDistanceToWall();
- //does math and gets accurate distance
- distance = distance * kArmAngleConversionFactor;
- //does more math with the correct distance and finds the necessary RPM to shoot the ball a certain distance
-double shooterRPM = distance * kShooterRPMConversionFactor;
-//sets PIDs to make motors run at previously determined RPM
-rShooterPID.setReference(shooterRPM, ControlType.kVelocity);
-lShooterPID.setReference(shooterRPM, ControlType.kVelocity);
-}
-
-public boolean getRightTrigger() {
-  double rt = RobotContainer.driveController.getTriggerAxis(Hand.kRight);
-  return (rt > .5);
-}
-  
-  public void stop() {
-    leftShooterMotor.set(0);
-    righShooterMotor.set(0);
-  }
-  
-  public void setShooterSpeed(double targetVelocity){
-    lShooterPID.setReference(targetVelocity, ControlType.kVelocity);
-    rShooterPID.setReference(targetVelocity, ControlType.kVelocity);  
+  /**
+   * VELOCITY SETTERS
+   */
+  /** */
+  public void setShooterSpeed(double targetVel){
+    shooterPID.setReference(targetVelocity, ControlType.kVelocity);
+    targetVelocity = targetVel;
   }
 
   public void setShooterSpeed(){
-    lShooterPID.setReference(kInitLineShooterRPM, ControlType.kVelocity);
-    rShooterPID.setReference(kInitLineShooterRPM, ControlType.kVelocity);
+    shooterPID.setReference(kDefaultShooterRPM, ControlType.kVelocity);
+    targetVelocity = kDefaultShooterRPM;
   }
 
-  double speed;
-  public void test(double speed){
-    this.speed = speed;
-    leftShooterMotor.set(speed);
-    righShooterMotor.set(speed);
+  public void stop() {
+    leftShooterMotor.set(0);
   }
 
+  /**
+   * VELOCITY GETTERS
+   */
+  /** */
   public double getAverageVelocity(){
-    return ((lShooterEncoder.getVelocity() + rShooterEncoder.getVelocity()) / 2);
+    return ((getLeftVelocity() + getRightVelocity()) / 2);
+  }
+  
+  public double getLeftVelocity(){
+    return leftShooterEncoder.getVelocity();
+  }
+
+  public double getRightVelocity(){
+    return rightShooterEncoder.getVelocity();
   }
 
   public boolean isAtTargetVelocity(){
-    return getAverageVelocity() >= kInitLineShooterRPM;
+    return getAverageVelocity() >= targetVelocity;
   }
 
+  /**
+   * TRIGGERS
+   */
+  /** */
   public boolean getLTrigger(){
     return (RobotContainer.auxController.getTriggerAxis(Hand.kLeft) > .5);
   }
@@ -123,8 +119,17 @@ public boolean getRightTrigger() {
     return (RobotContainer.auxController.getTriggerAxis(Hand.kRight) > .5);
   }
 
+
+  ShuffleboardTab driverView = Shuffleboard.getTab("Driver View");
+  
   @Override
   public void periodic() {
+
+
     SmartDashboard.putBoolean("atTargetVelocity", isAtTargetVelocity());
+
+    SmartDashboard.putNumber("av vel", getAverageVelocity());
+    SmartDashboard.putNumber("l vel", getLeftVelocity());
+    SmartDashboard.putNumber("r vel", getRightVelocity());
   }
 }

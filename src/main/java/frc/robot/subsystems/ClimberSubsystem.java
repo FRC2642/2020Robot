@@ -9,10 +9,7 @@
 
 package frc.robot.subsystems;
 
-//import frc.robot.RobotContainer;
-import static frc.robot.Constants.ID_CLIMBER_MOTOR;
-import static frc.robot.Constants.kClimberLimitSwitch;
-import static frc.robot.Constants.kClimberPistonPort;
+import static frc.robot.Constants.*;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
@@ -21,12 +18,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
-
-
-/**
- * Add your docs here.
- */
 
 public class ClimberSubsystem extends SubsystemBase {
   
@@ -39,11 +30,29 @@ public class ClimberSubsystem extends SubsystemBase {
   public ClimberSubsystem(){
 
     climberMotor = new VictorSPX(ID_CLIMBER_MOTOR);
-    climberMotor.setInverted(false);
+    climberMotor.setInverted(true);
 
     isClimbLocked = getClimbLock();
   }
   
+  /**
+   * CLIMBER MOTOR SETTERS
+   */
+  /** */
+  public void climb(double speed){
+    if(!getClimbLock()){
+      if(speed > .5){
+        climbUp();
+      } else if(speed < -.5){
+        climbDown();
+      } else {
+        stop();
+      }
+    } else {
+      stop();
+    }
+  }
+
   public void setClimbPower(double power){
     climberMotor.set(ControlMode.PercentOutput, power);
   }
@@ -56,25 +65,14 @@ public class ClimberSubsystem extends SubsystemBase {
     setClimbPower(-.7);
   }
 
-  public void climb(double speed){
-    if(getClimbLock()){
-      if(speed > .5){
-        climbUp();
-      } else if(speed < -.5){
-        climbDown();
-      } else {
-        stop();
-      }
-
-    } else {
-      stop();
-    }
+  public void stop() {
+    climberMotor.set(ControlMode.PercentOutput, 0);
   }
 
-  public boolean getClimbLock(){
-    return !climberPis.get();
-  }
-
+  /**
+   * CLIMB LOCK GETTERS AND SETTERS
+   */
+  /** */
   public void toggleClimbLock(){
     if(isClimbLocked){
       setClimbPiston(false);
@@ -86,24 +84,21 @@ public class ClimberSubsystem extends SubsystemBase {
     }
   }
 
-  public void setClimbPiston(boolean state){
-    if(state){
-      climberPis.set(true);
-    } else if(!state){
-      climberPis.set(false);
-    }
+  public boolean getClimbLock(){
+    return !climberPis.get();
   }
 
+  public void setClimbPiston(boolean state){
+    climberPis.set(state);
+    isClimbLocked = state;
+  }
+
+  /**
+   * CLIMB LIMIT SWITCH GETTER
+   */
+  /** */
   public boolean getLimitSwitch(){
     return climberLimitSwitch.get();
-  }
-
-  public boolean getUpDPad(){
-    return RobotContainer.auxController.getPOV() == 0;
-  }
-
-  public void stop() {
-    climberMotor.set(ControlMode.PercentOutput, 0);
   }
 
   @Override

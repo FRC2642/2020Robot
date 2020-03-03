@@ -10,7 +10,6 @@ package frc.robot.commands.colorSpinner;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ColorSpinnerSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
-import edu.wpi.first.wpilibj.DriverStation;
 
 public class PositionControlCommand extends CommandBase {
 

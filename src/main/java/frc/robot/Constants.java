@@ -50,33 +50,29 @@ public final class Constants {
     //CAN ID for Spinner Motor
     public static final int ID_SPINNER_MOTOR = 10;
     //CAN ID for Mag Belt
-    public static final int ID_MAG_BELT_MOTOR = 13;
+    public static final int ID_TOP_MAG_BELT_MOTOR = 13;
     //CAN IDs for Intake
     public static final int ID_INTAKE_MOTOR = 12;
     //CAN IDs for Shooter
-    public static final int ID_RIGHT_SHOOTER_MOTOR = 16;
-    public static final int ID_LEFT_SHOOTER_MOTOR = 15;
+    public static final int ID_RIGHT_SHOOTER_MOTOR = 15;
+    public static final int ID_LEFT_SHOOTER_MOTOR = 16;
     //CAN IDs for Hanger
     public static final int ID_CLIMBER_MOTOR = 14; //victor
     //CAN ID for climb bar motor
-    public static final int ID_CLIMB_BAR_MOTOR = 9; //victor
+    public static final int ID_BOTTOM_MAG_BELT_MOTOR = 9; 
 
       /**
        * SOLENOID PORTS
        */
     //mag piston port 
     public static final int kMagazinePistonPort = 0;
-
     //intake piston port
     public static final int kIntakePistonPort1 = 1;
     public static final int kIntakePistonPort2 = 2;
-
     //color spinner piston port
     public static final int kColorSpinnerPistonPort = 3;
-
     //climb piston port
     public static final int kClimberPistonPort = 4;
- 
      //light ring
     public static final int kLightRing = 7;
 
@@ -106,14 +102,20 @@ public final class Constants {
     /**
      *  CONVERSION FACTORS
      */
+
     public static final double kAnglePositionConversionFactor = 359.0 / 3.3; //degrees / volts
+
     public static final double kRPMToMPSConversionFactor = (1.0 / 60) * (4 * Math.PI) * .0254;
     public static final double kDriveVelocityConversionFactor = kRPMToMPSConversionFactor;
+
     public static final double kRelativeRotationsPerModuleRotation = 17.738054; //18.05; //relative rots 
     public static final double kModuleDegreesToRelativeRotations 
                                = kRelativeRotationsPerModuleRotation / 360.0; //rots / degrees
+
     public static final double kMaxSpeedConversionFactor = 8.667; //gear ratio conversion
+
     public static final double kShooterRPMConversionFactor = 18.84954;
+
     public static final double kArmAngleConversionFactor = 10.0;
 
     /**
@@ -124,20 +126,13 @@ public final class Constants {
     public static final double kRobotWidth = 0.6223;    //meters, 24.5
     public static final double kXDistanceFromCenter = kRobotLength / 2;
     public static final double kYDistanceFromCenter = kRobotWidth / 2;
-
+    //gyro offset
     public static final double kGyroOffset = 0.0;//180.0;
-    //absolute encoder offsets (swerve)
-    public static final double kFrontLeftAngleOffset = 0.0;//159.5;
-    public static final double kFrontRightAngleOffset = 0.0;//45.3;
-    public static final double kBackLeftAngleOffset = 0.0;//130.6;
-    public static final double kBackRightAngleOffset = 0.0;//57.8;
-
     //Dashboard reading offsets (swerve)
-    public static final double kFrontLeftAngleDashboardOffset = 344.5;//212.5;
-    public static final double kFrontRightAngleDashboardOffset = 241.4;//73.0;
-    public static final double kBackLeftAngleDashboardOffset = 45.8;//185.0;
-    public static final double kBackRightAngleDashboardOffset = 272.4;//33.0;
-
+    public static final double kFrontLeftAngleModuleOffset = 344.5;
+    public static final double kFrontRightAngleModuleOffset = 124.0;//241.4;
+    public static final double kBackLeftAngleModuleOffset = 45.8;
+    public static final double kBackRightAngleModuleOffset = 272.4;
 
     /**
      * MOTOR CONSTANTS
@@ -146,22 +141,26 @@ public final class Constants {
     public static final int kCurrentLimit = 30; //amps
     //motor neutral deadband
     public static final double kMotorNeutralDeadband = .15;
-    //mag belt speed
-    public static final double kMagShootSpeed = 2000; //RPM
-    public static final double kMagLoadSpeed = 6000; //RPM
-    public static final double kMagIdleSpeed = 2000; //RPM
     //swerve max speeds
     public static final double kMaxModuleRPM = 12.0 * kMaxSpeedConversionFactor; //desired module rotation speed * gear ratio conversion
     public static final double kMaxMPS = 12.0 * kMaxSpeedConversionFactor; //desired movement speed * gear ratio conversion
     public static final double kMaxAcceleration = 1.2192;
+    //mag belt speed
+    public static final double kMagDefaultShootSpeed = 3000; //RPM
+    public static final double kMagShortRangeShootSpeed = 3000; //RPM     auto rpm = 2500
+    public static final double kMagLongRangeShootSpeed = 2500; //RPM
+    public static final double kMagLoadSpeed = 3500; //RPM
+    public static final double kMagEjectSpeed = 2500; //RPM
     //shooter rpm
+    public static final double kDefaultShooterRPM = 1800; //RPM 
     public static final double kFrontTrenchShooterRPM = 1800; //RPM
-    public static final double kInitLineShooterRPM = 1800; //RPM
+    public static final double kInitLineShooterRPM = 1800; //RPM    auto rpm = 1600?
     public static final double kLongShotShooterRPM = 4500; //RPM
     //tilt presets
     public static final double kTrenchPos = 19.3;
-    public static final double kInitLineShootPos = 30.0;
-    public static final double kTrenchShootPos = 25.0;
+    public static final double kStartingPos = 41.1;
+    public static final double kInitLineShootPos = 27.5;
+    public static final double kFrontTrenchShootPos = 25.0;
     public static final double kClimbPos = 81.4;
 
     /**
@@ -188,16 +187,14 @@ public final class Constants {
     //PIDF values for closed-loop velocity control for the shooter wheels
     public static final double kShooterFF = .5 / 2700.0;
     public static final double kShooterP = 0.0;
-    public static final double kShooterI = kShooterFF / 10000;
-    public static final double kShooterD = 0.08;
-
+    public static final double kShooterI = 5e-8;
+    public static final double kShooterD = 0.0;
     //PID values for profiled closed-loop position control for the arm tilt motor
     public static final double kTiltP = .3;
-    public static final double kTiltI = 0.0;
+    public static final double kTiltI = kTiltP / 1000;
     public static final double kTiltD = 0.0;
-
-    public static final double kTiltMaxVel = 12; 
-    public static final double kTiltMaxAccel = 3;
+    public static final double kTiltMaxVel = 7; 
+    public static final double kTiltMaxAccel = 2;
 
     /**
      * AUTO TRAJECTORY PID GAINS

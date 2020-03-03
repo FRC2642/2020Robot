@@ -41,12 +41,14 @@ public class ArmToSetPosition extends ProfiledPIDCommand {
 
     arm = armSub;
     addRequirements(arm);
+
+    // /getController().setTolerance(.15);
     
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (arm.isManualOverride() );// || getController().atSetpoint());
+    return getController().atGoal();
   }
 }
