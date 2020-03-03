@@ -138,7 +138,4 @@ package frc.robot.util;
 			return x;
 		}
 
-		public double getCamWidth(){
-			return w;
-		}
 	}

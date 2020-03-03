@@ -34,7 +34,7 @@ MagazineSubsystem magazine;
   public void execute() {
 
     intake.intakeOut();
-    magazine.ejectBall();
+    magazine.setToEjectState();
   }
 
   //Called once the command ends or is interrupted.

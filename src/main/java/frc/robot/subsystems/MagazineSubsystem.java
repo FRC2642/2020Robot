@@ -9,10 +9,6 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.*;
 import static frc.robot.util.GeneralUtil.*;
-import frc.robot.util.library.simple.RightSight;
-
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
@@ -20,19 +16,24 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ControlType;
 
-//import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
+import frc.robot.util.GeneralUtil.PIDProfile;
+import frc.robot.util.library.simple.RightSight;
 
 public class MagazineSubsystem extends SubsystemBase {
   
-  CANSparkMax magBeltMotor;
+  CANSparkMax topMagBelt;
+  CANSparkMax bottomMagBelt;
+
   CANEncoder magEncoder;
   CANPIDController magPID;
-  public Solenoid magPis;
-  Timer timer = new Timer();
+  
+  Solenoid magPis;
 
   public RightSight rightSight = new RightSight(kRightSight);
 
@@ -40,151 +41,166 @@ public class MagazineSubsystem extends SubsystemBase {
   boolean hasBallEntered = false;
   boolean hasBallCounted = false;
 
+  boolean isMagEngagedAtIdle;
+
   public MagazineSubsystem() {
     //Magazine Neo Information
-    magBeltMotor = new CANSparkMax(ID_MAG_BELT_MOTOR, MotorType.kBrushless);
-    magBeltMotor.restoreFactoryDefaults();
-    magBeltMotor.setInverted(true);
-    magBeltMotor.setSmartCurrentLimit(kCurrentLimit);
+    topMagBelt = new CANSparkMax(ID_TOP_MAG_BELT_MOTOR, MotorType.kBrushless);
+    topMagBelt.restoreFactoryDefaults();
+    topMagBelt.setInverted(true);
+    topMagBelt.setSmartCurrentLimit(kCurrentLimit);
+
+    bottomMagBelt = new CANSparkMax(ID_BOTTOM_MAG_BELT_MOTOR, MotorType.kBrushless);
+    bottomMagBelt.restoreFactoryDefaults();
+    bottomMagBelt.setInverted(true);
+    bottomMagBelt.setSmartCurrentLimit(kCurrentLimit);
 
     magPis = new Solenoid(kMagazinePistonPort);
 
-    //Magazine PID Controller
-    magPID = magBeltMotor.getPIDController();
-    //Magazine Motor Encoder
-    magEncoder = magBeltMotor.getEncoder();
+    magPID = topMagBelt.getPIDController();
+    magEncoder = topMagBelt.getEncoder();
 
     magPID.setFeedbackDevice(magEncoder);
 
     setPIDGains(magPID, PIDProfile.MAGAZINE);
-    //Lifts Magazine belt on startup
-    //magPis.set(true);
 
+    //boolean = whether to invert output being followed
+    bottomMagBelt.follow(topMagBelt, true);
+
+    isMagEngagedAtIdle = false;
   }
 
-  //Magazine Conveyor 
-  public void setBeltVelocity(double targetVelocity) {
-    magPID.setReference(targetVelocity, ControlType.kVelocity);
+
+
+   /**
+   * MAGAZINE STATES (belt vel + piston settings)
+   */
+  /** */
+
+  public void setToIdleState(){
+    magStop();
+    magPis.set(isMagEngagedAtIdle);
   }
-  //Magazine Belt Is Set To Load Speed
+
+  public void setToShootingState(){
+    magShoot();
+    magPis.set(true);
+  }
+
+  public void setToShootingState(double beltVel){
+    magShoot(beltVel);
+    magPis.set(true);
+  }
+
+  public void setToEjectState(){
+    magEject();
+    magPis.set(false);
+  }
+
+  /**
+   * BELT VELOCITY SETTERS
+   */
+  /** */
+
+  public void magStop() {
+    setBeltVelocity(0);
+  }
+
   public void magLoad() {
     senseBall();
     setInverted(true);
     setBeltVelocity(kMagLoadSpeed);
   }
-  //Magazine Belt Is Set To Shoot Speed
-  public void magShoot() {
-    setInverted(true);
-    setBeltVelocity(kMagShootSpeed);
-  }
-  //Magazine Belt Is Set To Idle Speed
+
   public void magEject() {
     setInverted(false);
-    setBeltVelocity(kMagIdleSpeed);
+    setBeltVelocity(kMagEjectSpeed);
   }
-  public void magIdle() {
+  
+  public void magShoot() {
     setInverted(true);
-    setBeltVelocity(kMagIdleSpeed);
+    setBeltVelocity(kMagShortRangeShootSpeed);
   }
-  //Magazine Belt Is Set To Stop
-  public void stop() {
-    magPID.setReference(0, ControlType.kVelocity);
-  }
-
-  //Magazine "Left" and "Right" Belt Lift Pistons
-  public void stopAtIdle(){
-    stop();
-    magPis.set(false);
+  
+  public void magShoot(double vel){
+    setInverted(true);
+    setBeltVelocity(vel);
   }
 
-  public void runAtIdle(){
-    magIdle();
-    magPis.set(false);
+  public void setBeltVelocity(double targetVelocity) {
+    magPID.setReference(targetVelocity, ControlType.kVelocity);
   }
-  public void magEngage(){
-    magShoot();
+
+  /**
+   * MAG PISTON SETTERS 
+   */
+  /** */
+
+  public void setMagPis(){
     magPis.set(true);
   }
 
-  public void ejectBall(){
-    magEject();
-    magPis.set(false);
+  public void toggleIdleState(){
+    isMagEngagedAtIdle = !isMagEngagedAtIdle;
   }
 
-  double speed;
-  public void test(double speed){
-    this.speed = speed;
-    magBeltMotor.set(speed);
-  }
-
-  public double getSpeed(){
-    return speed;
-  }
+  /**
+   * BELT MOTOR SETTINGS AND DIAGNOSTICS
+   */
+  /** */
 
   public void setInverted(boolean inverted){
-    if(inverted){
-      magBeltMotor.setInverted(true);
-    } else {
-      magBeltMotor.setInverted(false);
-    }
+    topMagBelt.setInverted(inverted);
   }
-
-  public void toggleTopBelt(){
-
-    System.out.println("run");
-
-    if(!magPis.get()){
-
-      System.out.println("down");
-      magPis.set(false);
-
-    } else if(magPis.get()){
-      System.out.println("up");
-      magPis.set(true);
-    }
-  }
-
 
   public double getVelocity(){
     return magEncoder.getVelocity();
   }
 
+  /**
+   * BALL INDEXER METHODS
+   */
+
+  Timer timer = new Timer();
   public void senseBall() {
 
-      if(rightSight.get() == true) {
-        hasBallEntered = true;
-      } else {
-        hasBallEntered = false;
-      }
-
-    if (hasBallEntered && !hasBallCounted) {
-      ballCount++;
-      hasBallCounted = true;
+    if(rightSight.get() == true) {
+      hasBallEntered = true;
+    } else {
+      hasBallEntered = false;
     }
+
+  if (hasBallEntered && !hasBallCounted) {
+    ballCount++;
+    hasBallCounted = true;
+  }
   
-      if (ballCount == 5) {
-        timer.start();
-        RobotContainer.auxController.setRumble(RumbleType.kLeftRumble, 1);
-        RobotContainer.auxController.setRumble(RumbleType.kRightRumble, 1);
-      }
-      if (timer.get() > .5) {
-        RobotContainer.auxController.setRumble(RumbleType.kLeftRumble, 0);
-        RobotContainer.auxController.setRumble(RumbleType.kRightRumble, 0);
-      }
+    if (ballCount == 5) {
+      timer.start();
+      RobotContainer.auxController.setRumble(RumbleType.kLeftRumble, 1);
+      RobotContainer.auxController.setRumble(RumbleType.kRightRumble, 1);
     }
-
-  public double getMotorCurrent(){
-    return magBeltMotor.getOutputCurrent();
+    if (timer.get() > .5) {
+      RobotContainer.auxController.setRumble(RumbleType.kLeftRumble, 0);
+      RobotContainer.auxController.setRumble(RumbleType.kRightRumble, 0);
+    }
   }
 
   public int getBallCount() {
     return ballCount;
   }
 
+  /**
+   * TRIGGERS
+   */
+  /** */
+  public boolean getRightTrigger() {
+    double rt = RobotContainer.driveController.getTriggerAxis(Hand.kRight);
+    return (rt > .5);
+  }
+
   @Override
   public void periodic() {
-    //SmartDashboard.putNumber("magCurrent", getMotorCurrent());
-
-    SmartDashboard.putNumber("ballCount", getBallCount());
+    
   }
 }
