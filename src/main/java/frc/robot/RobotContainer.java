@@ -51,7 +51,7 @@ public class RobotContainer {
 
   public static final SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
   public static final IntakeSubsystem intake = new IntakeSubsystem();
-  //public static final MagazineSubsystem magazine = new MagazineSubsystem();
+  public static final MagazineSubsystem magazine = new MagazineSubsystem();
   //public static final ShooterSubsystem shooter = new ShooterSubsystem();
   public static final ColorSpinnerSubsystem spinner = new ColorSpinnerSubsystem();
   public static final ClimberSubsystem climb = new ClimberSubsystem();
