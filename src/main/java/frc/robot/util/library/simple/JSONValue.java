@@ -36,6 +36,10 @@ public class JSONValue {
 	 * 	java.lang.Number,
 	 * 	java.lang.Boolean,
 	 * 	null
+<<<<<<< HEAD
+	 * 
+=======
+>>>>>>> 4bf7bf598376519de480b99ce0c84d109ef367f4
 	 */
 	public static Object parse(Reader in){
 		try{

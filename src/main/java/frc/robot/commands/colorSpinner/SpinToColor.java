@@ -75,15 +75,6 @@ public class SpinToColor extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (correctColor == null){
-      return false;
-    }
-    if (currentColor == colorNeeded){
-      spinner.stop();
-      return true;
-    }
-    else{
-      return false;
-    }
+    return (currentColor == colorNeeded);
   }
 }

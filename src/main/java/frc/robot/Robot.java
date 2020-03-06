@@ -76,6 +76,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.vision.VisionPipeline;
 import edu.wpi.first.vision.VisionRunner;
 import edu.wpi.first.vision.VisionThread;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -116,9 +117,8 @@ public class Robot extends TimedRobot {
   /*
    * this was suppose to copy the pipeline values and store them in separate
    * variables, but I got rid of them because VS code didn't like it, and we don't
-   * really need it anyway. currently all it does is set pipelineRan to true
+   * really need it anyway. currently all it does is set pipelineRan to 
    */
-
   @Override
   public void robotInit() {
 
@@ -239,6 +239,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
 
+    lightRing.set(true);
+
     // cosine of the angle to tape
     // constantly updates distance to wall
    /* synchronized (visionLock) {
@@ -279,6 +281,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+
+    lightRing.set(true);
+
+
     /**
      * DO NOT PLACE SMARTDASHBOARD DIAGNOSTICS HERE
      * Place any teleop-only SmartDashboard diagnostics in the appropriate subsystem's periodic() method
