@@ -9,70 +9,100 @@
 
 package frc.robot.subsystems;
 
-//import frc.robot.RobotContainer;
-import static frc.robot.Constants.ID_CLIMBER_MOTOR;
-import static frc.robot.Constants.kClimberLimitSwitch;
-import static frc.robot.Constants.kClimberPistonPort;
+import static frc.robot.Constants.*;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-
-/**
- * Add your docs here.
- */
 
 public class ClimberSubsystem extends SubsystemBase {
   
   VictorSPX climberMotor;
-
   public Solenoid climberPis = new Solenoid(kClimberPistonPort);
   public DigitalInput climberLimitSwitch = new DigitalInput(kClimberLimitSwitch);
 
+  public boolean isClimbLocked;
+
   public ClimberSubsystem(){
+
     climberMotor = new VictorSPX(ID_CLIMBER_MOTOR);
     climberMotor.setInverted(true);
+
+    isClimbLocked = getClimbLock();
   }
   
+  /**
+   * CLIMBER MOTOR SETTERS
+   */
+  /** */
+  public void climb(double speed){
+    if(!getClimbLock()){
+      if(speed > .5){
+        climbUp();
+      } else if(speed < -.5){
+        climbDown();
+      } else {
+        stop();
+      }
+    } else {
+      stop();
+    }
+  }
+
   public void setClimbPower(double power){
     climberMotor.set(ControlMode.PercentOutput, power);
   }
 
   public void climbUp(){
-    if(!getLimitSwitch()){
-      climberPis.set(false);
       setClimbPower(.7);
-    } else {
-      stop();
-    }
   }
 
-  public void climbDown() {
-    climberPis.set(false);
+  public void climbDown(){
     setClimbPower(-.7);
-  }
-
-  public void climb(double speed) {
-    if (speed > .5) {
-      climbUp();
-    } else if (speed < -.5) {
-      climbDown();
-    } else {
-      stop();
-    }
-  }
-
-  public boolean getLimitSwitch() {
-    return climberLimitSwitch.get();
   }
 
   public void stop() {
     climberMotor.set(ControlMode.PercentOutput, 0);
-    climberPis.set(true);
   }
 
+  /**
+   * CLIMB LOCK GETTERS AND SETTERS
+   */
+  /** */
+  public void toggleClimbLock(){
+    if(isClimbLocked){
+      setClimbPiston(false);
+      isClimbLocked = false;
+
+    } else if(!isClimbLocked){
+      climberPis.set(true);
+      isClimbLocked = true;
+    }
+  }
+
+  public boolean getClimbLock(){
+    return !climberPis.get();
+  }
+
+  public void setClimbPiston(boolean state){
+    climberPis.set(state);
+    isClimbLocked = state;
+  }
+
+  /**
+   * CLIMB LIMIT SWITCH GETTER
+   */
+  /** */
+  public boolean getLimitSwitch(){
+    return climberLimitSwitch.get();
+  }
+
+  @Override
+  public void periodic(){
+    SmartDashboard.putBoolean("climb", getClimbLock());
+  }
 }

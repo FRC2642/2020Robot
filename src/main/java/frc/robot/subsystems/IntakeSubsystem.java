@@ -8,14 +8,15 @@
 package frc.robot.subsystems;
 
 import static frc.robot.Constants.*;
-import frc.robot.RobotContainer;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 
 public class IntakeSubsystem extends SubsystemBase {
   
@@ -31,36 +32,39 @@ public class IntakeSubsystem extends SubsystemBase {
     intakePiston = new DoubleSolenoid(kIntakePistonPort1, kIntakePistonPort2);
   }
 
-  Timer timer = new Timer();
-  boolean timerStarted = false;
-  //extends and runs intake
+  /**
+   * INTAKE MOTOR + PISTONS SETTERS
+   */
+
+   /** */
   public void intakeIn() {
     intakeMotor.set(-.6);
-
-    if(timerStarted == false){
-    timer.start();
-    }
-    
-    if(timer.get() < .3){
-      if(intakePiston.get() != Value.kReverse){
-        intakePiston.set(Value.kReverse);
-      }
+    if(intakePiston.get() != Value.kReverse){
+      intakePiston.set(Value.kReverse);
     } else {
-      if(intakePiston.get() != Value.kOff){
-        intakePiston.set(Value.kOff);
-      }
+      intakePiston.set(Value.kOff);
     }
   }
 
-  //stops intake
+  public void intakeOut(){
+    intakeMotor.set(.6);
+    intakePiston.set(Value.kReverse);
+  }
+
+  public void intakePistonOut(){
+    intakePiston.set(Value.kReverse);
+  }
+
   public void stop() {
     intakeMotor.set(0);
     intakePiston.set(Value.kForward);
-    timerStarted = false;
-    timer.stop();
-    timer.reset();
   }
     
+  /**
+   * TRIGGERS
+   */
+
+  /** */
   public boolean getLeftTrigger() {
     //stop intake i guess
     double lt = RobotContainer.driveController.getTriggerAxis(Hand.kLeft);

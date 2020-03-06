@@ -10,94 +10,91 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.*;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-//import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
-//import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
-import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
-import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
-
-import frc.robot.Robot;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 
-public class ArmSubsystem extends ProfiledPIDSubsystem {
+public class ArmSubsystem extends SubsystemBase {
 
   public VictorSPX armMotor;
-  /**
-   * Creates a new ArmSubsystem.
-   */
+  public AnalogPotentiometer armPot;
+
+  public double input;
+
   public ArmSubsystem() {
-    super(
-        // The ProfiledPIDController used by the subsystem
-        new ProfiledPIDController(0, 0, 0,
-            // The motion profile constraints
-            new TrapezoidProfile.Constraints(0, 0)));
-
+  
     armMotor = new VictorSPX(ID_MAG_TILT_MOTOR);
-           // armMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Absolute, 0, 2);
+    armMotor.setInverted(true);
+
+    armPot = new AnalogPotentiometer(kArmPotPort, 100);
   }
 
- // public ErrorCode getEncoderValue() {
-
- // }
-  public void armLift(double d) {
-    //20, 30, 40, and 60 are example numbers, can and will be changed
-    double distance = Robot.getDistanceToWall();
-    distance = distance * kArmAngleConversionFactor;
-    if (distance > 20 && distance < 40) {
-      setGoal(20);
-    } else if (distance > 40 && distance < 60) {
-      setGoal(30);
-    } //add more criterias
-  }
-  public double getArmPos() {
-    int armPos = 0;
-   // armMotor.getSensorCollection().getPulseWidthPosition() & 0xFFF;
-    return armPos;
-}
-
-  public void armDown() {
-        if (getArmPos() == 0) {
-      armStop();
-    } else {
-      setGoal(0);
-    }
-  }
-  public void armTrenchPos() {
-    setGoal(227.555556);
-  }
-  public void armBasePos() {
-    setGoal(512.000001);
-  }
-  public void armClimbPos() { 
-    if(getArmPos() == 1024){
-      armStop();
-    }
-    setGoal(1024);
-
-    }
-
+  /**
+   * ARM MOTOR SETTERS
+   */
+  /** */
   public void moveArm(double speed){
-    armMotor.set(ControlMode.PercentOutput, speed);
+      if(getPot() <= kTrenchPos && speed < 0){
+      stop();
+    } else if(getPot() >= kClimbPos && speed > 0){
+      stop();
+    } else {      
+      setPower(speed); 
+    }
   }
 
-  public void armStop() {
+  public void setPower(double input){
+    if(input > .6){
+      armMotor.set(ControlMode.PercentOutput, .6);
+    }
+    armMotor.set(ControlMode.PercentOutput, input);
+
+    this.input = input;
+  }
+
+  public void stop() {
     armMotor.set(ControlMode.PercentOutput, 0);
   }
 
-  public boolean isManualOverride(){
+  /**
+   * AIMING METHODS (pot + vision) AND MANUAL OVERRIDE
+   */
+  /** */
+  public boolean getManualOverride(){
     return (RobotContainer.auxController.getRawAxis(5) > .2 || RobotContainer.auxController.getRawAxis(5) < -.2);
   }
-  
-  @Override
-  public void useOutput(double output, TrapezoidProfile.State setpoint) {
-    // Use the output (and optionally the setpoint) here
+
+  public double getPot(){
+    return armPot.get();
+  }
+
+  public double getAngleFromVision(){
+    
+    //double dist = Robot.jevoisCam.getDistFromTarget(); //m
+    //calculates pot value based on distance from base of target 
+    //angle increases as distance decreases
+    double targetPos = kArmAngleConversionFactor / 1;
+
+    return targetPos;
+  }
+
+  /**
+   * TRIGGERS
+   */
+  /** */
+  public boolean getUpDPad(){
+    return RobotContainer.auxController.getPOV() == 0;
+  }
+
+  public boolean getDownDPad(){
+    return RobotContainer.auxController.getPOV() == 180;
   }
 
   @Override
-  public double getMeasurement() {
-    // Return the process variable measurement here
-    return 0;
+  public void periodic(){
+    SmartDashboard.putBoolean("arm manual override", getManualOverride());
   }
 }

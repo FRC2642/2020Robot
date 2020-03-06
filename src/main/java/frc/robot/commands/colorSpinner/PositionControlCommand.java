@@ -11,38 +11,61 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ColorSpinnerSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 
-public class EndSpinRoutine extends CommandBase {
- 
+public class PositionControlCommand extends CommandBase {
+
   ColorSpinnerSubsystem spinner;
   SwerveDriveSubsystem drive;
 
-  public EndSpinRoutine(ColorSpinnerSubsystem spinnerSub, SwerveDriveSubsystem driveSub) {
-    spinner = spinnerSub;
-    drive = driveSub;
-    addRequirements(spinner, drive);
+ /*  char correctColor;
+  String currentColor;
+  String colorNeeded; */
+
+  public PositionControlCommand(final ColorSpinnerSubsystem colorSub) {
+    spinner = colorSub;
+    addRequirements(spinner);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    spinner.setTargetColor();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //slow spin speed
-    //when stopped, back up 
+
+    spinner.slowSpinR();
+    spinner.getCurrentColorChar();
+/* 
+    currentColor = spinner.detectColor();
+    currentColor = currentColor.toUpperCase();
+
+    if (colorNeeded == "RED" & currentColor == "YELLOW"){
+      spinner.slowSpinL();
+    } else if (colorNeeded == "GREEN" & currentColor == "RED"){
+      spinner.slowSpinL();
+    } else if (colorNeeded == "BLUE" & currentColor == "GREEN"){
+      spinner.slowSpinL();
+    } else if (colorNeeded == "YELLOW" & currentColor == "BLUE"){
+      spinner.slowSpinL();
+
+    } else{
+      spinner.slowSpinR();
+    } */
+
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    spinner.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    //return finished when drive hsa driven back ~3 feet
-    return false;
+    return spinner.isAtColor();
+    /* return (currentColor == colorNeeded); */
   }
 }

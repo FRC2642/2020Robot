@@ -1,8 +1,32 @@
 package frc.robot.util;
 
-import static frc.robot.Constants.*;
+import static frc.robot.Constants.kAngleD;
+import static frc.robot.Constants.kAngleFF;
+import static frc.robot.Constants.kAngleI;
+import static frc.robot.Constants.kAngleP;
+import static frc.robot.Constants.kDriveD;
+import static frc.robot.Constants.kDriveFF;
+import static frc.robot.Constants.kDriveI;
+import static frc.robot.Constants.kDriveP;
+import static frc.robot.Constants.kMagD;
+import static frc.robot.Constants.kMagFF;
+import static frc.robot.Constants.kMagI;
+import static frc.robot.Constants.kMagP;
+import static frc.robot.Constants.kMaxOutput;
+import static frc.robot.Constants.kMinOutput;
+import static frc.robot.Constants.kMotorNeutralDeadband;
+import static frc.robot.Constants.kShooterD;
+import static frc.robot.Constants.kShooterFF;
+import static frc.robot.Constants.kShooterI;
+import static frc.robot.Constants.kShooterP;
 
 import com.revrobotics.CANPIDController;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.RobotContainer;
 
 public class GeneralUtil {
 
@@ -61,29 +85,12 @@ public class GeneralUtil {
         pid.setI(kMagI);
         pid.setD(kMagD);
         break;
-      case TILT:
-        pid.setFF(kTiltFF);
-        pid.setP(kTiltP);
-        pid.setI(kTiltI);
-        pid.setD(kTiltD);
       case SHOOTER:
         pid.setFF(kShooterFF);
         pid.setP(kShooterP);
         pid.setI(kShooterI);
         pid.setD(kShooterD);
         break;
-      case CLIMB:
-        pid.setFF(kClimbFF);
-        pid.setP(kClimbP);
-        pid.setI(kClimbI);
-        pid.setD(kClimbD);
-        break;
-      case ALIGN:
-        pid.setFF(kAlignmentFF);
-        pid.setP(kAlignmentP);
-        pid.setI(kAlignmentI);
-        pid.setD(kAlignmentD);
-      
     }
     pid.setOutputRange(kMinOutput, kMaxOutput);
   }
@@ -92,10 +99,33 @@ public class GeneralUtil {
         DRIVE,
         ANGLE,
         MAGAZINE,
-        TILT,
         SHOOTER,
-        CLIMB,
-        ALIGN;
+  }
+
+  public static Command generateAuto(){
+
+     Command auto = new InstantCommand(
+        () -> RobotContainer.magazine.toggleIdleState()
+        )
+      .withTimeout(2.5)
+      .andThen( new InstantCommand(
+        //drive::alignWheels
+        () -> RobotContainer.drive.alignWheels()
+          )
+        )
+      .andThen( new WaitCommand(.5)
+      )
+      .andThen( new RunCommand(
+        () -> RobotContainer.drive.drive(-.3, 0, 0), RobotContainer.drive
+          )
+        )
+      .withTimeout(1)
+      .andThen( new RunCommand(
+        () -> RobotContainer.drive.drive(0, 0, 0), RobotContainer.drive
+          )
+        );
+
+      return auto; 
   }
 }
 

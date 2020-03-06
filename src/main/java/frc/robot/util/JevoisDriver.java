@@ -13,7 +13,7 @@ package frc.robot.util;
 	
 	public class JevoisDriver implements Runnable {
 	
-		private static final String TapePrefix = "TAPE";
+		private static final String TapePrefix = "D3";
 	
 		private UsbCamera _jevoisCam;
 		private Thread _stream;
@@ -22,12 +22,13 @@ package frc.robot.util;
 		private String[] parts;
 		private boolean detectsTape;
 				
-		public String id;
-		public int w;
-		public int h;
-		public int hlist;
-		public int rvecs;
-		public int tvecs;
+		public String id; // chang 
+		public double xpos;
+		public double ypos;
+		public double zpos;
+		public double x;
+		public double y;
+		public double rot;
 	
 
 	
@@ -45,7 +46,7 @@ package frc.robot.util;
 			if (_stream.isAlive()) {
 				try {
 					_jevoisCam = CameraServer.getInstance().startAutomaticCapture();
-					_jevoisCam.setVideoMode(VideoMode.PixelFormat.kYUYV, 640, 480, 30);
+					_jevoisCam.setVideoMode(VideoMode.PixelFormat.kYUYV, 640, 480, 20);
 				} catch (Exception e) {
 					DriverStation.reportError("Jevois Cam failed to connect!", e.getStackTrace());
 				}
@@ -93,39 +94,48 @@ package frc.robot.util;
 			String[] tokens = str.split(",");
 			id = tokens[0];
 			try {
-				w = Integer.parseInt(tokens[1]);
-				h = Integer.parseInt(tokens[2]);
-				hlist = Integer.parseInt(tokens[3]);
-				rvecs = Integer.parseInt(tokens[4]);
-				tvecs = Integer.parseInt(tokens[5]);
+				xpos = Double.parseDouble(tokens[1]);
+				ypos = Double.parseDouble(tokens[2]);
+				zpos = Double.parseDouble(tokens[3]);
+				x = Double.parseDouble(tokens[4]);
+				y = Double.parseDouble(tokens[5]);
+				rot = Double.parseDouble(tokens[6]);
 
 			} catch(NumberFormatException ex) {
 			}
 		}
 	
 		public void VisionTarget(String ida,
-							int wa,
-							int ha,
-							int hlista,
-							int rvecsa,
-							int tvecsa) {
+							int xposa,
+							int yposa,
+							double zposa,
+							double xa,
+							double ya,
+							double rota) {
 			id = ida;
-			w = wa;
-			h = ha;
-			hlist = hlista;
-			rvecs = rvecsa;
-			tvecs = tvecsa;
+			xpos = xposa;
+			ypos = yposa;
+			zpos = zposa;
+			x = xa;
+			y = ya;
+			rot = rota;
 
 		}
 	
 		public void printSystemOut() {
 			System.out.println("Id = " + id);
-			System.out.println("w = " + w);
-			System.out.println("h = " + h);
-			System.out.println("hlist = " + hlist);
-			System.out.println("rvecs = " + rvecs);
-			System.out.println("tvecs = " + tvecs);
-
+			System.out.println("xpos = " + xpos);
+			System.out.println("ypos = " + ypos);
+			System.out.println("zpos = " + zpos);
+			System.out.println("x = " + x);
+			System.out.println("y = " + y);
+			System.out.println("rot = " + rot);
+			
 			
 		}
+
+		public double getCenterOfVisionTarget(){
+			return x;
+		}
+
 	}

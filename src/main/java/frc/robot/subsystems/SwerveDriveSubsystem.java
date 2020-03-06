@@ -7,6 +7,10 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics.normalizeWheelSpeeds;
+import static frc.robot.Constants.*;
+import static frc.robot.util.GeneralUtil.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,30 +18,23 @@ import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-//import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
-//import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
-//import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-//import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.util.SwerveModule;
-import frc.robot.Constants;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.util.Units;
-import edu.wpi.first.wpilibj.trajectory.Trajectory;
-
-import static frc.robot.Constants.*;
-import static edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics.normalizeWheelSpeeds;
-import static frc.robot.util.GeneralUtil.*;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.Robot;
+import frc.robot.util.SwerveModule;
 
 public class SwerveDriveSubsystem extends SubsystemBase {
   CANSparkMax frontLeftDriveMotor, frontLeftAngleMotor;
@@ -58,11 +55,16 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
   public AHRS navx;
   public TrajectoryConfig config;
-  public Trajectory exampleTrajectory;
+  public Trajectory centerTrajectory;
+  public Trajectory leftTrajectory;
+  public Trajectory rightTrajectory1;
+  public Trajectory rightTrajectory2;
  
   public boolean isDriveFieldCentric;
   public boolean isAimingMode;
   public boolean areAllWheelsAligned;
+
+  public boolean isSlowDrive = false;
 
   /**
    * Creates a new SwerveDriveSubsystem.
@@ -109,10 +111,10 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     backRightAngleMotor.setSmartCurrentLimit(kCurrentLimit);
 
     //assigns drive and angle motors to their respective swerve modules with offsets
-    frontLeftModule = new SwerveModule(frontLeftDriveMotor, frontLeftAngleMotor, kFrontLeftAngleOffset, kFrontLeftAngleDashboardOffset);
-    frontRightModule = new SwerveModule(frontRightDriveMotor, frontRightAngleMotor, kFrontRightAngleOffset, kFrontRightAngleDashboardOffset);
-    backLeftModule = new SwerveModule(backLeftDriveMotor, backLeftAngleMotor, kBackLeftAngleOffset, kBackLeftAngleDashboardOffset);
-    backRightModule = new SwerveModule(backRightDriveMotor, backRightAngleMotor, kBackRightAngleOffset, kBackRightAngleDashboardOffset);
+    frontLeftModule = new SwerveModule(frontLeftDriveMotor, frontLeftAngleMotor, kFrontLeftAngleModuleOffset);
+    frontRightModule = new SwerveModule(frontRightDriveMotor, frontRightAngleMotor, kFrontRightAngleModuleOffset);
+    backLeftModule = new SwerveModule(backLeftDriveMotor, backLeftAngleMotor, kBackLeftAngleModuleOffset);
+    backRightModule = new SwerveModule(backRightDriveMotor, backRightAngleMotor, kBackRightAngleModuleOffset);
 
     //assigns swerve modules to an array 
     //this simplifies updating module states
@@ -134,25 +136,49 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     odometry = new SwerveDriveOdometry(kinematics, getRobotYawInRotation2d());
 
-    TrajectoryConfig config =
+     TrajectoryConfig config =
       new TrajectoryConfig(Constants.kMaxMPS, Constants.kMaxAcceleration)
         // Add kinematics to ensure max speed is actually obeyed
         .setKinematics(kinematics);
 
-    
-    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-      // Start at the origin facing the +X direction
-      new Pose2d(0, 0, new Rotation2d(0)),
-      // Pass through these two interior waypoints, making an 's' curve path
-      List.of(
-        new Translation2d(1, 1),
-          new Translation2d(2, -1)
-      ),
-      // End 3 meters straight ahead of where we started, facing forward
-      new Pose2d(3, 0, new Rotation2d(0)),
-      config
-    );
-    
+      Trajectory centerTrajectory = TrajectoryGenerator.generateTrajectory(
+              // Start at the origin facing the +X direction
+              new Pose2d(0, 0, new Rotation2d(0)),
+              // Pass through these two interior waypoints, making an 's' curve path
+              List.of(
+                  new Translation2d(3.1496, 0)),
+              // End 3 meters straight ahead of where we started, facing forward
+              new Pose2d(3.1496, 0, new Rotation2d(0)),
+              config);
+
+      Trajectory leftTrajectory = TrajectoryGenerator.generateTrajectory(
+              new Pose2d(0,0, new Rotation2d(0)), 
+                
+                List.of(
+                  new Translation2d(3.1496, 0),
+                  new Translation2d(0, -2.64282819922)
+              ),
+              new Pose2d(3.1496,-2.64282819922, new Rotation2d(0)), 
+              config);
+            
+              //not final yet maybe possibly :\ ????
+      Trajectory rightTrajectory1 = TrajectoryGenerator.generateTrajectory(
+                new Pose2d(0, 0, new Rotation2d(0)),
+                
+                List.of(
+                    new Translation2d(2.200402, 0)),
+                
+                    new Pose2d(2.200402, 0, new Rotation2d(0)),
+                config);
+            
+      Trajectory rightTrajectory2 = TrajectoryGenerator.generateTrajectory(
+                  new Pose2d(2.200402, 0, new Rotation2d(0)),
+                  
+                  List.of(
+                      new Translation2d(2.7432, 0)),
+                  
+                      new Pose2d(4.943602, 0, new Rotation2d(0)),
+                  config);
     
     //instantiates navx
     try{
@@ -165,6 +191,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     isDriveFieldCentric = true;
     isAimingMode = false;
     areAllWheelsAligned = false;
+    isSlowDrive = false;
   }
 
   /**
@@ -178,9 +205,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   /**
    * Drives with either robot-centric or field-centric
    * 
-   * @param rawXInput Forward velocity
-   * @param rawYInput Sideways velocity
-   * @param rawRotate Angular velocity
+   * @param rawXInput Joystick input (left hand l/r)
+   * @param rawYInput Joyatick input (left hand up/down)
+   * @param rawRotate Joystick input (right hand l/r)
    */
   public void drive(double rawXInput, double rawYInput, double rawRotate){
     //sets deadbands
@@ -206,16 +233,24 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     }
   }
 
+  /**
+   * Drives with vision-assisted rotation to aim at vision target
+   * 
+   * @param rawXInput Joystick input (left hand l/r)
+   * @param rawYInput Joystick input (left hand up/down)
+   * @param rawRotate Input from vision 
+   */
   public void driveByAimbot(double rawXInput, double rawYInput, double rawRotate){
     //sets deadbands
     double xInput = deadband(rawXInput);
     double yInput = deadband(rawYInput);
-    double rotate = deadband(rawRotate);
+    //double rotate = deadband(rawRotate);
+    double rotate = rawRotate;
 
     //sqaures joystick input
     xInput *= Math.abs(xInput);
     yInput *= Math.abs(yInput);
-    rotate *= Math.abs(rotate);
+    //rotate *= Math.abs(rotate);
 
     //if there is no stick input
     if(xInput == 0 && yInput == 0 && rotate == 0){
@@ -272,7 +307,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     double xVelocity = xInput * kMaxMPS;
     double yVelocity = yInput * kMaxMPS;
     double rotateVelocity = rotate * kMaxModuleRPM;
-    Translation2d centerOfRotation = new Translation2d(kXDistanceFromCenter, 0);
+    Translation2d centerOfRotation = new Translation2d(-kXDistanceFromCenter, 0);
 
     //converts input targets to individual module states (aiming mode)
     ChassisSpeeds targetVelocity = new ChassisSpeeds(xVelocity, yVelocity, rotateVelocity);
@@ -334,7 +369,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     backLeftModule.setModuleAngle(backLeftAngle);
     backRightModule.setModuleAngle(backRightAngle);
 
-    SwerveModuleState frontLeft= new SwerveModuleState(frontLeftVelocity, frontLeftAngle);
+    //updates swerve module states for pose 
+    SwerveModuleState frontLeft = new SwerveModuleState(frontLeftVelocity, frontLeftAngle);
     SwerveModuleState frontRight = new SwerveModuleState(frontRightVelocity, frontRightAngle);
     SwerveModuleState backLeft = new SwerveModuleState(backLeftVelocity, backLeftAngle);
     SwerveModuleState backRight = new SwerveModuleState(backRightVelocity, backRightAngle);
@@ -344,22 +380,17 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     moduleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
   }
 
-  //needs more precision + better way of knowing when done
   public void alignWheels(){
-    
     for(SwerveModule module: modules){
-      //begins zeroing modules
         module.zeroModules();
     }
-    
   }
 
-  public boolean getAreAllWheelsAligned(){
-
-    return areAllWheelsAligned;
-  }
-
-  public void toggleIsDriveFieldCentric(){
+  /** 
+   * TOGGLEABLES AND GETTERS FOR DRIVING STATES
+  */
+  /** */
+  public void toggleDriveFieldCentric(){
     isDriveFieldCentric = !isDriveFieldCentric;
   }
 
@@ -367,7 +398,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     return isDriveFieldCentric;
   }
 
-  public void toggleIsAimingMode(){
+  public void toggleAimingMode(){
     isAimingMode = !isAimingMode;
   }
 
@@ -375,14 +406,20 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     return isAimingMode;
   }
 
-  //inverts spark
-  public void invertMotor(CANSparkMax motor){
-    boolean state = motor.getInverted();
-    state = !state;
-    motor.setInverted(state);
+  public void setSlowDrive(boolean state){
+    isSlowDrive = state;
   }
 
-  //navx methods 
+  public boolean getIsSlowDrive(){
+    boolean rv = isSlowDrive;
+    return rv;
+  }
+
+  /**
+   * NAVX METHODS
+   */
+  /** */
+
   double lastHeading = 0;
   public double getRobotYaw(){
     double heading = lastHeading;
@@ -418,6 +455,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     navx.zeroYaw();
   }
 
+  /**
+   * POSE GENERATION FOR USE IN AUTO PATHING
+   */
   public Pose2d getPoseMeters(){
     return odometry.getPoseMeters();
   }
@@ -426,8 +466,24 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     Pose2d pose2d = getPoseMeters();
     Translation2d poseTrans2d = pose2d.getTranslation();
     double pose = poseTrans2d.getX();
+    pose /= kMaxSpeedConversionFactor;
     return Units.metersToFeet(pose);
   }
+
+  public void doNothing(){
+  }
+
+  /**
+   * TARGET ACQUISITON FOR AIMING
+   */
+  /** */
+
+  public double getTargetX(){
+    double target = Robot.jevoisCam.getCenterOfVisionTarget();
+    return target;
+  }
+
+
 
   /**
    * DIAGNOSTIC 
@@ -450,7 +506,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("naxv angle", getRobotYaw());
     SmartDashboard.putBoolean("isDriveFieldCentric", getIsDriveFieldCentric());
     SmartDashboard.putString("positionOnField", odometry.getPoseMeters().toString());
 
@@ -459,7 +514,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     } catch(RuntimeException e){ 
     }
 
-    SmartDashboard.putNumber("driveVelocity", frontLeftModule.getDriveVelocity());
     SmartDashboard.putNumber("poseXInFeet", getPoseXInFeet());
 
   }

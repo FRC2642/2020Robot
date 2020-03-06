@@ -6,18 +6,18 @@
 ----------------------------------------------------------------------------
 */
 
-package frc.robot.commands;
+package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.MagazineSubsystem;
 
-public class IntakeCommand extends CommandBase {
+public class IntakeOutCommand extends CommandBase {
   
 IntakeSubsystem intake;
 MagazineSubsystem magazine;
 
-  public IntakeCommand(IntakeSubsystem incom, MagazineSubsystem magcom) {
+  public IntakeOutCommand(IntakeSubsystem incom, MagazineSubsystem magcom) {
     intake = incom;
     magazine = magcom;
     addRequirements(intake);
@@ -33,8 +33,8 @@ MagazineSubsystem magazine;
   @Override
   public void execute() {
 
-    intake.intakeIn();
-    magazine.magLoad();
+    intake.intakeOut();
+    magazine.setToEjectState();
   }
 
   //Called once the command ends or is interrupted.
