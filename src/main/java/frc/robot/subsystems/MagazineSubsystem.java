@@ -18,6 +18,7 @@ import com.revrobotics.ControlType;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -119,7 +120,7 @@ public class MagazineSubsystem extends SubsystemBase {
   
   public void magShoot() {
     setInverted(true);
-    setBeltVelocity(kMagShortRangeShootSpeed);
+    setBeltVelocity(kMagDefaultShootSpeed);
   }
   
   public void magShoot(double vel){
@@ -136,8 +137,8 @@ public class MagazineSubsystem extends SubsystemBase {
    */
   /** */
 
-  public void setMagPis(){
-    magPis.set(true);
+  public void setMagPis(boolean state){
+    magPis.set(state);
   }
 
   public void toggleIdleState(){
@@ -191,6 +192,23 @@ public class MagazineSubsystem extends SubsystemBase {
   }
 
   /**
+   * STATE GETTERS FOR AUTO SHOOTING
+   */
+  /** */
+
+  public boolean isMagReadyToShoot(){
+
+    boolean isArmReady = RobotContainer.arm.isArmAtGoal();
+    boolean areWheelsReady = RobotContainer.shooter.isAtTargetVelocity();
+
+    if(isArmReady && areWheelsReady){
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
    * TRIGGERS
    */
   /** */
@@ -201,6 +219,5 @@ public class MagazineSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    
   }
 }

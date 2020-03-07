@@ -104,16 +104,27 @@ public class GeneralUtil {
 
   public static Command generateAuto(){
 
-     Command auto = new InstantCommand(
-        () -> RobotContainer.magazine.toggleIdleState()
-        )
-      .withTimeout(2.5)
+      Command auto = new InstantCommand(
+        () -> RobotContainer.magazine.setMagPis(true)
+        ); 
+
+
+      /* Command auto = new RunCommand(
+        () -> RobotContainer.shooter.setShooterSpeed(kInitLineVelocity)
+        ).alongWith()
+
+        () -> RobotContainer.magazine.setToShootingState(), RobotContainer.magazine
+      )
+      .alongWith(
+        RobotContainer.autoArmTo
+        
+      )
       .andThen( new InstantCommand(
         //drive::alignWheels
         () -> RobotContainer.drive.alignWheels()
           )
-        )
-      .andThen( new WaitCommand(.5)
+        ); */
+       /*.andThen( new WaitCommand(.5)
       )
       .andThen( new RunCommand(
         () -> RobotContainer.drive.drive(-.3, 0, 0), RobotContainer.drive
@@ -123,7 +134,7 @@ public class GeneralUtil {
       .andThen( new RunCommand(
         () -> RobotContainer.drive.drive(0, 0, 0), RobotContainer.drive
           )
-        );
+        ); */ 
 
       return auto; 
   }

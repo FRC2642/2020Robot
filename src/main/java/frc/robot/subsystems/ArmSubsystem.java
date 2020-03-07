@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
@@ -24,12 +25,16 @@ public class ArmSubsystem extends SubsystemBase {
 
   public double input;
 
+  public double target;
+
   public ArmSubsystem() {
   
     armMotor = new VictorSPX(ID_MAG_TILT_MOTOR);
     armMotor.setInverted(true);
 
     armPot = new AnalogPotentiometer(kArmPotPort, 100);
+
+    target = 0;
   }
 
   /**
@@ -37,9 +42,10 @@ public class ArmSubsystem extends SubsystemBase {
    */
   /** */
   public void moveArm(double speed){
-      if(getPot() <= kTrenchPos && speed < 0){
+    
+      if(getPot() <= kArmTrenchRunPos && speed < 0){
       stop();
-    } else if(getPot() >= kClimbPos && speed > 0){
+    } else if(getPot() >= kArmClimbPos && speed > 0){
       stop();
     } else {      
       setPower(speed); 
@@ -47,6 +53,10 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setPower(double input){
+
+    SlewRateLimiter speedLimiter = new SlewRateLimiter(2);
+    speedLimiter.calculate(input);
+
     if(input > .6){
       armMotor.set(ControlMode.PercentOutput, .6);
     }
@@ -69,6 +79,22 @@ public class ArmSubsystem extends SubsystemBase {
 
   public double getPot(){
     return armPot.get();
+  }
+
+  public void setTarget(double target){
+    this.target = target;
+  }
+
+  public double getTarget(){
+    return target;
+  }
+
+  public boolean isArmAtGoal(){
+    if((getPot() >= getTarget() - .5) && (getPot() <= getTarget() + .5)){
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public double getAngleFromVision(){
@@ -95,6 +121,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic(){
-    SmartDashboard.putBoolean("arm manual override", getManualOverride());
+    //SmartDashboard.putBoolean("arm manual override", getManualOverride());
+    SmartDashboard.putNumber("target", getTarget());
   }
 }

@@ -66,7 +66,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     rightShooterMotor.follow(leftShooterMotor, true);
 
-    targetVelocity = kDefaultShooterRPM;
+    targetVelocity = kShooterDefaultRPM;
   }
 
   /**
@@ -79,8 +79,8 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void setShooterSpeed(){
-    shooterPID.setReference(kDefaultShooterRPM, ControlType.kVelocity);
-    targetVelocity = kDefaultShooterRPM;
+    shooterPID.setReference(kShooterDefaultRPM, ControlType.kVelocity);
+    targetVelocity = kShooterDefaultRPM;
   }
 
   public void stop() {

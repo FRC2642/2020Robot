@@ -112,12 +112,8 @@ public class Robot extends TimedRobot {
   
   @Override
   public void robotInit() {
-
-    // Instantiate our RobotContainer. This will perform all our button bindings,
-    // and put our
-    // autonomous chooser on the dashboard.
+  
     robotContainer = new RobotContainer();
-    //instantiates JeVois camera
     jevoisCam = new JevoisDriver();
     pdp = new PowerDistributionPanel();
 
@@ -172,22 +168,22 @@ public class Robot extends TimedRobot {
      * place any SmartDashboard methods that should be running even when the robot is disabled here
      */
 
-    SmartDashboard.putNumber("shooter vel", RobotContainer.shooter.getAverageVelocity());
     SmartDashboard.putNumber("arm pot", RobotContainer.arm.getPot());
-    SmartDashboard.putNumber("mag vel", RobotContainer.magazine.getVelocity());
 
+    //SmartDashboard.putNumber("mag vel", RobotContainer.magazine.getVelocity());
     
-    /* SmartDashboard.putNumber("fl", RobotContainer.drive.frontLeftModule.getModulePosition());
+    /*  SmartDashboard.putNumber("fl", RobotContainer.drive.frontLeftModule.getModulePosition());
     SmartDashboard.putNumber("fr", RobotContainer.drive.frontRightModule.getModulePosition());
     SmartDashboard.putNumber("bl", RobotContainer.drive.backLeftModule.getModulePosition());
-    SmartDashboard.putNumber("br", RobotContainer.drive.backRightModule.getModulePosition()); */
+    SmartDashboard.putNumber("br", RobotContainer.drive.backRightModule.getModulePosition());  */
+
+    SmartDashboard.putBoolean("isShoot", RobotContainer.shooter.isAtTargetVelocity());
+    SmartDashboard.putBoolean("isArm", RobotContainer.arm.isArmAtGoal());
+    SmartDashboard.putBoolean("isMagReady", RobotContainer.magazine.isMagReadyToShoot());
 
     //SmartDashboard.putString("targetColor", value)
   }
 
-  /**
-   * This function is called once each time the robot enters Disabled mode.s
-   */
   @Override
   public void disabledInit() {
   }
@@ -196,29 +192,19 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
   }
 
-  /**
-   * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
-   */
   @Override
   public void autonomousInit() {
     
     m_autonomousCommand = robotContainer.getAutonomousCommand();
 
-    // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     } 
     
   }
-  
-  /**
-   * This function is called periodically during autonomous.
-   * 
-   */
 
   @Override
   public void autonomousPeriodic() {
-
   }
 
   @Override
@@ -230,9 +216,6 @@ public class Robot extends TimedRobot {
 
   }
 
-  /**
-   * This function is called periodically during operator control.
-   */
   @Override
   public void teleopPeriodic() {
 
@@ -244,13 +227,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
-    // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
   }
 
-  /**
-   * This function is called periodically during test mode.
-   */
   @Override
   public void testPeriodic() {
   }

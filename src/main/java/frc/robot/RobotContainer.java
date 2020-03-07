@@ -7,13 +7,32 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.*;
+import static frc.robot.Constants.kArmAutoInitLineShootPos;
+import static frc.robot.Constants.kArmClimbPos;
+import static frc.robot.Constants.kArmFrontTrenchShootPos;
+import static frc.robot.Constants.kArmInitLineShootPos;
+import static frc.robot.Constants.kArmStartingPos;
+import static frc.robot.Constants.kArmTrenchRunPos;
+import static frc.robot.Constants.kAuxControllerPort;
+import static frc.robot.Constants.kDriveControllerPort;
+import static frc.robot.Constants.kShooterFrontTrenchRPM;
+import static frc.robot.Constants.kShooterInitLineRPM;
+import static frc.robot.Constants.kShooterLongShotRPM;
+
+import java.util.List;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -35,6 +54,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.MagazineSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
+
 
 
 /**
@@ -65,14 +85,14 @@ public class RobotContainer {
   public final Command aimbotTilt = new AimbotTiltCommand(arm);
   public final Command aimbotSpinup = new AimbotSpinupCommand(shooter);
 
-  public final Command armToStartingPosition = new ArmToSetPosition(kStartingPos, arm);
+  public final Command armToStartingPosition = new ArmToSetPosition(kArmStartingPos, arm);
 
-  public final Command armToTrenchPosition = new ArmToSetPosition(kTrenchPos, arm);
-  public final Command armToInitLineShootPosition = new ArmToSetPosition(kInitLineShootPos, arm);
-  public final Command armToTrenchShootPosition = new ArmToSetPosition(kFrontTrenchShootPos, arm);
-  public final Command armToClimbPosition = new ArmToSetPosition(kClimbPos, arm);
+  public final Command armToTrenchPosition = new ArmToSetPosition(kArmTrenchRunPos, arm);
+  public final Command armToInitLineShootPosition = new ArmToSetPosition(kArmInitLineShootPos, arm);
+  public final Command armToTrenchShootPosition = new ArmToSetPosition(kArmFrontTrenchShootPos, arm);
+  public final Command armToClimbPosition = new ArmToSetPosition(kArmClimbPos, arm);
 
-  public final Command autoArmInitLineShootPosition = new ArmToSetPosition(kInitLineShootPos, arm);
+  public final Command autoArmInitLineShootPosition = new ArmToSetPosition(kArmAutoInitLineShootPos, arm);
 
   //CONTROLLERS STUFF
   public static XboxController driveController = new XboxController(kDriveControllerPort);
@@ -92,6 +112,7 @@ public class RobotContainer {
   public static SwerveControllerCommand swerveControllerCommandLeft;
   public static SwerveControllerCommand swerveControllerCommandRight1;
   public static SwerveControllerCommand swerveControllerCommandRight2;
+  public static SwerveControllerCommand swerveControllerCommandExample;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -102,14 +123,22 @@ public class RobotContainer {
     drive.setSlowDrive(false);
 
     //add conditional command that runs either normal or slow based on color piston state
-     drive.setDefaultCommand(  
+      drive.setDefaultCommand(  
       new RunCommand(
         () -> drive.drive( 
-          -(driveController.getRawAxis(1)) * .5, 
+          -(driveController.getRawAxis(1)) * 5, 
           driveController.getRawAxis(0) * .5, 
           driveController.getRawAxis(4) * .5),
           drive)
-      ); 
+      );  
+
+      /* 
+       drive.testDrivePIDFLoop(
+        drive.modules,
+        driveController.getRawAxis(0) * .5
+        ); */
+
+      
     
      arm.setDefaultCommand(
       new RunCommand(
@@ -186,7 +215,7 @@ public class RobotContainer {
       .whenPressed(new InstantCommand(drive::toggleDriveFieldCentric));
     //aligns swerve wheels 
     new JoystickButton(driveController, Button.kStart.value)
-      .whenHeld(new RunCommand(drive::alignWheels, drive));
+      .whenPressed(new InstantCommand(drive::alignWheels, drive));
 
     //extends pistons without wheels
     new JoystickButton(driveController, Button.kX.value)
@@ -220,17 +249,27 @@ public class RobotContainer {
     //preset for shooting at init line position
     new JoystickButton(auxController, Button.kY.value)
      .whileHeld(new RunCommand(
-      () -> shooter.setShooterSpeed(kInitLineShooterRPM), shooter)
+      () -> shooter.setShooterSpeed(kShooterInitLineRPM), shooter)
       .alongWith( 
-        new ConditionalCommand(
-        /* arm.getDefaultCommand() */ new RunCommand(drive::doNothing), armToInitLineShootPosition  ,  () -> arm.getManualOverride())
+        armToInitLineShootPosition
+        /* new ConditionalCommand(
+
+          armToInitLineShootPosition, 
+
+          new RunCommand(
+            () -> arm.moveArm(
+              (-auxController.getRawAxis(5) * .5)
+           ), arm
+          ),
+           
+          () -> arm.getManualOverride()) */
         )
       ); 
 
     //preset for shooting in front trench position
     new JoystickButton(auxController, Button.kB.value)
       .whileHeld(new RunCommand(
-       () -> shooter.setShooterSpeed(kFrontTrenchShooterRPM), shooter)
+       () -> shooter.setShooterSpeed(kShooterFrontTrenchRPM), shooter)
        .alongWith(armToTrenchShootPosition)
        ); 
     
@@ -240,7 +279,7 @@ public class RobotContainer {
 
     new JoystickButton(auxController, Button.kX.value)
      .whileHeld(new RunCommand(
-       () -> shooter.setShooterSpeed(kLongShotShooterRPM)
+       () -> shooter.setShooterSpeed(kShooterLongShotRPM)
      )); 
 
     //spin up shooter at arbitrary speed
@@ -290,6 +329,10 @@ public class RobotContainer {
 
     new JoystickButton(auxController, Button.kBack.value)
     .whenPressed(armToStartingPosition);
+
+    
+    new JoystickButton(auxController, Button.kStart.value)
+      .whenPressed(new InstantCommand(drive::resetPose, drive));
   }
 
   /**
@@ -357,88 +400,63 @@ public class RobotContainer {
   );
     return swerveControllerCommand.andThen(() -> drive.drive(0, 0, 0));   */
 
-    /* Command auto = new RunCommand(
-      //START 
-      //spin up wheels
-      () -> shooter.setShooterSpeed(kInitLineShooterRPM), shooter)
-        .raceWith(
-          //move arm to position
-          autoArmToInitLineShootPosition,
-          //feed balls to shooter
-          new RunCommand( () -> magazine.setBeltVelocity(kMagAutoShootSpeed), magazine), 
-          //add timeout for shooter
-          new WaitCommand(10.0)
-      //after 10 second timeout, drive away for 1.5 secs
-      ).andThen( new RunCommand(
-        //drive at .25 speed away from shooting target
-        () -> drive.drive(-.25, 0, 0), drive)
-        //for 1.5 seconds
-        .withTimeout(1.5)
-      //after drive timeout
-      ).andThen(
-        //stop drive
-        () -> drive.drive(0, 0, 0)
-      );
-      return auto; */
-
-     /* Command auto = new RunCommand(
-        () -> shooter.setShooterSpeed(kFrontTrenchShooterRPM), shooter
-          )
-      .alongWith(
-        autoArmInitLineShootPosition
-      )
-      .alongWith(
-        new RunCommand( () -> magazine.magEngageAuto()
-          )
-      )
-      .withTimeout(10)
-
-      .andThen(new InstantCommand(
-        drive::alignWheels
-          )
-      )
-      .andThen( new RunCommand(
-        () -> drive.drive(-.25, 0, 0), drive
-          )
-      )
-      .withTimeout(2.5)
-
-      .andThen( new RunCommand(
-        () -> drive.drive(0, 0, 0), drive
-          )
-      );
-      
-      return auto; */
  
-      /* Command autoClimb = new InstantCommand(
-        () -> climb.setClimbPiston(false)
-      ).alongWith(new PrintCommand("climb"));
-      Command autoMagClose = new InstantCommand(
-        () -> magazine.toggleIdleState()
-      ).alongWith(new PrintCommand("mag"));
 
-      Command autoAlignDriveWheels = new InstantCommand(
-        drive::alignWheels
+ /*  Command auto = 
+        new WaitUntilCommand(
+          () -> magazine.isMagReadyToShoot()
         )
-      .alongWith(new PrintCommand("align"))
-      .andThen( new WaitCommand(2)
-      ).alongWith(new PrintCommand("wait"));
-
-      Command autoDrive = new RunCommand(
-        () -> drive.drive(-.3, 0, 0), drive
+        .deadlineWith(
+          autoArmInitLineShootPosition,
+          new RunCommand(
+            () -> shooter.setShooterSpeed(1600), shooter
+            )
+        )
+    .andThen( 
+          new RunCommand(
+            () -> magazine.setToShootingState(kMagShortRangeShootSpeed), magazine
+          ).withTimeout(2)
+        /* .alongWith(
+          autoArmInitLineShootPosition,
+          new RunCommand(
+            () -> shooter.setShooterSpeed(kShooterInitLineRPM)
           )
-      .withTimeout(1.5).alongWith(new PrintCommand("drive"));
+        )  */
+        TrajectoryConfig config =
+      new TrajectoryConfig(Constants.kMaxMPS, Constants.kMaxAcceleration)
+        // Add kinematics to ensure max speed is actually obeyed
+        .setKinematics(drive.kinematics);
+      
+      config.setReversed(true);
 
-      Command autoStopDrive = new RunCommand(
-        () -> drive.drive(0, 0, 0), drive
-        ).alongWith(new PrintCommand("stop"));
+        Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+          new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+          List.of(
+              //new Translation2d(-3.0, 0.0)
+              ),
+          
+              new Pose2d(-4.0, 0.0, Rotation2d.fromDegrees(0)),
+          config);
 
-
-      Command auto = autoClimb.andThen(autoMagClose, autoAlignDriveWheels, autoDrive, autoDrive, autoStopDrive);
-
-      return auto; */
- 
+    Command auto =
+        new InstantCommand(
+          () -> RobotContainer.drive.alignWheels()
+        )
+    .andThen( 
+        new SwerveControllerCommand(
+          exampleTrajectory,
+          drive::getPose, 
+          drive.kinematics,
+          //Position controllers
+          new PIDController(1.0, 0.4, 0),
+          new PIDController(1.0, 0.4, 0),
+          new ProfiledPIDController(1.0, 0.4, 0,
+                              Constants.kThetaControllerConstraints),
+          drive::setModuleStates,
+          drive
+        )
+    );
     
-      return Robot.autoCommand;
+      return auto; 
   }
 }

@@ -103,16 +103,16 @@ public final class Constants {
      *  CONVERSION FACTORS
      */
 
+    public static final double kMaxSpeedConversionFactor = 8.3; //gear ratio conversion
+
     public static final double kAnglePositionConversionFactor = 359.0 / 3.3; //degrees / volts
 
     public static final double kRPMToMPSConversionFactor = (1.0 / 60) * (4 * Math.PI) * .0254;
-    public static final double kDriveVelocityConversionFactor = kRPMToMPSConversionFactor;
+    public static final double kDriveVelocityConversionFactor = kRPMToMPSConversionFactor ;
 
     public static final double kRelativeRotationsPerModuleRotation = 17.738054; //18.05; //relative rots 
     public static final double kModuleDegreesToRelativeRotations 
                                = kRelativeRotationsPerModuleRotation / 360.0; //rots / degrees
-
-    public static final double kMaxSpeedConversionFactor = 8.667; //gear ratio conversion
 
     public static final double kShooterRPMConversionFactor = 18.84954;
 
@@ -130,7 +130,7 @@ public final class Constants {
     public static final double kGyroOffset = 0.0;//180.0;
     //Dashboard reading offsets (swerve)
     public static final double kFrontLeftAngleModuleOffset = 344.5;
-    public static final double kFrontRightAngleModuleOffset = 124.0;//241.4;
+    public static final double kFrontRightAngleModuleOffset = 68.6;//248.6;//124.0;
     public static final double kBackLeftAngleModuleOffset = 45.8;
     public static final double kBackRightAngleModuleOffset = 272.4;
 
@@ -142,26 +142,29 @@ public final class Constants {
     //motor neutral deadband
     public static final double kMotorNeutralDeadband = .15;
     //swerve max speeds
-    public static final double kMaxModuleRPM = 12.0 * kMaxSpeedConversionFactor; //desired module rotation speed * gear ratio conversion
-    public static final double kMaxMPS = 12.0 * kMaxSpeedConversionFactor; //desired movement speed * gear ratio conversion
+    public static final double kRealMaxMPS = 12.0;
+    public static final double kMaxModuleRPM = kRealMaxMPS * kMaxSpeedConversionFactor; //desired module rotation speed * gear ratio conversion
+    public static final double kMaxMPS = kRealMaxMPS * kMaxSpeedConversionFactor; //desired movement speed * gear ratio conversion
     public static final double kMaxAcceleration = 1.2192;
     //mag belt speed
     public static final double kMagDefaultShootSpeed = 3000; //RPM
-    public static final double kMagShortRangeShootSpeed = 3000; //RPM     auto rpm = 2500
-    public static final double kMagLongRangeShootSpeed = 2500; //RPM
+    public static final double kMagShortRangeShootSpeed = 5500; //RPM     auto rpm = 2500
+    public static final double kMagMidRangeShootSpeed = 3500; //RPM
+    public static final double kMagLongRangeShootSpeed = 2000; //RPM
     public static final double kMagLoadSpeed = 3500; //RPM
     public static final double kMagEjectSpeed = 2500; //RPM
     //shooter rpm
-    public static final double kDefaultShooterRPM = 1800; //RPM 
-    public static final double kFrontTrenchShooterRPM = 1800; //RPM
-    public static final double kInitLineShooterRPM = 1800; //RPM    auto rpm = 1600?
-    public static final double kLongShotShooterRPM = 4500; //RPM
+    public static final double kShooterDefaultRPM = 1800; //RPM     
+    public static final double kShooterInitLineRPM = 1800; //RPM
+    public static final double kShooterFrontTrenchRPM = 1800; //RPM
+    public static final double kShooterLongShotRPM = 4900; //RPM
     //tilt presets
-    public static final double kTrenchPos = 19.3;
-    public static final double kStartingPos = 41.1;
-    public static final double kInitLineShootPos = 27.5;
-    public static final double kFrontTrenchShootPos = 25.0;
-    public static final double kClimbPos = 81.4;
+    public static final double kArmTrenchRunPos = 19.3;
+    public static final double kArmStartingPos = 41.1;                            //33.75
+    public static final double kArmAutoInitLineShootPos = 31;
+    public static final double kArmInitLineShootPos = 27.5;
+    public static final double kArmFrontTrenchShootPos = 25.0;
+    public static final double kArmClimbPos = 81.4;
 
     /**
      * PID GAINS AND CONSTANTS AND PROFILING CONSTANTS
@@ -204,7 +207,7 @@ public final class Constants {
     public static final double kPXController = .3;
     public static final double kPYController = .4;
     public static final double kPThetaController = .5;
-    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
+    public static final double kMaxAngularSpeedRadiansPerSecond = 2 * Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
   
     //Constraint for the motion profilied robot angle controller
