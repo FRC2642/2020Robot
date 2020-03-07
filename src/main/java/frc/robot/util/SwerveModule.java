@@ -169,14 +169,14 @@ public class SwerveModule {
    * Aligns the module's relative encoder onboard the SparkMax using the absolute encoder position
    */
   public void zeroModules(){
-    //if(!getIsWheelAligned()){
+    if(!getIsWheelAligned()){
       zeroEncoder();
       
       double moduleAngle = getModulePosition();
       double relativeAngle = moduleAngle * kModuleDegreesToRelativeRotations;
       setEncoder(relativeAngle);
-      //isWheelAligned = true;
-    //}
+      isWheelAligned = true;
+    }
   }
 
   public void zeroEncoder(){
@@ -201,9 +201,8 @@ public class SwerveModule {
    */
 
   public double getDriveVelocity(){
-    double vel = driveEncoder.getVelocity();
-    vel /= kMaxSpeedConversionFactor;
-    return Units.metersToFeet(vel);
+    return driveEncoder.getVelocity();
+    
   }
 
   public double getAbsoluteAngleEncoder(){

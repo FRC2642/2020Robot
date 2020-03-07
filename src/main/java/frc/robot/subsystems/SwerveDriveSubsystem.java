@@ -19,8 +19,10 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Transform2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
@@ -51,7 +53,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public SwerveModuleState state;
 
   public SwerveDriveKinematics kinematics;
-  SwerveDriveOdometry odometry;
+  public SwerveDriveOdometry odometry;
 
   public AHRS navx;
   public TrajectoryConfig config;
@@ -59,6 +61,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public Trajectory leftTrajectory;
   public Trajectory rightTrajectory1;
   public Trajectory rightTrajectory2;
+  public Trajectory exampleTrajectory;
  
   public boolean isDriveFieldCentric;
   public boolean isAimingMode;
@@ -140,8 +143,10 @@ public class SwerveDriveSubsystem extends SubsystemBase {
       new TrajectoryConfig(Constants.kMaxMPS, Constants.kMaxAcceleration)
         // Add kinematics to ensure max speed is actually obeyed
         .setKinematics(kinematics);
+      
+      config.setReversed(true);
 
-      Trajectory centerTrajectory = TrajectoryGenerator.generateTrajectory(
+      /* Trajectory centerTrajectory = TrajectoryGenerator.generateTrajectory(
               // Start at the origin facing the +X direction
               new Pose2d(0, 0, new Rotation2d(0)),
               // Pass through these two interior waypoints, making an 's' curve path
@@ -178,7 +183,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
                       new Translation2d(2.7432, 0)),
                   
                       new Pose2d(4.943602, 0, new Rotation2d(0)),
-                  config);
+                  config); */
+
+        
     
     //instantiates navx
     try{
@@ -334,6 +341,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
       //sets angle of module using closed loop position control
       module.setModuleAngle(module.getTargetAngle(moduleStates[i]));
     }
+
+    odometry.update(getRobotYawInRotation2d(), moduleStates);
   }
 
   /**
@@ -458,16 +467,29 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   /**
    * POSE GENERATION FOR USE IN AUTO PATHING
    */
-  public Pose2d getPoseMeters(){
-    return odometry.getPoseMeters();
+  /**
+   * my pose
+   */
+  public Pose2d getPose(){
+    Pose2d pose = odometry.getPoseMeters();
+
+    Translation2d transPose = pose.getTranslation();
+    transPose = transPose.div(kMaxSpeedConversionFactor);
+    Pose2d realPose = new Pose2d(transPose, pose.getRotation());
+    return realPose; 
+
+    //return pose;
   }
 
   public double getPoseXInFeet(){
-    Pose2d pose2d = getPoseMeters();
+    Pose2d pose2d = getPose();
     Translation2d poseTrans2d = pose2d.getTranslation();
-    double pose = poseTrans2d.getX();
-    pose /= kMaxSpeedConversionFactor;
-    return Units.metersToFeet(pose);
+    double xPose = poseTrans2d.getX();
+    return Units.metersToFeet(xPose);
+  }
+
+  public void resetPose(){
+    odometry.resetPosition(new Pose2d(), getRobotYawInRotation2d());
   }
 
   public void doNothing(){
@@ -507,14 +529,14 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putBoolean("isDriveFieldCentric", getIsDriveFieldCentric());
-    SmartDashboard.putString("positionOnField", odometry.getPoseMeters().toString());
+    SmartDashboard.putString("positionOnField", getPose().toString());
 
-    try{
+   /*  try{
     odometry.update(getRobotYawInRotation2d(), moduleStates);
     } catch(RuntimeException e){ 
-    }
+      System.out.println("not updating");
+    } */
 
-    SmartDashboard.putNumber("poseXInFeet", getPoseXInFeet());
-
+  SmartDashboard.putNumber("fl vel", frontLeftModule.getDriveVelocity());
   }
 }
