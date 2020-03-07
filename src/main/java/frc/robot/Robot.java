@@ -67,6 +67,10 @@ package frc.robot;
 
 import static frc.robot.util.GeneralUtil.generateAuto;
 
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.imgproc.Imgproc;
+
 import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -79,50 +83,84 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.JevoisDriver;
 
 /**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to each mode, as described in the TimedRobot
+ * documentation. If you change the name of this class or the package after
+ * creating this project, you must also update the build.gradle file in the
  * project.
  */
-public class Robot<MyFindTapePipeline> extends TimedRobot {
+public class Robot extends TimedRobot {
 
   public Command m_autonomousCommand;
   public RobotContainer robotContainer;
-  public PowerDistributionPanel pdp;
-    
-  public VideoSource usbCamera;
-  public VideoSource _jevoisMjpegServer;
+
+  public VideoSource camera;
+  public VisionPipeline cameraPipeline;
   
-  //Jevois driver
-  public static JevoisDriver jevoisCam;
+  public VisionThread visionThread;
+  
+  public final Object visionLock = new Object();
 
+   private Object particleReports;
+  
+  // Jevois driver
+  JevoisDriver jevoisCam;
+ 
+  public PowerDistributionPanel pdp;
+  
   public static Command autoCommand;
-
+  
   @Override
   public void robotInit() {
 
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
+    // Instantiate our RobotContainer. This will perform all our button bindings,
+    // and put our
     // autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
-    //takes a picture with the camera
-    //sets resolution of camera
+    //instantiates JeVois camera
     jevoisCam = new JevoisDriver();
     pdp = new PowerDistributionPanel();
 
     autoCommand = generateAuto();
 
-    CameraServer.getInstance().startAutomaticCapture();
-    CameraServer.getInstance().startAutomaticCapture(1);
-
   }
 
-  /**
-   * This function is called every robot packet, no matter the mode. Use this for items like
-   * diagnostics that you want ran during disabled, autonomous, teleoperated and test.
-   *
-   * <p>This runs after the mode specific periodic functions, but before
-   * LiveWindow and SmartDashboard integrated updating.
-   */
+  public void setUpCamera() {
+    camera = CameraServer.getInstance().startAutomaticCapture(1);
+   // camera.setResolution(Constants.IMG_WIDTH, Constants.IMG_HEIGHT);
+   // camera.setExposureManual(Constants.exposure);
+    
+    visionThread = new VisionThread(camera, cameraPipeline, pipeline -> {
+        if (!pipeline.filterContoursOutput().isEmpty()) {
+            Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
+            synchronized (imgLock) {
+                int centerX = r.x + (r.width / 2);
+            }
+
+    ParticleReport[] reports = new ParticleReport[contours.size()];
+
+    for (int i = 0; i < reports.length; i++)
+        {
+        reports[i] = new ParticleReport();
+        Rect r = Imgproc.boundingRect(contours.get(i));
+        reports[i].area = r.area();
+        reports[i].center = new Point(r.x + (r.width / 2),
+                r.y + (r.height / 2));
+        reports[i].boundingRect = r;
+        }
+
+    this.particleReports = reports();
+        } 
+    });    
+  }
+
+  private Object reports() {
+    return reports();
+  }
+
+  private void visionThread(VideoSource camera2, VisionPipeline visionPipeline2) {
+  }
+
   @Override
   public void robotPeriodic() {
     
