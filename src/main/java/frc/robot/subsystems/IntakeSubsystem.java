@@ -38,7 +38,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
    /** */
   public void intakeIn() {
-    intakeMotor.set(-.6);
+    intakeMotor.set(-.8);
     if(intakePiston.get() != Value.kReverse){
       intakePiston.set(Value.kReverse);
     } else {
@@ -47,7 +47,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void intakeOut(){
-    intakeMotor.set(.6);
+    intakeMotor.set(.8);
     intakePiston.set(Value.kReverse);
   }
 

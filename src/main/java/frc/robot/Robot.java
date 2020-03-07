@@ -73,10 +73,10 @@ import org.opencv.imgproc.Imgproc;
 
 import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.vision.VisionPipeline;
+import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -120,7 +120,7 @@ public class Robot extends TimedRobot {
     autoCommand = generateAuto();
 
   }
-
+/* 
   public void setUpCamera() {
     camera = CameraServer.getInstance().startAutomaticCapture(1);
    // camera.setResolution(Constants.IMG_WIDTH, Constants.IMG_HEIGHT);
@@ -129,7 +129,7 @@ public class Robot extends TimedRobot {
     visionThread = new VisionThread(camera, cameraPipeline, pipeline -> {
         if (!pipeline.filterContoursOutput().isEmpty()) {
             Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
-            synchronized (imgLock) {
+            synchronized (visionLock) {
                 int centerX = r.x + (r.width / 2);
             }
 
@@ -148,7 +148,7 @@ public class Robot extends TimedRobot {
     this.particleReports = reports();
         } 
     });    
-  }
+  } */
 
   private Object reports() {
     return reports();
