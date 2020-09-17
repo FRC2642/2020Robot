@@ -127,7 +127,7 @@ public class RobotContainer {
     new JoystickButton(driveController, Button.kBack.value)
       .whenPressed(new InstantCommand(drive::toggleIsDriveFieldCentric));
 
-    new JoystickButton(driveController, Button.kBumperLeft.value)
+    /*new JoystickButton(driveController, Button.kBumperLeft.value)
       .whenPressed(swerveControllerCommandCenter.andThen(
       (new RunCommand(magazine::magLoad, magazine)), 
       (new RunCommand(intake::intakeIn, intake)),
@@ -153,7 +153,7 @@ public class RobotContainer {
       (new RunCommand(magazine::magShoot)),
       (new RunCommand(shooter::shoot))
     ));
-
+*/
     /**
      * Everything below here requires reworking.
      */
