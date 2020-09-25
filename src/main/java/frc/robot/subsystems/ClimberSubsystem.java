@@ -12,6 +12,9 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.*;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -21,16 +24,21 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ClimberSubsystem extends SubsystemBase {
   
-  VictorSPX climberMotor;
+  //VictorSPX climberMotor;
+  TalonSRX climberMotor;
   public Solenoid climberPis = new Solenoid(kClimberPistonPort);
-  public DigitalInput climberLimitSwitch = new DigitalInput(kClimberLimitSwitch);
 
   public boolean isClimbLocked;
 
   public ClimberSubsystem(){
 
-    climberMotor = new VictorSPX(ID_CLIMBER_MOTOR);
+    /* climberMotor = new VictorSPX(ID_CLIMBER_MOTOR);
+    climberMotor.setInverted(true); */
+
+    climberMotor = new TalonSRX(ID_CLIMBER_MOTOR);
+    climberMotor.configFactoryDefault();
     climberMotor.setInverted(true);
+    //climberMotor.configForwardLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX, LimitSwitchNormal.NormallyOpen, climberMotor.getDeviceID());
 
     isClimbLocked = getClimbLock();
   }
@@ -62,7 +70,7 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public void climbDown(){
-    setClimbPower(-.7);
+    setClimbPower(-0.7);
   }
 
   public void stop() {
@@ -91,14 +99,6 @@ public class ClimberSubsystem extends SubsystemBase {
   public void setClimbPiston(boolean state){
     climberPis.set(state);
     isClimbLocked = state;
-  }
-
-  /**
-   * CLIMB LIMIT SWITCH GETTER
-   */
-  /** */
-  public boolean getLimitSwitch(){
-    return climberLimitSwitch.get();
   }
 
   @Override

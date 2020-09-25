@@ -34,7 +34,9 @@ MagazineSubsystem magazine;
   public void execute() {
 
     intake.intakeIn();
-    magazine.magLoad();
+    magazine.setToLoadState();
+
+    
   }
 
   //Called once the command ends or is interrupted.

@@ -192,6 +192,10 @@ public class SwerveModule {
     driveMotor.set(0);
   }
 
+  public void zeroOutI(){
+    drivePID.setIAccum(0.0);
+  }
+
   /**
    * DIAGNOSTIC METHODS 
    */

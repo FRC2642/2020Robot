@@ -7,22 +7,13 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.kArmAutoInitLineShootPos;
-import static frc.robot.Constants.kArmClimbPos;
-import static frc.robot.Constants.kArmFrontTrenchShootPos;
-import static frc.robot.Constants.kArmInitLineShootPos;
-import static frc.robot.Constants.kArmStartingPos;
-import static frc.robot.Constants.kArmTrenchRunPos;
-import static frc.robot.Constants.kAuxControllerPort;
-import static frc.robot.Constants.kDriveControllerPort;
-import static frc.robot.Constants.kShooterFrontTrenchRPM;
-import static frc.robot.Constants.kShooterInitLineRPM;
-import static frc.robot.Constants.kShooterLongShotRPM;
+import static frc.robot.Constants.*;
 
 import java.util.List;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
@@ -37,6 +28,8 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.aimbot.AimbotRotateCommand;
@@ -54,6 +47,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.MagazineSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
+import frc.robot.subsystems.MagazineSubsystem.ShootMode;
 
 
 
@@ -89,10 +83,13 @@ public class RobotContainer {
 
   public final Command armToTrenchPosition = new ArmToSetPosition(kArmTrenchRunPos, arm);
   public final Command armToInitLineShootPosition = new ArmToSetPosition(kArmInitLineShootPos, arm);
-  public final Command armToTrenchShootPosition = new ArmToSetPosition(kArmFrontTrenchShootPos, arm);
+  public final Command armToFrontTrenchShootPosition = new ArmToSetPosition(kArmFrontTrenchShootPos, arm);
+  public final Command armToBackTrenchShootPosition = new ArmToSetPosition(kArmBackTrenchShootPos, arm);
   public final Command armToClimbPosition = new ArmToSetPosition(kArmClimbPos, arm);
 
   public final Command autoArmInitLineShootPosition = new ArmToSetPosition(kArmAutoInitLineShootPos, arm);
+  public final Command autoArmToIntakePosition = new ArmToSetPosition(kArmTrenchRunPos, arm);
+
 
   //CONTROLLERS STUFF
   public static XboxController driveController = new XboxController(kDriveControllerPort);
@@ -100,6 +97,7 @@ public class RobotContainer {
 
   public static Trigger leftTrigger = new Trigger(intake::getLeftTrigger);
   public static Trigger rightTrigger = new Trigger(magazine::getRightTrigger);
+  public static Trigger shooterStuff;
 
   public static Trigger auxLeftTrigger = new Trigger(shooter::getLTrigger);
   public static Trigger auxRightTrigger = new Trigger(shooter::getRTrigger);
@@ -123,27 +121,19 @@ public class RobotContainer {
     drive.setSlowDrive(false);
 
     //add conditional command that runs either normal or slow based on color piston state
-      drive.setDefaultCommand(  
+    drive.setDefaultCommand(  
       new RunCommand(
-        () -> drive.drive( 
-          -(driveController.getRawAxis(1)) * 5, 
+        () -> drive.drive( //-.15, 0, 0),
+          -(driveController.getRawAxis(1)) * .5, 
           driveController.getRawAxis(0) * .5, 
           driveController.getRawAxis(4) * .5),
           drive)
       );  
 
-      /* 
-       drive.testDrivePIDFLoop(
-        drive.modules,
-        driveController.getRawAxis(0) * .5
-        ); */
-
-      
-    
-     arm.setDefaultCommand(
+    arm.setDefaultCommand(
       new RunCommand(
         () -> arm.moveArm(
-          (-auxController.getRawAxis(5) * .5)
+          (-auxController.getRawAxis(5) )
        ), arm
       )
     );
@@ -178,38 +168,12 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    //instantiates drive toggle button
 
     //-=+=-DRIVE Controller Buttons-=+=-//
-/*
-    new JoystickButton(driveController, Button.kBumperLeft.value)
-      .whenPressed(swerveControllerCommandCenter.andThen(
-      (new RunCommand(magazine::magLoad, magazine)), 
-      (new RunCommand(intake::intakeIn, intake)),
-      (new RunCommand(magazine::magShoot)), 
-      (new RunCommand(shooter::
-      shoot))
-      ));
 
-    new JoystickButton(driveController, Button.kBack.value)
-    .whenPressed(swerveControllerCommandLeft.andThen(
-      (new RunCommand(magazine::magLoad, magazine)), 
-      (new RunCommand(intake::intakeIn, intake)),
-      (new RunCommand(magazine::magShoot)), 
-      (new RunCommand(shooter::shoot))
-    ));
-
-    new JoystickButton(driveController, Button.kBack.value)
-    .whenPressed(new RunCommand(magazine::magShoot).andThen(
-      (new RunCommand(shooter::shoot, shooter)),
-      (swerveControllerCommandRight1),
-      (new RunCommand(magazine::magLoad)), 
-      (new RunCommand(intake::intakeIn, intake)),
-      (swerveControllerCommandRight2), 
-      (new RunCommand(magazine::magShoot)),
-      (new RunCommand(shooter::shoot))
-    ));
-*/
+    /**
+     * swerve stuff
+     */
     //toggles field drive and robot drive
     new JoystickButton(driveController, Button.kBack.value)
       .whenPressed(new InstantCommand(drive::toggleDriveFieldCentric));
@@ -217,95 +181,86 @@ public class RobotContainer {
     new JoystickButton(driveController, Button.kStart.value)
       .whenPressed(new InstantCommand(drive::alignWheels, drive));
 
+    /**
+     * intake buttons
+     */
     //extends pistons without wheels
     new JoystickButton(driveController, Button.kX.value)
     .whenHeld(new RunCommand(intake::intakePistonOut));
-    //moves arm to trench position
-    new JoystickButton(driveController, Button.kA.value)
-     .whenPressed(armToTrenchPosition); 
+    //ejects balls
+    new JoystickButton(driveController, Button.kBumperLeft.value)
+    .whenHeld(intakeOutCommand);
+    //intakes balls
+    leftTrigger.whileActiveContinuous(intakeCommand);
 
-    //activates aiming mode
-   /*  new JoystickButton(driveController, Button.kBumperRight.value)
-    .whenHeld(aimbotRotate.alongWith(
-      new ConditionalCommand(aimbotTilt, arm.getDefaultCommand(), () -> !arm.isManualOverride()),
-      aimbotSpinup
-    )); */
+    /**
+     * shooting buttons
+     */
     new JoystickButton(driveController, Button.kBumperRight.value)
     .whenPressed(new InstantCommand(magazine::toggleIdleState, magazine));
 
-    new JoystickButton(driveController, Button.kBumperLeft.value)
-    .whenHeld(intakeOutCommand);
-
-    //intakes balls
-    leftTrigger.whileActiveContinuous(intakeCommand);
     //activates shooting mode
-    rightTrigger.whileActiveContinuous(
-      new RunCommand(magazine::setToShootingState, magazine));
+      shooterStuff = rightTrigger.whileActiveContinuous(
+      new RunCommand(magazine::setToShootingStateShortRange, magazine));
 
 //-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-=+=-// 
   
     //-=+=-AUX Controller Buttons-=+=-//
 
+    /**
+     * presets 
+     */
+    
     //preset for shooting at init line position
     new JoystickButton(auxController, Button.kY.value)
      .whileHeld(new RunCommand(
       () -> shooter.setShooterSpeed(kShooterInitLineRPM), shooter)
       .alongWith( 
-        armToInitLineShootPosition
-        /* new ConditionalCommand(
-
-          armToInitLineShootPosition, 
-
-          new RunCommand(
-            () -> arm.moveArm(
-              (-auxController.getRawAxis(5) * .5)
-           ), arm
-          ),
-           
-          () -> arm.getManualOverride()) */
-        )
+        armToInitLineShootPosition,
+        new RunCommand(
+          () -> magazine.setShootMode(ShootMode.SHORT), magazine
+          )
+        ), true
       ); 
 
     //preset for shooting in front trench position
     new JoystickButton(auxController, Button.kB.value)
       .whileHeld(new RunCommand(
        () -> shooter.setShooterSpeed(kShooterFrontTrenchRPM), shooter)
-       .alongWith(armToTrenchShootPosition)
-       ); 
-    
-    //move arm to trench/intake position
-    new JoystickButton(auxController, Button.kA.value)
-     .whenPressed(armToTrenchPosition); 
+       .alongWith(
+         armToFrontTrenchShootPosition,
+         new RunCommand(
+          () -> magazine.setShootMode(ShootMode.MID), magazine
+          )
+         )); 
 
-    new JoystickButton(auxController, Button.kX.value)
+    //preset for shooting at back trench position
+    new JoystickButton(auxController, Button.kA.value)
+     .whileHeld(new RunCommand(
+      () -> shooter.setShooterSpeed(kShooterBackTrenchRPM), shooter)
+      .alongWith( 
+        armToBackTrenchShootPosition,
+        new RunCommand(
+          () -> magazine.setShootMode(ShootMode.LONG), magazine
+          )
+        )
+      ); 
+
+    /* new JoystickButton(auxController, Button.kX.value)
      .whileHeld(new RunCommand(
        () -> shooter.setShooterSpeed(kShooterLongShotRPM)
-     )); 
+     ));  */
 
     //spin up shooter at arbitrary speed
     auxRightTrigger.whileActiveContinuous(new RunCommand(shooter::setShooterSpeed, shooter));
 
-    
-   /*  new JoystickButton(auxController, Button.kX.value)
-     .whileHeld(new RunCommand(
-      () -> shooter.setShooterSpeed(kInitLineShooterRPM), shooter)
-      .alongWith(armToInitLineShootPosition)
-      );  */
-
+    /**
+     * color spinner buttons
+     */
     //extends the color spinner
     new JoystickButton(auxController, Button.kBumperRight.value)
     .whenPressed(new InstantCommand(spinner::extend)
-      .alongWith(
-        new FunctionalCommand(
-          () -> drive.setSlowDrive(true),
-          () -> drive.drive( 
-            -(driveController.getRawAxis(1)) * .7, 
-            driveController.getRawAxis(0) * .7, 
-            driveController.getRawAxis(4) * .7), 
-          (interupted) -> drive.doNothing(),
-          () -> drive.getIsSlowDrive(), 
-          drive)
-      ));
+    );
 
     //retracts the color spinner 
     new JoystickButton(auxController, Button.kBumperLeft.value)
@@ -320,6 +275,9 @@ public class RobotContainer {
     //activates position control
     auxRDPad.whenActive(positionControl);
 
+    /**
+     * climb buttons
+     */
     //move arm to climb position
     auxUpDPad.whenActive(armToClimbPosition);
 
@@ -327,6 +285,9 @@ public class RobotContainer {
     new JoystickButton(auxController, Button.kStickLeft.value)
     .whenPressed(new InstantCommand(climb::toggleClimbLock));
 
+    /**
+     * starting position button (pit settings)
+     */
     new JoystickButton(auxController, Button.kBack.value)
     .whenPressed(armToStartingPosition);
 
@@ -402,27 +363,52 @@ public class RobotContainer {
 
  
 
- /*  Command auto = 
-        new WaitUntilCommand(
-          () -> magazine.isMagReadyToShoot()
-        )
+  Command auto = 
+    //begin with(
+          new WaitUntilCommand(
+            () -> magazine.isMagReadyToShoot()
+          )
         .deadlineWith(
-          autoArmInitLineShootPosition,
-          new RunCommand(
-            () -> shooter.setShooterSpeed(1600), shooter
-            )
+            autoArmInitLineShootPosition,
+            new RunCommand(
+              () -> shooter.setShooterSpeed(1600), shooter
+              )
+    ).andThen( 
+        new WaitCommand(3)
+          .deadlineWith(
+            new RunCommand(
+              () -> magazine.setToShootingStateShortRange(), magazine
+          )
         )
-    .andThen( 
+    ).andThen(
+        new InstantCommand(
+          () -> drive.alignWheels(), drive
+        )
+    ).andThen(
+        new WaitCommand(.25)
+    ).andThen(
+        new WaitCommand(.5)
+          .deadlineWith(
+            new RunCommand(
+              () -> drive.drive(-.3, 0.0, 0.0), drive)
+          )  
+    ).andThen(
           new RunCommand(
-            () -> magazine.setToShootingState(kMagShortRangeShootSpeed), magazine
-          ).withTimeout(2)
+            () -> drive.drive(0.0, 0.0, 0.0), drive
+            )
+    ).andThen(
+        autoArmToIntakePosition
+    );
+
+
         /* .alongWith(
           autoArmInitLineShootPosition,
           new RunCommand(
             () -> shooter.setShooterSpeed(kShooterInitLineRPM)
           )
-        )  */
-        TrajectoryConfig config =
+        ) 
+
+        /* TrajectoryConfig config =
       new TrajectoryConfig(Constants.kMaxMPS, Constants.kMaxAcceleration)
         // Add kinematics to ensure max speed is actually obeyed
         .setKinematics(drive.kinematics);
@@ -432,10 +418,11 @@ public class RobotContainer {
         Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
           new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
           List.of(
-              //new Translation2d(-3.0, 0.0)
+              new Translation2d(-4.0, 4.0),
+              new Translation2d(-8.0, 0.0)
               ),
           
-              new Pose2d(-4.0, 0.0, Rotation2d.fromDegrees(0)),
+              new Pose2d(-12.0, 4.0, Rotation2d.fromDegrees(0)),
           config);
 
     Command auto =
@@ -455,8 +442,38 @@ public class RobotContainer {
           drive::setModuleStates,
           drive
         )
-    );
+    ); */
     
       return auto; 
   }
 }
+
+/*
+    new JoystickButton(driveController, Button.kBumperLeft.value)
+      .whenPressed(swerveControllerCommandCenter.andThen(
+      (new RunCommand(magazine::magLoad, magazine)), 
+      (new RunCommand(intake::intakeIn, intake)),
+      (new RunCommand(magazine::magShoot)), 
+      (new RunCommand(shooter::
+      shoot))
+      ));
+
+    new JoystickButton(driveController, Button.kBack.value)
+    .whenPressed(swerveControllerCommandLeft.andThen(
+      (new RunCommand(magazine::magLoad, magazine)), 
+      (new RunCommand(intake::intakeIn, intake)),
+      (new RunCommand(magazine::magShoot)), 
+      (new RunCommand(shooter::shoot))
+    ));
+
+    new JoystickButton(driveController, Button.kBack.value)
+    .whenPressed(new RunCommand(magazine::magShoot).andThen(
+      (new RunCommand(shooter::shoot, shooter)),
+      (swerveControllerCommandRight1),
+      (new RunCommand(magazine::magLoad)), 
+      (new RunCommand(intake::intakeIn, intake)),
+      (swerveControllerCommandRight2), 
+      (new RunCommand(magazine::magShoot)),
+      (new RunCommand(shooter::shoot))
+    ));
+*/

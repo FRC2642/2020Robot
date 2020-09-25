@@ -71,16 +71,23 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
 
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoSink;
 import edu.wpi.cscore.VideoSource;
+import edu.wpi.cscore.VideoSource.ConnectionStrategy;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.vision.VisionPipeline;
 import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.JevoisDriver;
+import frc.robot.RobotContainer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -94,21 +101,28 @@ public class Robot extends TimedRobot {
   public Command m_autonomousCommand;
   public RobotContainer robotContainer;
 
-  public VideoSource camera;
+/*   public VideoSource camera;
   public VisionPipeline cameraPipeline;
   
   public VisionThread visionThread;
   
   public final Object visionLock = new Object();
 
-   private Object particleReports;
+   private Object particleReports; */
   
+  NetworkTable table;
+
   // Jevois driver
   JevoisDriver jevoisCam;
  
   public PowerDistributionPanel pdp;
   
   public static Command autoCommand;
+
+  UsbCamera intakeCam;
+  UsbCamera shooterCam;
+
+  VideoSink camServer;
   
   @Override
   public void robotInit() {
@@ -119,9 +133,25 @@ public class Robot extends TimedRobot {
 
     autoCommand = generateAuto();
 
+    intakeCam = CameraServer.getInstance().startAutomaticCapture(0);
+    shooterCam = CameraServer.getInstance().startAutomaticCapture(1);
+
+    intakeCam.setFPS(10);
+    shooterCam.setFPS(15);
+
+    intakeCam.setResolution(320, 240);
+    shooterCam.setResolution(320, 240);
+
+    intakeCam.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
+    shooterCam.setConnectionStrategy(ConnectionStrategy.kAutoManage);
+
+    camServer = CameraServer.getInstance().getServer();
+
+    //table = NetworkTableInstance.getDefault().getTable("GRIP/mycontoursReport");
+
   }
-/* 
-  public void setUpCamera() {
+ 
+ /*  public void setUpCamera() {
     camera = CameraServer.getInstance().startAutomaticCapture(1);
    // camera.setResolution(Constants.IMG_WIDTH, Constants.IMG_HEIGHT);
    // camera.setExposureManual(Constants.exposure);
@@ -148,7 +178,7 @@ public class Robot extends TimedRobot {
     this.particleReports = reports();
         } 
     });    
-  } */
+  }  
 
   private Object reports() {
     return reports();
@@ -156,6 +186,7 @@ public class Robot extends TimedRobot {
 
   private void visionThread(VideoSource camera2, VisionPipeline visionPipeline2) {
   }
+  */
 
   @Override
   public void robotPeriodic() {
@@ -172,13 +203,13 @@ public class Robot extends TimedRobot {
 
     //SmartDashboard.putNumber("mag vel", RobotContainer.magazine.getVelocity());
     
-    /*  SmartDashboard.putNumber("fl", RobotContainer.drive.frontLeftModule.getModulePosition());
+   /*  SmartDashboard.putNumber("fl", RobotContainer.drive.frontLeftModule.getModulePosition());
     SmartDashboard.putNumber("fr", RobotContainer.drive.frontRightModule.getModulePosition());
     SmartDashboard.putNumber("bl", RobotContainer.drive.backLeftModule.getModulePosition());
     SmartDashboard.putNumber("br", RobotContainer.drive.backRightModule.getModulePosition());  */
 
-    SmartDashboard.putBoolean("isShoot", RobotContainer.shooter.isAtTargetVelocity());
-    SmartDashboard.putBoolean("isArm", RobotContainer.arm.isArmAtGoal());
+    //SmartDashboard.putBoolean("isShoot", RobotContainer.shooter.isAtTargetVelocity());
+    //SmartDashboard.putBoolean("isArm", RobotContainer.arm.isArmAtGoal());
     SmartDashboard.putBoolean("isMagReady", RobotContainer.magazine.isMagReadyToShoot());
 
     //SmartDashboard.putString("targetColor", value)
@@ -219,6 +250,25 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
+    if(RobotContainer.driveController.getTriggerAxis(Hand.kLeft) > .5){
+      camServer.setSource(intakeCam);
+    } else {
+      camServer.setSource(shooterCam);
+    }
+
+    
+
+    /* double[] defaultValue = new double[0];
+
+    double[] areas = table.getEntry("areas").getDoubleArray(defaultValue);
+
+    System.out.print("areas: ");
+    
+    for(double area: areas){
+      System.out.print(area + " ");
+    }
+
+    System.out.println(); */
     /**
      * DO NOT PLACE SMARTDASHBOARD DIAGNOSTICS HERE
      * Place any teleop-only SmartDashboard diagnostics in the appropriate subsystem's periodic() method

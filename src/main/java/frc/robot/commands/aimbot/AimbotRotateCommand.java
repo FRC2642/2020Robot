@@ -55,4 +55,12 @@ public class AimbotRotateCommand extends CommandBase {
   public boolean isFinished() {
     return false;
   }
+
 }
+/* ;allows robot to take a fat rip
+pick up juul
+move juul to intake aka mouth
+take a fat hit
+50 nic bro
+get buzzed
+send it into the sunset */

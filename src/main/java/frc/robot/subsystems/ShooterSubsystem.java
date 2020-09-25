@@ -36,9 +36,12 @@ public class ShooterSubsystem extends SubsystemBase {
   //declare PIDs
   CANEncoder leftShooterEncoder;
   CANEncoder rightShooterEncoder;
-  CANPIDController shooterPID;
+  CANPIDController leftShooterPID;
+  CANPIDController rightShooterPID;
 
   double targetVelocity;
+
+  double velTolerance = 50; //RPM
 
   public ShooterSubsystem() {
     //declare motors
@@ -49,22 +52,25 @@ public class ShooterSubsystem extends SubsystemBase {
     rightShooterMotor.restoreFactoryDefaults();
     //set to not inverted
     leftShooterMotor.setInverted(true);
-    rightShooterMotor.setInverted(true);
+    rightShooterMotor.setInverted(false);
     //set current limit
     leftShooterMotor.setSmartCurrentLimit(kCurrentLimit);
     rightShooterMotor.setSmartCurrentLimit(kCurrentLimit);
 
     //PID
-    shooterPID = leftShooterMotor.getPIDController();
+    leftShooterPID = leftShooterMotor.getPIDController();
+    rightShooterPID = rightShooterMotor.getPIDController();
+
     leftShooterEncoder = leftShooterMotor.getEncoder();
     rightShooterEncoder = rightShooterMotor.getEncoder();
 
-    shooterPID.setFeedbackDevice(leftShooterEncoder);
-    shooterPID.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput);
+    leftShooterPID.setFeedbackDevice(leftShooterEncoder);
+    leftShooterPID.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput);
 
-    setPIDGains(shooterPID, PIDProfile.SHOOTER);
-
-    rightShooterMotor.follow(leftShooterMotor, true);
+    setPIDGains(leftShooterPID, PIDProfile.SHOOTER);
+    setPIDGains(rightShooterPID, PIDProfile.SHOOTER);
+/* 
+    rightShooterMotor.follow(leftShooterMotor, true); */
 
     targetVelocity = kShooterDefaultRPM;
   }
@@ -74,17 +80,24 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   /** */
   public void setShooterSpeed(double targetVel){
-    shooterPID.setReference(targetVelocity, ControlType.kVelocity);
     targetVelocity = targetVel;
+
+    rightShooterPID.setReference(targetVelocity, ControlType.kVelocity);
+    leftShooterPID.setReference(targetVelocity, ControlType.kVelocity);
   }
 
   public void setShooterSpeed(){
-    shooterPID.setReference(kShooterDefaultRPM, ControlType.kVelocity);
+    //shooterPID.setReference(kShooterDefaultRPM, ControlType.kVelocity);
     targetVelocity = kShooterDefaultRPM;
+
+    rightShooterPID.setReference(targetVelocity, ControlType.kVelocity);
+    leftShooterPID.setReference(targetVelocity, ControlType.kVelocity);
+    
   }
 
   public void stop() {
     leftShooterMotor.set(0);
+    rightShooterMotor.set(0);
   }
 
   /**
@@ -104,7 +117,10 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public boolean isAtTargetVelocity(){
-    return getAverageVelocity() >= targetVelocity;
+    boolean aboveMinThreshold = getAverageVelocity() >= targetVelocity - velTolerance;
+    boolean belowMaxThreshhold = getAverageVelocity() <= targetVelocity + velTolerance;
+    return (aboveMinThreshold && belowMaxThreshhold);
+    //return getAverageVelocity() >= targetVelocity;
   }
 
   /**
@@ -126,10 +142,10 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic() {
 
 
-    SmartDashboard.putBoolean("atTargetVelocity", isAtTargetVelocity());
+    //SmartDashboard.putBoolean("atTargetVelocity", isAtTargetVelocity());
 
-    SmartDashboard.putNumber("av vel", getAverageVelocity());
+    /* SmartDashboard.putNumber("av vel", getAverageVelocity());*/
     SmartDashboard.putNumber("l vel", getLeftVelocity());
-    SmartDashboard.putNumber("r vel", getRightVelocity());
+    SmartDashboard.putNumber("r vel", getRightVelocity()); 
   }
 }

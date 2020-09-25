@@ -122,6 +122,6 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic(){
     //SmartDashboard.putBoolean("arm manual override", getManualOverride());
-    SmartDashboard.putNumber("target", getTarget());
+    //SmartDashboard.putNumber("target", getTarget());
   }
 }

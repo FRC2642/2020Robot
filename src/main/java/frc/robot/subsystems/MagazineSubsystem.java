@@ -36,13 +36,11 @@ public class MagazineSubsystem extends SubsystemBase {
   
   Solenoid magPis;
 
-  public RightSight rightSight = new RightSight(kRightSight);
-
-  int ballCount = 0;
-  boolean hasBallEntered = false;
-  boolean hasBallCounted = false;
+  public RightSight rightSight;
 
   boolean isMagEngagedAtIdle;
+
+  ShootMode shootMode;
 
   public MagazineSubsystem() {
     //Magazine Neo Information
@@ -68,6 +66,8 @@ public class MagazineSubsystem extends SubsystemBase {
     //boolean = whether to invert output being followed
     bottomMagBelt.follow(topMagBelt, true);
 
+    rightSight = new RightSight(kRightSight);
+
     isMagEngagedAtIdle = false;
   }
 
@@ -84,13 +84,35 @@ public class MagazineSubsystem extends SubsystemBase {
   }
 
   public void setToShootingState(){
-    magShoot();
+
+    if(shootMode == ShootMode.SHORT){
+      setToShootingStateShortRange();
+    } else if(shootMode == ShootMode.MID){
+      setToShootingStateMidRange();
+    } else if(shootMode == ShootMode.LONG){
+      setToShootingStateLongRange();
+    }
+  }
+
+  public void setToShootingStateShortRange(){
+    magShootShortRange();
     magPis.set(true);
   }
 
-  public void setToShootingState(double beltVel){
-    magShoot(beltVel);
+  public void setToShootingStateMidRange(){
+    magShootMidRange();
     magPis.set(true);
+  }
+
+  public void setToShootingStateLongRange(){
+    magShootLongRange();
+    magPis.set(true);
+  }
+
+  public void setToLoadState(){
+    magLoad();
+    setIsMagEngagedAtIdle(false);
+    magPis.set(false);
   }
 
   public void setToEjectState(){
@@ -106,9 +128,32 @@ public class MagazineSubsystem extends SubsystemBase {
   public void magStop() {
     setBeltVelocity(0);
   }
+  
+  public void magShootShortRange(){
+    setInverted(true);
+    setBeltVelocity(kMagShortRangeShootSpeed);
+  }
+
+  public void magShootMidRange(){
+    setInverted(true);
+    setBeltVelocity(kMagMidRangeShootSpeed);
+  }
+
+  public void magShootLongRange(){
+    setInverted(true);
+    setBeltVelocity(kMagLongRangeShootSpeed);
+  }
+
+  public void magPreload(){
+    setInverted(true);
+    if(!isBallPreloaded()){
+      magLoad();
+    } else {
+      magStop();
+    }
+  }
 
   public void magLoad() {
-    senseBall();
     setInverted(true);
     setBeltVelocity(kMagLoadSpeed);
   }
@@ -116,16 +161,6 @@ public class MagazineSubsystem extends SubsystemBase {
   public void magEject() {
     setInverted(false);
     setBeltVelocity(kMagEjectSpeed);
-  }
-  
-  public void magShoot() {
-    setInverted(true);
-    setBeltVelocity(kMagDefaultShootSpeed);
-  }
-  
-  public void magShoot(double vel){
-    setInverted(true);
-    setBeltVelocity(vel);
   }
 
   public void setBeltVelocity(double targetVelocity) {
@@ -145,6 +180,10 @@ public class MagazineSubsystem extends SubsystemBase {
     isMagEngagedAtIdle = !isMagEngagedAtIdle;
   }
 
+  public void setIsMagEngagedAtIdle(boolean state){
+    isMagEngagedAtIdle = state;
+  }
+
   /**
    * BELT MOTOR SETTINGS AND DIAGNOSTICS
    */
@@ -158,37 +197,16 @@ public class MagazineSubsystem extends SubsystemBase {
     return magEncoder.getVelocity();
   }
 
+  public void setShootMode(ShootMode shootMode){
+    this.shootMode = shootMode;
+  }
+
   /**
    * BALL INDEXER METHODS
    */
 
-  Timer timer = new Timer();
-  public void senseBall() {
-
-    if(rightSight.get() == true) {
-      hasBallEntered = true;
-    } else {
-      hasBallEntered = false;
-    }
-
-  if (hasBallEntered && !hasBallCounted) {
-    ballCount++;
-    hasBallCounted = true;
-  }
-  
-    if (ballCount == 5) {
-      timer.start();
-      RobotContainer.auxController.setRumble(RumbleType.kLeftRumble, 1);
-      RobotContainer.auxController.setRumble(RumbleType.kRightRumble, 1);
-    }
-    if (timer.get() > .5) {
-      RobotContainer.auxController.setRumble(RumbleType.kLeftRumble, 0);
-      RobotContainer.auxController.setRumble(RumbleType.kRightRumble, 0);
-    }
-  }
-
-  public int getBallCount() {
-    return ballCount;
+  public boolean isBallPreloaded() {
+    return rightSight.get();
   }
 
   /**
@@ -202,8 +220,12 @@ public class MagazineSubsystem extends SubsystemBase {
     boolean areWheelsReady = RobotContainer.shooter.isAtTargetVelocity();
 
     if(isArmReady && areWheelsReady){
+      RobotContainer.driveController.setRumble(RumbleType.kLeftRumble, 1);
+      RobotContainer.driveController.setRumble(RumbleType.kRightRumble, 1);
       return true;
     } else {
+      RobotContainer.driveController.setRumble(RumbleType.kLeftRumble, 0);
+      RobotContainer.driveController.setRumble(RumbleType.kRightRumble, 0);
       return false;
     }
   }
@@ -217,7 +239,16 @@ public class MagazineSubsystem extends SubsystemBase {
     return (rt > .5);
   }
 
+  public enum ShootMode {
+        SHORT,
+        MID,
+        LONG;
+  }
+
   @Override
   public void periodic() {
+
+    SmartDashboard.putNumber("magvel", magEncoder.getVelocity());
+
   }
 }

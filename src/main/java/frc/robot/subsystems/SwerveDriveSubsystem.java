@@ -94,7 +94,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     backRightAngleMotor.restoreFactoryDefaults(); 
 
     //sets default inversion settings for motors
-    frontLeftDriveMotor.setInverted(true);
+    frontLeftDriveMotor.setInverted(false);
     frontLeftAngleMotor.setInverted(true);
     frontRightDriveMotor.setInverted(true);
     frontRightAngleMotor.setInverted(true);
@@ -217,10 +217,20 @@ public class SwerveDriveSubsystem extends SubsystemBase {
    * @param rawRotate Joystick input (right hand l/r)
    */
   public void drive(double rawXInput, double rawYInput, double rawRotate){
+
+    double xInput = rawXInput;
+    double yInput = rawYInput;
+    double rotate = rawRotate;
+
     //sets deadbands
-    double xInput = deadband(rawXInput);
-    double yInput = deadband(rawYInput);
-    double rotate = deadband(rawRotate);
+    if(Math.abs(rawXInput) <= kMotorNeutralDeadband && Math.abs(rawXInput) <= kMotorNeutralDeadband){
+      //System.out.println("banding");
+      xInput = deadband(rawXInput);
+      yInput = deadband(rawYInput);
+    } /* else {
+      System.out.println("not banding");
+    } */
+    rotate = deadband(rawRotate);
 
     //sqaures joystick input
     xInput *= Math.abs(xInput);
@@ -372,6 +382,11 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     backLeftModule.setModuleVelocity(backLeftVelocity);
     backRightModule.setModuleVelocity(backRightVelocity);
 
+    frontLeftModule.zeroOutI();
+    frontRightModule.zeroOutI();
+    backLeftModule.zeroOutI();
+    backRightModule.zeroOutI();
+
     //sets wheels in the locked orientation
     frontLeftModule.setModuleAngle(frontLeftAngle);   
     frontRightModule.setModuleAngle(frontRightAngle);
@@ -467,12 +482,10 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   /**
    * POSE GENERATION FOR USE IN AUTO PATHING
    */
-  /**
-   * my pose
-   */
+  /** */
+
   public Pose2d getPose(){
     Pose2d pose = odometry.getPoseMeters();
-
     Translation2d transPose = pose.getTranslation();
     transPose = transPose.div(kMaxSpeedConversionFactor);
     Pose2d realPose = new Pose2d(transPose, pose.getRotation());
@@ -537,6 +550,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
       System.out.println("not updating");
     } */
 
-  SmartDashboard.putNumber("fl vel", frontLeftModule.getDriveVelocity());
+  //SmartDashboard.putNumber("fl vel", frontLeftModule.getDriveVelocity());
   }
 }
