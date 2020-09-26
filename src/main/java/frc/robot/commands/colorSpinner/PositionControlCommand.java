@@ -10,74 +10,63 @@ package frc.robot.commands.colorSpinner;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ColorSpinnerSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
+import edu.wpi.first.wpilibj.DriverStation;
 
-public class spinByAmount extends CommandBase {
+public class PositionControlCommand extends CommandBase {
 
-  public boolean notDetected = true;
   ColorSpinnerSubsystem spinner;
   SwerveDriveSubsystem drive;
-  public String Color;
-  double spin; 
-  public int counter = 0; 
 
-  public spinByAmount(final ColorSpinnerSubsystem colorSub, final SwerveDriveSubsystem driveSub){
+ /*  char correctColor;
+  String currentColor;
+  String colorNeeded; */
+
+  public PositionControlCommand(final ColorSpinnerSubsystem colorSub) {
     spinner = colorSub;
-    drive = driveSub;
-    addRequirements(spinner, drive);
+    addRequirements(spinner);
   }
-  //creates a counter that detects how many times the wheel spins
-  public boolean spinnerCounter(){ 
-      counter++;
-      if(counter >= 7)
-        return false;
-      else{
-        return true;
-      }
-    }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Color = spinner.detectColor();
-    notDetected = true;
+    spinner.setTargetColor();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-   while (spinnerCounter()){
-    spinner.spinL();
-    if (spinner.detectColor() == Color & !notDetected){
-      spinnerCounter();
-      notDetected = true;
-    }
-    else{
-      notDetected = false;
-    }
-    }
- 
+
+    spinner.slowSpinR();
+    spinner.getCurrentColorChar();
+/* 
+    currentColor = spinner.detectColor();
+    currentColor = currentColor.toUpperCase();
+
+    if (colorNeeded == "RED" & currentColor == "YELLOW"){
+      spinner.slowSpinL();
+    } else if (colorNeeded == "GREEN" & currentColor == "RED"){
+      spinner.slowSpinL();
+    } else if (colorNeeded == "BLUE" & currentColor == "GREEN"){
+      spinner.slowSpinL();
+    } else if (colorNeeded == "YELLOW" & currentColor == "BLUE"){
+      spinner.slowSpinL();
+
+    } else{
+      spinner.slowSpinR();
+    } */
+
   }
-  
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(final boolean interrupted) {
+  public void end(boolean interrupted) {
+    spinner.stop();
   }
 
   // Returns true when the command should end.
   @Override
-  public boolean isFinished() { 
-    if (counter >= 7){ //if it has spun the desired amount of times it stops
-      spinner.slowStop();
-
-      return true;
-    }
-    else{
-      return false;
-    }
-
-
-    
-
+  public boolean isFinished() {
+    return spinner.isAtColor();
+    /* return (currentColor == colorNeeded); */
   }
 }

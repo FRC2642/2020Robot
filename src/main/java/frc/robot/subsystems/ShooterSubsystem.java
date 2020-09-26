@@ -7,11 +7,8 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.ID_LEFT_SHOOTER_MOTOR;
-import static frc.robot.Constants.ID_RIGHT_SHOOTER_MOTOR;
-import static frc.robot.Constants.kArmAngleConversionFactor;
-import static frc.robot.Constants.kCurrentLimit;
-import static frc.robot.Constants.kShooterRPMConversionFactor;
+import static frc.robot.Constants.*;
+import static frc.robot.util.GeneralUtil.*;
 
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
@@ -20,10 +17,12 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ControlType;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.util.GeneralUtil.PIDProfile;
 
 public class ShooterSubsystem extends SubsystemBase {
   
@@ -62,6 +61,8 @@ public class ShooterSubsystem extends SubsystemBase {
     rShooterPID.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput);
     lShooterPID.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput);
 
+    setPIDGains(lShooterPID, PIDProfile.SHOOTER);
+    setPIDGains(rShooterPID, PIDProfile.SHOOTER);
   }
 
   //sets speed for shooter
@@ -82,6 +83,7 @@ public boolean getRightTrigger() {
   double rt = RobotContainer.driveController.getTriggerAxis(Hand.kRight);
   return (rt > .5);
 }
+  
   public void stop() {
     leftShooterMotor.set(0);
     righShooterMotor.set(0);
@@ -92,8 +94,29 @@ public boolean getRightTrigger() {
     rShooterPID.setReference(targetVelocity, ControlType.kVelocity);  
   }
 
+  public void setShooterSpeed(){
+    lShooterPID.setReference(kShooterRPM, ControlType.kVelocity);
+    rShooterPID.setReference(kShooterRPM, ControlType.kVelocity);
+  }
+
+  double speed;
+  public void test(double speed){
+    this.speed = speed;
+    leftShooterMotor.set(speed);
+    righShooterMotor.set(speed);
+  }
+
+  public double getAverageVelocity(){
+    return ((lShooterEncoder.getVelocity() + rShooterEncoder.getVelocity()) / 2);
+  }
+
+
+
+  public boolean getLTrigger(){
+    return (RobotContainer.auxController.getTriggerAxis(Hand.kLeft) > .5);
+  }
+
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
   }
 }

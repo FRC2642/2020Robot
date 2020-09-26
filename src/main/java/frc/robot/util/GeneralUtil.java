@@ -61,24 +61,12 @@ public class GeneralUtil {
         pid.setI(kMagI);
         pid.setD(kMagD);
         break;
-      case TILT:
-        pid.setFF(kTiltFF);
-        pid.setP(kTiltP);
-        pid.setI(kTiltI);
-        pid.setD(kTiltD);
       case SHOOTER:
         pid.setFF(kShooterFF);
         pid.setP(kShooterP);
         pid.setI(kShooterI);
         pid.setD(kShooterD);
         break;
-      case CLIMB:
-        pid.setFF(kClimbFF);
-        pid.setP(kClimbP);
-        pid.setI(kClimbI);
-        pid.setD(kClimbD);
-        break;
-      
     }
     pid.setOutputRange(kMinOutput, kMaxOutput);
   }
@@ -87,9 +75,7 @@ public class GeneralUtil {
         DRIVE,
         ANGLE,
         MAGAZINE,
-        TILT,
         SHOOTER,
-        CLIMB;
   }
 }
 
