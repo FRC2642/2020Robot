@@ -194,23 +194,23 @@ public final class Constants {
     public static final double kTiltD = 0.0;
 
     public static final double kTiltMaxVel = 12; 
-    public static final double kTiltMaxAccel = 3;
+    public static final double kTiltMaxAccel = 3;{}
 
     /**
      * AUTO TRAJECTORY PID GAINS
      */
 
     //PID Controllers for auto command
-    public static final double kPXController = .3;
-    public static final double kPYController = .4;
-    public static final double kPThetaController = .5;
-    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
-    public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
+    //public static final double kPXController = .3;
+    //public static final double kPYController = .4;
+    //public static final double kPThetaController = .5;
+    //public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
+    //public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
   
     //Constraint for the motion profilied robot angle controller
-    public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
-      new TrapezoidProfile.Constraints(kMaxAngularSpeedRadiansPerSecond,
-        kMaxAngularSpeedRadiansPerSecondSquared);
+    //public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
+      //new TrapezoidProfile.Constraints(kMaxAngularSpeedRadiansPerSecond,
+       // kMaxAngularSpeedRadiansPerSecondSquared);
 
     /**
      * CONTROLLER PORTS
@@ -220,14 +220,14 @@ public final class Constants {
     public static final int kAuxControllerPort = 1;
 
      //Constraint for the motion profilied robot angle controller
-     public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
-     new TrapezoidProfile.Constraints(kMaxAngularSpeedRadiansPerSecond,
-       kMaxAngularSpeedRadiansPerSecondSquared);
+     //public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
+     //new TrapezoidProfile.Constraints(kMaxAngularSpeedRadiansPerSecond,
+       //kMaxAngularSpeedRadiansPerSecondSquared);
 
 
 
     //practice auto stuff
     public static final double kDriveDistance = 5.4;
     public static final double kDriveSpeed = 10.77;
-}
 
+}
