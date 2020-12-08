@@ -14,9 +14,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 
 public class ColorSpinnerSubsystem extends SubsystemBase {
 
@@ -24,8 +24,7 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
   public Solenoid colorSpinnerPiston;
   public ColorSensorV3 m_colorSensor;
   public DigitalInput limitSwitch;
-
-  //creates final RGB values for colors
+  
   final ColorMatch m_colorMatcher = new ColorMatch();
   final Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
   final Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
@@ -35,8 +34,6 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
   public String colorString;
   ColorMatchResult match;
   Color detectedColor;
-  double slowStopSpeed = 0.4;
-  double slowingSpeed = 0.005; //change this for diffrent slowing of the motor after rotating
   
   boolean hasCounted;
   char targetColor;
@@ -61,64 +58,41 @@ public class ColorSpinnerSubsystem extends SubsystemBase {
     hasCounted = false;
   }
 
-
-public static boolean Counter() {
-  int counter = 0;
-  int spins = 0;
-  // The contents of this will execute 100 times
-  for(spins = 1; spins <= 7; spins++) 
-    
-      // This increases your counter by 1
-      counter++; 
-      // Since your counter is declared outside of the loop, it is accessible here
-      // so check its value
-      if(counter <= 6) { 
-        return true;
-  
-      }else{
-        return false;
-      }
-  
-      // At this point, the loop is over, so go to the next iteration
-   
-}
-
-//Set speed for Color Spinner direction.
-//spins colorspinner motor Counter Clockwise
+  /**
+   * MOTOR METHODS
+   */
+  /** */
   public void spinL() {
     colorSpinnerMotor.set(-.4);
   }
 
-//slowly spins clockwise
   public void slowSpinR(){
     colorSpinnerMotor.set(.1);
   }
-//slowly pins counter clokewise
   public void slowSpinL(){
     colorSpinnerMotor.set(-.1);
   }
 
-//stops motor
   public void stop(){
     colorSpinnerMotor.set(0.0);
   }
-//slow stop
-  public void slowStop(){
-    while (slowStopSpeed != 0);
-    colorSpinnerMotor.set(slowStopSpeed);
-    slowStopSpeed = slowStopSpeed - slowingSpeed;
-  }
 
- //extends piston
+  /**
+   * PISTON METHODS
+   */
+  /** */
   public void extend(){
     colorSpinnerPiston.set(true);
   }
 
-//retracts piston
   public void retract(){
     colorSpinnerPiston.set(false);
   }
 
+  /**
+   * GENERAL COLOR LOGIC
+   */
+  /** */
   public String detectColor(){
     
     detectedColor = m_colorSensor.getColor();
@@ -149,7 +123,7 @@ public static boolean Counter() {
   }
 
   /**
-   * counter for rotation control
+   * COUNTER METHODS (ROTATION CONTROL)
    */
   /** */
   public void zeroCounter(){
@@ -175,7 +149,7 @@ public static boolean Counter() {
 
 
   /**
-   * position control
+   * COLOR LOGIC FOR POSITION
    */
   /** */
   public void setTargetColor(){
@@ -195,13 +169,26 @@ public static boolean Counter() {
     char currentColor = getCurrentColorChar();
     return targetColor == currentColor;
   }
+
+  /**
+   * TRIGGERS
+   */
+  /** */
+  public boolean getLDPad(){
+    return RobotContainer.auxController.getPOV() == 270;
+  }
+
+  public boolean getRDPad(){
+    return RobotContainer.auxController.getPOV() == 90;
+  }
   
   @Override
   public void periodic() {
     //SmartDashboard.putNumber("Confidence", match.confidence);
-    SmartDashboard.putString("Detected Color", detectColor());
+    
+   /*  SmartDashboard.putString("Detected Color", detectColor());
     SmartDashboard.putNumber("targetColor", targetColor);
-    SmartDashboard.putBoolean("atColor", isAtColor());
+    SmartDashboard.putBoolean("atColor", isAtColor()); */
   }
 }
 

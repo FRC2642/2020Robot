@@ -8,14 +8,15 @@
 package frc.robot.subsystems;
 
 import static frc.robot.Constants.*;
-import frc.robot.RobotContainer;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 
 public class IntakeSubsystem extends SubsystemBase {
   
@@ -31,9 +32,13 @@ public class IntakeSubsystem extends SubsystemBase {
     intakePiston = new DoubleSolenoid(kIntakePistonPort1, kIntakePistonPort2);
   }
 
-  //extends and runs intake
+  /**
+   * INTAKE MOTOR + PISTONS SETTERS
+   */
+
+   /** */
   public void intakeIn() {
-    intakeMotor.set(-.6);
+    intakeMotor.set(-.8);
     if(intakePiston.get() != Value.kReverse){
       intakePiston.set(Value.kReverse);
     } else {
@@ -42,7 +47,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void intakeOut(){
-    intakeMotor.set(.6);
+    intakeMotor.set(.8);
     intakePiston.set(Value.kReverse);
   }
 
@@ -50,12 +55,16 @@ public class IntakeSubsystem extends SubsystemBase {
     intakePiston.set(Value.kReverse);
   }
 
-  //stops intake
   public void stop() {
     intakeMotor.set(0);
     intakePiston.set(Value.kForward);
   }
     
+  /**
+   * TRIGGERS
+   */
+
+  /** */
   public boolean getLeftTrigger() {
     //stop intake i guess
     double lt = RobotContainer.driveController.getTriggerAxis(Hand.kLeft);

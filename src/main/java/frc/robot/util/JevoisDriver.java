@@ -23,13 +23,12 @@ package frc.robot.util;
 		private boolean detectsTape;
 				
 		public String id; // chang 
-		public int w;
-		public int h;
-		public double hlist;
-		public double rvecs;
-		public double tvecs;
+		public double xpos;
+		public double ypos;
+		public double zpos;
 		public double x;
 		public double y;
+		public double rot;
 	
 
 	
@@ -95,58 +94,48 @@ package frc.robot.util;
 			String[] tokens = str.split(",");
 			id = tokens[0];
 			try {
-				w = Integer.parseInt(tokens[1]);
-				h = Integer.parseInt(tokens[2]);
-				hlist = Double.parseDouble(tokens[3]);
-				rvecs = Double.parseDouble(tokens[4]);
-				tvecs = Double.parseDouble(tokens[5]);
-				x = Double.parseDouble(tokens[6]);
+				xpos = Double.parseDouble(tokens[1]);
+				ypos = Double.parseDouble(tokens[2]);
+				zpos = Double.parseDouble(tokens[3]);
+				x = Double.parseDouble(tokens[4]);
+				y = Double.parseDouble(tokens[5]);
+				rot = Double.parseDouble(tokens[6]);
 
 			} catch(NumberFormatException ex) {
 			}
 		}
 	
 		public void VisionTarget(String ida,
-							int wa,
-							int ha,
-							double hlista,
-							double rvecsa,
-							double tvecsa,
+							int xposa,
+							int yposa,
+							double zposa,
 							double xa,
-							double ya) {
-
+							double ya,
+							double rota) {
 			id = ida;
-			w = wa;
-			h = ha;
-			hlist = hlista;
-			rvecs = rvecsa;
-			tvecs = tvecsa;
+			xpos = xposa;
+			ypos = yposa;
+			zpos = zposa;
 			x = xa;
 			y = ya;
+			rot = rota;
 
 		}
 	
 		public void printSystemOut() {
 			System.out.println("Id = " + id);
-			System.out.println("w = " + w);
-			System.out.println("h = " + h);
-			System.out.println("hlist = " + hlist);
-			System.out.println("rvecs = " + rvecs);
-			System.out.println("tvecs = " + tvecs);
+			System.out.println("xpos = " + xpos);
+			System.out.println("ypos = " + ypos);
+			System.out.println("zpos = " + zpos);
 			System.out.println("x = " + x);
 			System.out.println("y = " + y);
-	
-		}
-    
-		public double getDistFromTarget(){
-			return hlist;
+			System.out.println("rot = " + rot);
+			
+			
 		}
 
 		public double getCenterOfVisionTarget(){
 			return x;
 		}
 
-		public double getCamWidth(){
-			return w;
-		}
 	}

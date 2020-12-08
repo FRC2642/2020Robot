@@ -8,7 +8,6 @@
 
 package frc.robot.commands.intake;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.MagazineSubsystem;
@@ -35,7 +34,9 @@ MagazineSubsystem magazine;
   public void execute() {
 
     intake.intakeIn();
-    magazine.magLoad();
+    magazine.setToLoadState();
+
+    
   }
 
   //Called once the command ends or is interrupted.

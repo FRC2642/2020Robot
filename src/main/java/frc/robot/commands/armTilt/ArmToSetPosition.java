@@ -35,18 +35,22 @@ public class ArmToSetPosition extends ProfiledPIDCommand {
         () -> new TrapezoidProfile.State(target, 0),
         // This uses the output
         (output, setpoint) -> {
+          arm.setTarget(target);
           arm.moveArm(output);
           // Use the output (and setpoint, if desired) here
         });
 
     arm = armSub;
     addRequirements(arm);
+
+
+    //getController().setTolerance(.25);
     
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (arm.isManualOverride() );// || getController().atSetpoint());
+    return getController().atGoal() || arm.getManualOverride();
   }
 }

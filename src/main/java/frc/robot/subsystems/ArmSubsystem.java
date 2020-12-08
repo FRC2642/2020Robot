@@ -13,9 +13,9 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
 public class ArmSubsystem extends SubsystemBase {
@@ -25,30 +25,38 @@ public class ArmSubsystem extends SubsystemBase {
 
   public double input;
 
+  public double target;
+
   public ArmSubsystem() {
   
     armMotor = new VictorSPX(ID_MAG_TILT_MOTOR);
     armMotor.setInverted(true);
 
     armPot = new AnalogPotentiometer(kArmPotPort, 100);
+
+    target = 0;
   }
 
-  //basic motor methods
+  /**
+   * ARM MOTOR SETTERS
+   */
+  /** */
   public void moveArm(double speed){
-    if(getPot() <= kTrenchPos && speed < 0){
+    
+      if(getPot() <= kArmTrenchRunPos && speed < 0){
       stop();
-    } else if(getPot() >= kClimbPos && speed > 0){
+    } else if(getPot() >= kArmClimbPos && speed > 0){
       stop();
-    } else {    
+    } else {      
       setPower(speed); 
     }
   }
 
-  public void stop() {
-    armMotor.set(ControlMode.PercentOutput, 0);
-  }
-
   public void setPower(double input){
+
+    SlewRateLimiter speedLimiter = new SlewRateLimiter(2);
+    speedLimiter.calculate(input);
+
     if(input > .6){
       armMotor.set(ControlMode.PercentOutput, .6);
     }
@@ -57,8 +65,15 @@ public class ArmSubsystem extends SubsystemBase {
     this.input = input;
   }
 
-  //aiming inputs
-  public boolean isManualOverride(){
+  public void stop() {
+    armMotor.set(ControlMode.PercentOutput, 0);
+  }
+
+  /**
+   * AIMING METHODS (pot + vision) AND MANUAL OVERRIDE
+   */
+  /** */
+  public boolean getManualOverride(){
     return (RobotContainer.auxController.getRawAxis(5) > .2 || RobotContainer.auxController.getRawAxis(5) < -.2);
   }
 
@@ -66,22 +81,47 @@ public class ArmSubsystem extends SubsystemBase {
     return armPot.get();
   }
 
+  public void setTarget(double target){
+    this.target = target;
+  }
+
+  public double getTarget(){
+    return target;
+  }
+
+  public boolean isArmAtGoal(){
+    if((getPot() >= getTarget() - .5) && (getPot() <= getTarget() + .5)){
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   public double getAngleFromVision(){
     
-    double dist = Robot.jevoisCam.getDistFromTarget(); //m
+    //double dist = Robot.jevoisCam.getDistFromTarget(); //m
     //calculates pot value based on distance from base of target 
     //angle increases as distance decreases
-    double targetPos = kArmAngleConversionFactor / dist;
+    double targetPos = kArmAngleConversionFactor / 1;
 
     return targetPos;
   }
 
-  public double getMotorPower(){
-    return input;
+  /**
+   * TRIGGERS
+   */
+  /** */
+  public boolean getUpDPad(){
+    return RobotContainer.auxController.getPOV() == 0;
+  }
+
+  public boolean getDownDPad(){
+    return RobotContainer.auxController.getPOV() == 180;
   }
 
   @Override
   public void periodic(){
-    SmartDashboard.putBoolean("arm manual override", isManualOverride());
+    //SmartDashboard.putBoolean("arm manual override", getManualOverride());
+    //SmartDashboard.putNumber("target", getTarget());
   }
 }
