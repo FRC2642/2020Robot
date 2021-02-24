@@ -212,6 +212,10 @@ public class Robot extends TimedRobot {
     //SmartDashboard.putBoolean("isShoot", RobotContainer.shooter.isAtTargetVelocity());
     //SmartDashboard.putBoolean("isArm", RobotContainer.arm.isArmAtGoal());
     SmartDashboard.putBoolean("isMagReady", RobotContainer.magazine.isMagReadyToShoot());
+    SmartDashboard.putNumber("blangle", RobotContainer.drive.frontLeftModule.getModulePosition());
+    SmartDashboard.putNumber("blangle", RobotContainer.drive.frontLeftModule.getModulePosition());
+    SmartDashboard.putNumber("blangle", RobotContainer.drive.frontLeftModule.getModulePosition());
+
 
     //SmartDashboard.putString("targetColor", value)
   }
