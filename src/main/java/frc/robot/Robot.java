@@ -88,6 +88,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.JevoisDriver;
 import frc.robot.RobotContainer;
+import frc.robot.commands.autoCommands.AutoCommandGroup;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -226,7 +227,9 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     
-    m_autonomousCommand = robotContainer.getAutonomousCommand();
+    //m_autonomousCommand = robotContainer.getAutonomousCommand();
+
+    m_autonomousCommand = new AutoCommandGroup();
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();

@@ -183,6 +183,15 @@ public class SwerveModule {
     setEncoder(0.0);
   }
 
+  public void zeroDriveEncoder(){
+    setDriveEncoder(0.0);
+  }
+  
+  public void setDriveEncoder(double position){
+    driveEncoder.setPosition(position);
+  }
+  
+  
   public void setEncoder(double position){
     relativeAngleEncoder.setPosition(position);
   }
