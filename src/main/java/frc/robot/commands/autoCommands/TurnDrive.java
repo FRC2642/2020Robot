@@ -23,23 +23,28 @@ public class TurnDrive extends CommandBase {
    * Creates a new TurnDrive.
    */
   private double degrees;
+  private double negDegrees;
   
   public TurnDrive(double degrees) {
     // Use addRequirements() here to declare subsystem dependencies.
     SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
     addRequirements(drive);
     this.degrees  = degrees;
+    this.negDegrees = -degrees;
     //setTimeout(2.0);*/
+    /*drive.frontLeftAngleMotor.setInverted(false);
+    drive.backRightAngleMotor.setInverted(false); 
+
 
     double frontLeftVelocity = 0.0;
     double frontRightVelocity = 0.0;
     double backLeftVelocity = 0.0;
     double backRightVelocity = 0.0;
 
-    Rotation2d frontLeftAngle = drive.toRotation2d(degrees);
+    Rotation2d frontLeftAngle = drive.toRotation2d(negDegrees);
     Rotation2d frontRightAngle = drive.toRotation2d(degrees);
     Rotation2d backLeftAngle = drive.toRotation2d(degrees);
-    Rotation2d backRightAngle = drive.toRotation2d(degrees);
+    Rotation2d backRightAngle = drive.toRotation2d(negDegrees);
 
     drive.frontLeftModule.setModuleVelocity(frontLeftVelocity);
     drive.frontRightModule.setModuleVelocity(frontRightVelocity);
@@ -61,7 +66,7 @@ public class TurnDrive extends CommandBase {
     ChassisSpeeds chassisSpeeds = drive.kinematics.toChassisSpeeds(frontLeft, frontRight, backLeft, backRight);
 
     drive.moduleStates = drive.kinematics.toSwerveModuleStates(chassisSpeeds);
-
+*/
 }
   
   // Called when the command is initially scheduled.

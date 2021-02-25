@@ -26,13 +26,14 @@ public class InchesDrive extends CommandBase {
   public InchesDrive(double inches) {
 
     SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
+   // SwerveModule module = new SwerveModule();
     addRequirements(drive);
     
     //sets timeout
-    if (drive.getPoseXInFeet() > inches/12) {
+    if (drive.getPoseXInFeet() < inches) {
       drive.drive(inches, 0,0);
     }
-    else if (drive.getPoseXInFeet() <= (inches/12) +0.0001) {
+    else if (drive.getPoseXInFeet() >= (inches) +0.0001) {
       drive.drive(0,0,0);
     }
     this.inches = inches;
@@ -44,7 +45,7 @@ public class InchesDrive extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    //SwerveModule.zeroDriveEncoder();
+   // module.zeroDriveEncoder();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

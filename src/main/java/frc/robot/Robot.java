@@ -89,6 +89,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.JevoisDriver;
 import frc.robot.RobotContainer;
 import frc.robot.commands.autoCommands.AutoCommandGroup;
+import frc.robot.subsystems.SwerveDriveSubsystem;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -119,6 +121,8 @@ public class Robot extends TimedRobot {
   public PowerDistributionPanel pdp;
   
   public static Command autoCommand;
+  SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
+
 
   UsbCamera intakeCam;
   UsbCamera shooterCam;
@@ -127,7 +131,7 @@ public class Robot extends TimedRobot {
   
   @Override
   public void robotInit() {
-  
+    
     robotContainer = new RobotContainer();
     jevoisCam = new JevoisDriver();
     pdp = new PowerDistributionPanel();
@@ -212,9 +216,22 @@ public class Robot extends TimedRobot {
     //SmartDashboard.putBoolean("isShoot", RobotContainer.shooter.isAtTargetVelocity());
     //SmartDashboard.putBoolean("isArm", RobotContainer.arm.isArmAtGoal());
     SmartDashboard.putBoolean("isMagReady", RobotContainer.magazine.isMagReadyToShoot());
-    SmartDashboard.putNumber("blangle", RobotContainer.drive.frontLeftModule.getModulePosition());
-    SmartDashboard.putNumber("blangle", RobotContainer.drive.frontLeftModule.getModulePosition());
-    SmartDashboard.putNumber("blangle", RobotContainer.drive.frontLeftModule.getModulePosition());
+   
+    SmartDashboard.putNumber("blangle", RobotContainer.drive.backLeftModule.getAbsoluteAngleEncoder());
+    SmartDashboard.putNumber("brangle", RobotContainer.drive.backRightModule.getAbsoluteAngleEncoder());
+    SmartDashboard.putNumber("flangle", RobotContainer.drive.frontLeftModule.getAbsoluteAngleEncoder());
+    SmartDashboard.putNumber("frangle", RobotContainer.drive.frontRightModule.getAbsoluteAngleEncoder());
+
+    SmartDashboard.putNumber("relblangle", RobotContainer.drive.backLeftModule.getRelativeAngleEncoder());
+    SmartDashboard.putNumber("relbrangle", RobotContainer.drive.backRightModule.getRelativeAngleEncoder());
+    SmartDashboard.putNumber("relflangle", RobotContainer.drive.frontLeftModule.getRelativeAngleEncoder());
+    SmartDashboard.putNumber("relfrangle", RobotContainer.drive.frontRightModule.getRelativeAngleEncoder());
+
+    SmartDashboard.putNumber("blvelocity", RobotContainer.drive.backLeftModule.getDriveVelocity());
+    SmartDashboard.putNumber("brvelocity", RobotContainer.drive.backRightModule.getDriveVelocity());
+    SmartDashboard.putNumber("flvelocity", RobotContainer.drive.frontLeftModule.getDriveVelocity());
+    SmartDashboard.putNumber("frvelocity", RobotContainer.drive.frontRightModule.getDriveVelocity());
+
 
 
     //SmartDashboard.putString("targetColor", value)

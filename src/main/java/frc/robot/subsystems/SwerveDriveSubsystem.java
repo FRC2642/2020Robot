@@ -39,10 +39,10 @@ import frc.robot.Robot;
 import frc.robot.util.SwerveModule;
 
 public class SwerveDriveSubsystem extends SubsystemBase {
-  CANSparkMax frontLeftDriveMotor, frontLeftAngleMotor;
-  CANSparkMax frontRightDriveMotor, frontRightAngleMotor;
-  CANSparkMax backLeftDriveMotor, backLeftAngleMotor;
-  CANSparkMax backRightDriveMotor, backRightAngleMotor;
+  public CANSparkMax frontLeftDriveMotor, frontLeftAngleMotor;
+  public CANSparkMax frontRightDriveMotor, frontRightAngleMotor;
+  public CANSparkMax backLeftDriveMotor, backLeftAngleMotor;
+  public CANSparkMax backRightDriveMotor, backRightAngleMotor;
 
   public SwerveModule frontLeftModule;
   public SwerveModule frontRightModule;
@@ -95,12 +95,17 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     //sets default inversion settings for motors
     frontLeftDriveMotor.setInverted(false);
+    //was true
     frontLeftAngleMotor.setInverted(true);
+    
     frontRightDriveMotor.setInverted(true);
     frontRightAngleMotor.setInverted(true);
+    
     backLeftDriveMotor.setInverted(true);
     backLeftAngleMotor.setInverted(true);
+    
     backRightDriveMotor.setInverted(true);
+    //was true
     backRightAngleMotor.setInverted(true); 
 
     //sets current limits 
@@ -388,10 +393,10 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     backRightModule.zeroOutI();
 
     //sets wheels in the locked orientation
-    frontLeftModule.setModuleAngle(frontLeftAngle);   
+    /*frontLeftModule.setModuleAngle(frontLeftAngle);   
     frontRightModule.setModuleAngle(frontRightAngle);
     backLeftModule.setModuleAngle(backLeftAngle);
-    backRightModule.setModuleAngle(backRightAngle);
+    backRightModule.setModuleAngle(backRightAngle);*/
 
     //updates swerve module states for pose 
     SwerveModuleState frontLeft = new SwerveModuleState(frontLeftVelocity, frontLeftAngle);
@@ -501,6 +506,14 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     return Units.metersToFeet(xPose);
   }
 
+  public double getPoseXInInches(){
+    Pose2d pose2d = getPose();
+    Translation2d poseTrans2d = pose2d.getTranslation();
+    double xPose = poseTrans2d.getX();
+    return Units.metersToInches(xPose);
+  }
+
+
   public void resetPose(){
     odometry.resetPosition(new Pose2d(), getRobotYawInRotation2d());
   }
@@ -543,6 +556,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putBoolean("isDriveFieldCentric", getIsDriveFieldCentric());
     SmartDashboard.putString("positionOnField", getPose().toString());
+    SmartDashboard.putNumber("positionInInches", getPoseXInInches());
 
    /*  try{
     odometry.update(getRobotYawInRotation2d(), moduleStates);

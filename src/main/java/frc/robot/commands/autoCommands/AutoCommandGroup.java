@@ -20,7 +20,6 @@ public class AutoCommandGroup extends SequentialCommandGroup {
   
   public static final SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
   
-  //public final Command DriveStraight = new DriveStraight(drive);
 
 
   /**
@@ -29,9 +28,9 @@ public class AutoCommandGroup extends SequentialCommandGroup {
   public AutoCommandGroup() {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    super(//new InchesDrive(12.0),
+    super(new InchesDrive(3.048),
           new TurnDrive(45.0));
-         /* addSequential(new DriveStraight(120.0)),
-          addParallel(new TurnDrive(45.0))*/
+          /*addSequential(new InchesDrive(120.0)),
+          //addParallel(new TurnDrive(45.0)));*/
   }
 }
