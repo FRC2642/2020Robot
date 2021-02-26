@@ -32,7 +32,7 @@ public class TurnDrive extends CommandBase {
     this.degrees  = degrees;
     this.negDegrees = -degrees;
     //setTimeout(2.0);*/
-    /*drive.frontLeftAngleMotor.setInverted(false);
+    drive.frontLeftAngleMotor.setInverted(false);
     drive.backRightAngleMotor.setInverted(false); 
 
 
@@ -66,7 +66,7 @@ public class TurnDrive extends CommandBase {
     ChassisSpeeds chassisSpeeds = drive.kinematics.toChassisSpeeds(frontLeft, frontRight, backLeft, backRight);
 
     drive.moduleStates = drive.kinematics.toSwerveModuleStates(chassisSpeeds);
-*/
+
 }
   
   // Called when the command is initially scheduled.

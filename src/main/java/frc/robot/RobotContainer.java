@@ -305,7 +305,100 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    TrajectoryConfig config =
+    Command auto = 
+    /*//begin with(
+          new WaitUntilCommand(
+            () -> magazine.isMagReadyToShoot()
+          )
+        .deadlineWith(
+            autoArmInitLineShootPosition,
+            new RunCommand(
+              () -> shooter.setShooterSpeed(1600), shooter
+              )
+    ).andThen( 
+        new WaitCommand(3)
+          .deadlineWith(
+            new RunCommand(
+              () -> magazine.setToShootingStateShortRange(), magazine
+          )
+        )
+    ).andThen(
+        new InstantCommand(
+          () -> drive.alignWheels(), drive
+        )
+    ).andThen(
+        new WaitCommand(.25)
+    ).andThen(
+        new WaitCommand(.5)
+          .deadlineWith(
+            new RunCommand(
+              () -> drive.drive(-.3, 0.0, 0.0), drive)
+          )  
+    ).andThen(
+          new RunCommand(
+            () -> drive.drive(0.0, 0.0, 0.0), drive
+            )
+    ).andThen(
+        autoArmToIntakePosition
+    ); 
+  
+    new RunCommand(
+      () -> drive.drive(.6, 0.0, 0.0), drive);
+
+  return auto.andThen(() -> drive.drive(0.0,0.0,0.0));*/
+
+
+
+
+new WaitCommand(.25)
+.andThen(new WaitCommand(10.0)
+.deadlineWith(
+  new RunCommand(
+    () -> drive.drive(-0.3, 0.0, 0.0), drive)
+)  
+).andThen(
+new RunCommand(
+  () -> drive.drive(0.0, 0.0, 0.0), drive
+  ));
+
+
+  /*new WaitUntilCommand(
+    () -> magazine.isMagReadyToShoot()
+  )
+ .deadlineWith(
+    autoArmInitLineShootPosition,
+    new RunCommand(
+      () -> shooter.setShooterSpeed(1600), shooter
+      )
+).andThen( 
+new WaitCommand(3)
+  .deadlineWith(
+    new RunCommand(
+      () -> magazine.setToShootingStateShortRange(), magazine
+  )
+)
+).andThen(
+new InstantCommand(
+  () -> drive.alignWheels(), drive
+)
+).andThen(
+new WaitCommand(.25)
+).andThen(
+new WaitCommand(.5)
+  .deadlineWith(
+    new RunCommand(
+      () -> drive.drive(-.3, 0.0, 0.0), drive)
+  )  
+).andThen(
+  new RunCommand(
+    () -> drive.drive(0.0, 0.0, 0.0), drive
+    )
+).andThen(
+autoArmToIntakePosition
+); */
+return auto;
+}
+    /*TrajectoryConfig config =
       new TrajectoryConfig(Constants.kMaxMPS, Constants.kMaxAcceleration)
         // Add kinematics to ensure max speed is actually obeyed
         .setKinematics(drive.kinematics);
@@ -313,8 +406,8 @@ public class RobotContainer {
       config.setReversed(true);
 
         /*Trajectory autonav3 = TrajectoryGenerator.generateTrajectory(
-          new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-          List.of(
+          new Pose2d(0, 0, Rotation2d.fromDegrees(0)),*/
+          /*List.of(
                 new Translation2d(1, 4),
                 //new Rotation2d(0.242535625036333, 0.970142500145332),
                 new Translation2d(1.5, -5.5),
@@ -333,7 +426,7 @@ public class RobotContainer {
                // new Rotation2d(0.739940073395944, -0.672672793996312),
                 new Pose2d(21.5, -11.5, Rotation2d.fromDegrees(0)),
           config));*/
-          Trajectory autonav3 = TrajectoryGenerator.generateTrajectory(
+          /*Trajectory autonav3 = TrajectoryGenerator.generateTrajectory(
             new Pose2d(0, 0, new Rotation2d(0)),
             List.of(
               new Translation2d(1, 4),
@@ -353,13 +446,13 @@ public class RobotContainer {
               new Translation2d(5.5, -5)),
              // new Rotation2d(0.739940073395944, -0.672672793996312),
               new Pose2d(21.5, -11.5, Rotation2d.fromDegrees(0)),
-            config);
+            config);*/
     /* Command auto =
         new InstantCommand(
           () -> RobotContainer.drive.alignWheels()
         )*/
     //.andThen( 
-        SwerveControllerCommand swervecontrollercommand = new SwerveControllerCommand(
+        /*SwerveControllerCommand swervecontrollercommand = new SwerveControllerCommand(
           autonav3,
           drive::getPose, 
           drive.kinematics,
@@ -373,8 +466,8 @@ public class RobotContainer {
         );
     //); 
     return swervecontrollercommand.andThen(() -> drive.drive(0.0,0.0,0.0));
-      //return auto; 
-  }
+      //return auto; */
+  //} 
 
   }
 
@@ -438,42 +531,7 @@ public class RobotContainer {
 
  
 
-  /*Command auto = 
-    //begin with(
-          new WaitUntilCommand(
-            () -> magazine.isMagReadyToShoot()
-          )
-        .deadlineWith(
-            autoArmInitLineShootPosition,
-            new RunCommand(
-              () -> shooter.setShooterSpeed(1600), shooter
-              )
-    ).andThen( 
-        new WaitCommand(3)
-          .deadlineWith(
-            new RunCommand(
-              () -> magazine.setToShootingStateShortRange(), magazine
-          )
-        )
-    ).andThen(
-        new InstantCommand(
-          () -> drive.alignWheels(), drive
-        )
-    ).andThen(
-        new WaitCommand(.25)
-    ).andThen(
-        new WaitCommand(.5)
-          .deadlineWith(
-            new RunCommand(
-              () -> drive.drive(-.3, 0.0, 0.0), drive)
-          )  
-    ).andThen(
-          new RunCommand(
-            () -> drive.drive(0.0, 0.0, 0.0), drive
-            )
-    ).andThen(
-        autoArmToIntakePosition
-    ); */
+  
 
 
         /* .alongWith(

@@ -144,7 +144,7 @@ public final class Constants {
     //motor neutral deadband
     public static final double kMotorNeutralDeadband = 0.15;
     //swerve max speeds
-    public static final double kRealMaxMPS = 12.0;
+    public static final double kRealMaxMPS = 12.0; //12
     public static final double kMaxModuleRPM = kRealMaxMPS * kMaxSpeedConversionFactor; //desired module rotation speed * gear ratio conversion
     public static final double kMaxMPS = kRealMaxMPS * kMaxSpeedConversionFactor; //desired movement speed * gear ratio conversion
     public static final double kMaxAcceleration = 1.2192;
