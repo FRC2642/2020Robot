@@ -31,11 +31,15 @@ public class InchesDrive extends CommandBase {
     addRequirements(drive);
     //drive.drive(ticks, 0.0, 0.0);
     //sets timeout
+
+    //homie, hear me out, full send, no speed regulation
+    //idk how the ticks are gonna work tbh
+
     if (drive.getDrivePosition() < ticks) {
-      drive.drive(ticks, 0,0);
+      drive.setWheelsStraight();
     }
     else if (drive.getDrivePosition() >= ticks) {
-      drive.drive(0,0,0);
+      drive.lockWheels();
     }
     
 
