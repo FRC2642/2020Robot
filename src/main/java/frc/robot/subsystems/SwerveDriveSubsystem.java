@@ -37,6 +37,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.util.SwerveModule;
+import com.revrobotics.CANEncoder;
+
 
 public class SwerveDriveSubsystem extends SubsystemBase {
   CANSparkMax frontLeftDriveMotor, frontLeftAngleMotor;
@@ -62,15 +64,22 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public Trajectory rightTrajectory1;
   public Trajectory rightTrajectory2;
   public Trajectory exampleTrajectory;
+
+  public CANSparkMax driveMotor;
+  public CANEncoder driveEncoder;
+
  
   public boolean isDriveFieldCentric;
   public boolean isAimingMode;
   public boolean areAllWheelsAligned;
 
+  public double position;
+
   public boolean isSlowDrive = false;
 
   /**
    * Creates a new SwerveDriveSubsystem.
+ * @return 
    */
   public SwerveDriveSubsystem() {
     //instantiates all 8 module motors
@@ -112,6 +121,11 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     backLeftAngleMotor.setSmartCurrentLimit(kCurrentLimit);
     backRightDriveMotor.setSmartCurrentLimit(kCurrentLimit);
     backRightAngleMotor.setSmartCurrentLimit(kCurrentLimit);
+
+    //assign drive encoder
+    this.driveMotor = driveMotor;
+    driveEncoder = frontLeftDriveMotor.getEncoder();
+
 
     //assigns drive and angle motors to their respective swerve modules with offsets
     frontLeftModule = new SwerveModule(frontLeftDriveMotor, frontLeftAngleMotor, kFrontLeftAngleModuleOffset);
@@ -208,7 +222,10 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   /**
    * drive methods
    */
-
+  public double getDrivePosition(){
+    position = driveEncoder.getPosition();
+    return position;
+  }
   /**
    * Drives with either robot-centric or field-centric
    * 
@@ -518,7 +535,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     return target;
   } */
 
-
+//AUTONOMOUS
 
   /**
    * DIAGNOSTIC 
