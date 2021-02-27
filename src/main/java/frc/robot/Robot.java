@@ -88,7 +88,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.JevoisDriver;
 import frc.robot.RobotContainer;
-import frc.robot.commands.autoCommands.AutoCommandGroup;
+//import frc.robot.commands.autoCommands.AutoCommandGroup;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 
 
@@ -227,11 +227,12 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("relflangle", RobotContainer.drive.frontLeftModule.getRelativeAngleEncoder());
     SmartDashboard.putNumber("relfrangle", RobotContainer.drive.frontRightModule.getRelativeAngleEncoder());
 
-    SmartDashboard.putNumber("blvelocity", RobotContainer.drive.backLeftModule.getDriveVelocity());
+    /*SmartDashboard.putNumber("blvelocity", RobotContainer.drive.backLeftModule.getDriveVelocity());
     SmartDashboard.putNumber("brvelocity", RobotContainer.drive.backRightModule.getDriveVelocity());
     SmartDashboard.putNumber("flvelocity", RobotContainer.drive.frontLeftModule.getDriveVelocity());
-    SmartDashboard.putNumber("frvelocity", RobotContainer.drive.frontRightModule.getDriveVelocity());
+    SmartDashboard.putNumber("frvelocity", RobotContainer.drive.frontRightModule.getDriveVelocity());*/
 
+    SmartDashboard.putNumber("driveEncoder", RobotContainer.drive.getDrivePosition());
 
 
     //SmartDashboard.putString("targetColor", value)

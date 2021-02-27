@@ -22,7 +22,6 @@ public class InchesDrive extends CommandBase {
   /**
    * Creates a new drive.
    */
-  //double inches;
   double x;
   double y;
   double r;
@@ -33,20 +32,16 @@ public class InchesDrive extends CommandBase {
     SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
    // SwerveModule module = new SwerveModule();
     addRequirements(drive);
-        
-    new RunCommand(
-      () -> drive.drive(x, y, r), drive);
-
-
-      /*if (drive.getPoseXInFeet() < inches) {
+    drive.drive(x, y, r);
+    //sets timeout
+    /*if (drive.getPoseXInFeet() > inches/12) {
       drive.drive(inches, 0,0);
     }
     else if (drive.getPoseXInFeet() >= (inches) +0.0001) {
       drive.drive(0,0,0);
     }
     this.inches = inches;*/
-    //drive.drive(x, y, r);
-
+    
 
     // Use addRequirements() here to declare subsystem dependencies.
   }

@@ -218,6 +218,7 @@ public class SwerveModule {
     
   }
 
+
   public double getAbsoluteAngleEncoder(){
     return absoluteAngleEncoder.getPosition();
   }
