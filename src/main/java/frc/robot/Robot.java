@@ -67,6 +67,8 @@ package frc.robot;
 
 import static frc.robot.util.GeneralUtil.generateAuto;
 
+import com.kauailabs.navx.frc.AHRS;
+
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
@@ -88,7 +90,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.JevoisDriver;
 import frc.robot.RobotContainer;
-import frc.robot.commands.autoCommands.AutoCommandGroup;
+import frc.robot.subsystems.SwerveDriveSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -99,8 +101,10 @@ import frc.robot.commands.autoCommands.AutoCommandGroup;
  */
 public class Robot extends TimedRobot {
 
-  public Command m_autonomousCommand;
-  public RobotContainer robotContainer;
+  private Command m_autonomousCommand;
+  private RobotContainer robotContainer;
+  AHRS ahrs;
+  public static final SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
 
 /*   public VideoSource camera;
   public VisionPipeline cameraPipeline;
@@ -114,14 +118,14 @@ public class Robot extends TimedRobot {
   NetworkTable table;
 
   // Jevois driver
-  JevoisDriver jevoisCam;
+ // JevoisDriver jevoisCam;
  
   public PowerDistributionPanel pdp;
   
   public static Command autoCommand;
 
-  UsbCamera intakeCam;
-  UsbCamera shooterCam;
+ // UsbCamera intakeCam;
+ // UsbCamera shooterCam;
 
   VideoSink camServer;
   
@@ -129,11 +133,12 @@ public class Robot extends TimedRobot {
   public void robotInit() {
   
     robotContainer = new RobotContainer();
-    jevoisCam = new JevoisDriver();
+    //jevoisCam = new JevoisDriver();
     pdp = new PowerDistributionPanel();
 
-    autoCommand = generateAuto();
-
+    m_autonomousCommand = generateAuto();
+    
+/*
     intakeCam = CameraServer.getInstance().startAutomaticCapture(0);
     shooterCam = CameraServer.getInstance().startAutomaticCapture(1);
 
@@ -149,7 +154,7 @@ public class Robot extends TimedRobot {
     camServer = CameraServer.getInstance().getServer();
 
     //table = NetworkTableInstance.getDefault().getTable("GRIP/mycontoursReport");
-
+*/
   }
  
  /*  public void setUpCamera() {
@@ -204,23 +209,33 @@ public class Robot extends TimedRobot {
 
     //SmartDashboard.putNumber("mag vel", RobotContainer.magazine.getVelocity());
     
-   /*  SmartDashboard.putNumber("fl", RobotContainer.drive.frontLeftModule.getModulePosition());
-    SmartDashboard.putNumber("fr", RobotContainer.drive.frontRightModule.getModulePosition());
-    SmartDashboard.putNumber("bl", RobotContainer.drive.backLeftModule.getModulePosition());
-    SmartDashboard.putNumber("br", RobotContainer.drive.backRightModule.getModulePosition());  */
-
+   
     //SmartDashboard.putBoolean("isShoot", RobotContainer.shooter.isAtTargetVelocity());
     //SmartDashboard.putBoolean("isArm", RobotContainer.arm.isArmAtGoal());
     SmartDashboard.putBoolean("isMagReady", RobotContainer.magazine.isMagReadyToShoot());
-    SmartDashboard.putNumber("driveEncoder", RobotContainer.drive.getDrivePosition());
+    //SmartDashboard.putNumber("bl", RobotContainer.drive.backLeftModule.getModulePosition());
+    SmartDashboard.putNumber("blangle", RobotContainer.drive.backLeftModule.getAbsoluteAngleEncoder());
+    SmartDashboard.putNumber("brangle", RobotContainer.drive.backRightModule.getAbsoluteAngleEncoder());
+    SmartDashboard.putNumber("flangle", RobotContainer.drive.frontLeftModule.getAbsoluteAngleEncoder());
+    SmartDashboard.putNumber("frangle", RobotContainer.drive.frontRightModule.getAbsoluteAngleEncoder());
 
+    SmartDashboard.putNumber("relblangle", RobotContainer.drive.backLeftModule.getRelativeAngleEncoder());
+    SmartDashboard.putNumber("relbrangle", RobotContainer.drive.backRightModule.getRelativeAngleEncoder());
+    SmartDashboard.putNumber("relflangle", RobotContainer.drive.frontLeftModule.getRelativeAngleEncoder());
+    SmartDashboard.putNumber("relfrangle", RobotContainer.drive.frontRightModule.getRelativeAngleEncoder());
 
+    SmartDashboard.putNumber("xDisplacement", ahrs.getDisplacementX());
+    SmartDashboard.putNumber("yDisplacement", ahrs.getDisplacementY());
+    
+    
     //SmartDashboard.putString("targetColor", value)
   }
 
   @Override
   public void disabledInit() {
+    ahrs.resetDisplacement();
   }
+
 
   @Override
   public void disabledPeriodic() {
@@ -229,18 +244,16 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     
-    //m_autonomousCommand = robotContainer.getAutonomousCommand();
-
-    m_autonomousCommand = new AutoCommandGroup();
+    m_autonomousCommand = robotContainer.getAutonomousCommand();
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
-    } 
-    
-  }
+       } 
+    }
 
   @Override
   public void autonomousPeriodic() {
+  
   }
 
   @Override
@@ -254,13 +267,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-
+/*
     if(RobotContainer.driveController.getTriggerAxis(Hand.kLeft) > .5){
       camServer.setSource(intakeCam);
     } else {
       camServer.setSource(shooterCam);
     }
-
+*/
     
 
     /* double[] defaultValue = new double[0];

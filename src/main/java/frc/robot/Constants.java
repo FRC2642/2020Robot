@@ -120,6 +120,13 @@ public final class Constants {
 
     public static final double kArmAngleConversionFactor = 10.0;
 
+
+   /**encoder constants as of 2/26
+    * inch = .6883-
+    * foot = 8.26 
+    */
+
+
     /**
      * ROBOT CONSTANTS
      */
