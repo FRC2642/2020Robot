@@ -73,6 +73,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public boolean isAimingMode;
   public boolean areAllWheelsAligned;
 
+  public double position;
+
   public boolean isSlowDrive = false;
 
   /**
@@ -122,7 +124,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     //assign drive encoder
     this.driveMotor = driveMotor;
-    driveEncoder = driveMotor.getEncoder();
+    driveEncoder = frontLeftDriveMotor.getEncoder();
 
 
     //assigns drive and angle motors to their respective swerve modules with offsets
@@ -221,7 +223,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
    * drive methods
    */
   public double getDrivePosition(){
-    return driveEncoder.getPosition();
+    position = driveEncoder.getPosition();
+    return position;
   }
   /**
    * Drives with either robot-centric or field-centric
