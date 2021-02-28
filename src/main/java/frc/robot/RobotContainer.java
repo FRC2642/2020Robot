@@ -306,7 +306,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     Command auto = 
-    /*//begin with(
+    //begin with(
           new WaitUntilCommand(
             () -> magazine.isMagReadyToShoot()
           )
@@ -345,12 +345,12 @@ public class RobotContainer {
     new RunCommand(
       () -> drive.drive(.6, 0.0, 0.0), drive);
 
-  return auto.andThen(() -> drive.drive(0.0,0.0,0.0));*/
+  //return auto.andThen(() -> drive.drive(0.0,0.0,0.0));
 
 
 
 
-new WaitCommand(.25)
+/*new WaitCommand(.25)
 .andThen(new WaitCommand(10.0)
 .deadlineWith(
   new RunCommand(
@@ -359,7 +359,7 @@ new WaitCommand(.25)
 ).andThen(
 new RunCommand(
   () -> drive.drive(0.0, 0.0, 0.0), drive
-  ));
+  ));*/
 
 
   /*new WaitUntilCommand(
