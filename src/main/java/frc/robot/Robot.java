@@ -240,6 +240,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
+    drive.driveEncoder.setPosition(0.0);
   }
 
   @Override
@@ -253,7 +254,7 @@ public class Robot extends TimedRobot {
 
     //m_autonomousCommand = new AutoCommandGroup();
     //m_autonomousCommand = robotContainer.getAutonomousCommand();
-    //m_autonomousCommand = new AutoCommandGroup();
+   // m_autonomousCommand = new AutoCommandGroup();
 
     m_autonomousCommand =  robotContainer.getAutonomousCommand();
 

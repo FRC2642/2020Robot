@@ -28,8 +28,8 @@ public class AutoCommandGroup extends SequentialCommandGroup {
   public AutoCommandGroup() {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    super(new InchesDrive(41.3),
-          new TurnDrive(45.0),
-          new InchesDrive(8.1));
+    super(new InchesDrive(41.3));
+          //new TurnDrive(45.0),
+          //new InchesDrive(8.1));
   }
 }

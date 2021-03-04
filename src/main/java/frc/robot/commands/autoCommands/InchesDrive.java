@@ -14,6 +14,8 @@ import frc.robot.subsystems.SwerveDriveSubsystem;
 //import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.util.SwerveModule;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+
 
 
 
@@ -34,13 +36,14 @@ public class InchesDrive extends CommandBase {
     addRequirements(drive);
     //drive.drive(ticks, 0.0, 0.0);
     //sets timeout
-    if (drive.getDrivePosition() < ticks) {
-      drive.drive(ticks, 0,0);
+    /*if (drive.getDrivePosition() < ticks) {
+      //drive.drive(ticks, 0,0);
     }
     else if (drive.getDrivePosition() >= ticks) {
-      drive.drive(0,0,0);
-    }
-    
+      drive.stop();    
+    }*/
+
+    //System.out.print("I have gotten the drive position");
 
     // Use addRequirements() here to declare subsystem dependencies.
   }

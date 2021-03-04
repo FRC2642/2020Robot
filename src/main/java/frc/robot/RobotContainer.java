@@ -110,11 +110,14 @@ public class RobotContainer {
   public static SwerveControllerCommand swerveControllerCommandRight1;
   public static SwerveControllerCommand swerveControllerCommandRight2;
   public static SwerveControllerCommand swerveControllerCommandExample;
+
+  public boolean ticksAt5Feet;
   //actual swerve controller command
   public static SwerveControllerCommand swervecontrollercommand;
 
   public TrajectoryConfig config;
   public Trajectory autonav3;
+  //public double ticks;
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -305,8 +308,35 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    
     Command auto = 
-    //begin with(
+
+        
+    new WaitCommand(5.0)
+          .deadlineWith(
+            new RunCommand(
+              () -> drive.drive(-.3, 0.0, 0.0), drive)
+          );  
+    
+    /*if (drive.getDrivePosition() < 41.3) {
+      new WaitCommand(.25)
+      .andThen(new WaitCommand(10.0)
+        .deadlineWith(
+          new RunCommand(
+          () -> drive.drive(-0.3, 0.0, 0.0), drive)
+                )  
+        ).andThen(
+          new RunCommand(
+          () -> drive.drive(0.0, 0.0, 0.0), drive
+                )); 
+    }
+    else if (drive.getDrivePosition() >= 41.3) {
+      drive.stop(); 
+    }*/
+
+    //new RunCommand(() -> drive.drive(0.3, 0.0,0.0));
+    
+      /*//begin with(
           new WaitUntilCommand(
             () -> magazine.isMagReadyToShoot()
           )
@@ -340,26 +370,21 @@ public class RobotContainer {
             )
     ).andThen(
         autoArmToIntakePosition
-    ); 
+    ); */
+
+       
+    
   
-    new RunCommand(
-      () -> drive.drive(.6, 0.0, 0.0), drive);
+   
+    //new RunCommand(
+     // () -> drive.drive(.6, 0.0, 0.0), drive);
 
   //return auto.andThen(() -> drive.drive(0.0,0.0,0.0));
 
 
 
 
-/*new WaitCommand(.25)
-.andThen(new WaitCommand(10.0)
-.deadlineWith(
-  new RunCommand(
-    () -> drive.drive(-0.3, 0.0, 0.0), drive)
-)  
-).andThen(
-new RunCommand(
-  () -> drive.drive(0.0, 0.0, 0.0), drive
-  ));*/
+
 
 
   /*new WaitUntilCommand(
