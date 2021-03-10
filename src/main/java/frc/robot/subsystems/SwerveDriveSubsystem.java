@@ -279,6 +279,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
    * @param rawYInput Joystick input (left hand up/down)
    * @param rawRotate Input from vision 
    */
+
   public void driveByAimbot(double rawXInput, double rawYInput, double rawRotate){
     //sets deadbands
     double xInput = deadband(rawXInput);
@@ -307,6 +308,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
    * @param rawYInput Sideways velocity
    * @param rawRotate Angular velocity
    */
+       
   public void robotCentricDrive(double xInput, double yInput, double rotate){
    
     //sets target angle and velocity based on stick input
@@ -356,7 +358,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     setModuleStates(moduleStates);
   }
 
-  /**
+  /**e
    * Takes module state data and converts it into module velocities and angles
    */
   public void setModuleStates(SwerveModuleState[] moduleStates){

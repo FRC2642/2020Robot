@@ -251,16 +251,12 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     
     //m_autonomousCommand = robotContainer.getAutonomousCommand();
+    m_autonomousCommand = new AutoCommandGroup();
 
-    //m_autonomousCommand = new AutoCommandGroup();
-    //m_autonomousCommand = robotContainer.getAutonomousCommand();
-   // m_autonomousCommand = new AutoCommandGroup();
-
-    m_autonomousCommand =  robotContainer.getAutonomousCommand();
-
+    //m_autonomousCommand =  robotContainer.getAutonomousCommand();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
-    } 
+    }
     
   }
 
@@ -270,7 +266,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    
+
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }

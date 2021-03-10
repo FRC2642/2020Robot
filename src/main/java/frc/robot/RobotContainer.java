@@ -67,6 +67,7 @@ public class RobotContainer {
   public static final ShooterSubsystem shooter = new ShooterSubsystem();
   public static final ColorSpinnerSubsystem spinner = new ColorSpinnerSubsystem();
   public static final ClimberSubsystem climb = new ClimberSubsystem();
+  //public static final InchesDrive inches = new InchesDrive();
 
   //COMMANDS 
   public final Command intakeCommand = new IntakeCommand(intake, magazine);
@@ -307,70 +308,12 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
+
   public Command getAutonomousCommand() {
     
-    Command auto = 
-
-        
-    new WaitCommand(5.0)
-          .deadlineWith(
-            new RunCommand(
-              () -> drive.drive(-.3, 0.0, 0.0), drive)
-          );  
+    /*Command auto = 
     
-    /*if (drive.getDrivePosition() < 41.3) {
-      new WaitCommand(.25)
-      .andThen(new WaitCommand(10.0)
-        .deadlineWith(
-          new RunCommand(
-          () -> drive.drive(-0.3, 0.0, 0.0), drive)
-                )  
-        ).andThen(
-          new RunCommand(
-          () -> drive.drive(0.0, 0.0, 0.0), drive
-                )); 
-    }
-    else if (drive.getDrivePosition() >= 41.3) {
-      drive.stop(); 
-    }*/
-
-    //new RunCommand(() -> drive.drive(0.3, 0.0,0.0));
-    
-      /*//begin with(
-          new WaitUntilCommand(
-            () -> magazine.isMagReadyToShoot()
-          )
-        .deadlineWith(
-            autoArmInitLineShootPosition,
-            new RunCommand(
-              () -> shooter.setShooterSpeed(1600), shooter
-              )
-    ).andThen( 
-        new WaitCommand(3)
-          .deadlineWith(
-            new RunCommand(
-              () -> magazine.setToShootingStateShortRange(), magazine
-          )
-        )
-    ).andThen(
-        new InstantCommand(
-          () -> drive.alignWheels(), drive
-        )
-    ).andThen(
-        new WaitCommand(.25)
-    ).andThen(
-        new WaitCommand(.5)
-          .deadlineWith(
-            new RunCommand(
-              () -> drive.drive(-.3, 0.0, 0.0), drive)
-          )  
-    ).andThen(
-          new RunCommand(
-            () -> drive.drive(0.0, 0.0, 0.0), drive
-            )
-    ).andThen(
-        autoArmToIntakePosition
-    ); */
+    new RunCommand(() -> public inches.InchesDrive(5.0));*/
 
        
     
@@ -385,9 +328,9 @@ public class RobotContainer {
 
 
 
+Command auto =
 
-
-  /*new WaitUntilCommand(
+  new WaitUntilCommand(
     () -> magazine.isMagReadyToShoot()
   )
  .deadlineWith(
@@ -420,7 +363,7 @@ new WaitCommand(.5)
     )
 ).andThen(
 autoArmToIntakePosition
-); */
+); 
 return auto;
 }
     /*TrajectoryConfig config =

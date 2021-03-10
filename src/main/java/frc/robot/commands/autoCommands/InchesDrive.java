@@ -36,12 +36,17 @@ public class InchesDrive extends CommandBase {
     addRequirements(drive);
     //drive.drive(ticks, 0.0, 0.0);
     //sets timeout
-    /*if (drive.getDrivePosition() < ticks) {
-      //drive.drive(ticks, 0,0);
+    if (drive.getDrivePosition() < ticks) {
+      new WaitCommand(5.0)
+          .deadlineWith(
+            new RunCommand(
+              () -> drive.drive(-.3, 0.0, 0.0), drive)
+          );  
     }
     else if (drive.getDrivePosition() >= ticks) {
+      System.out.println("I am doing the wrong thing right here but this is okay");
       drive.stop();    
-    }*/
+    }
 
     //System.out.print("I have gotten the drive position");
 
