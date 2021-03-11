@@ -38,6 +38,8 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.util.SwerveModule;
 import com.revrobotics.CANEncoder;
+import com.revrobotics.CANAnalog;
+
 
 
 public class SwerveDriveSubsystem extends SubsystemBase {
@@ -67,6 +69,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
   public CANSparkMax driveMotor;
   public CANEncoder driveEncoder;
+  public CANAnalog absoluteAngleEncoder;
+  public CANSparkMax angleMotor;
 
  
   public boolean isDriveFieldCentric;
@@ -103,7 +107,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     backRightAngleMotor.restoreFactoryDefaults(); 
 
     //sets default inversion settings for motors
-    frontLeftDriveMotor.setInverted(false);
+    frontLeftDriveMotor.setInverted(true);
     //was true
     frontLeftAngleMotor.setInverted(true);
     
@@ -130,6 +134,11 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     //assign drive encoder
     this.driveMotor = driveMotor;
     driveEncoder = frontLeftDriveMotor.getEncoder();
+
+    //assigns angle encoder
+    this.angleMotor = angleMotor;
+    absoluteAngleEncoder = angleMotor.getAnalog(CANAnalog.AnalogMode.kAbsolute);
+    absoluteAngleEncoder.setPositionConversionFactor(kAnglePositionConversionFactor); //voltage into degrees
 
 
     //assigns drive and angle motors to their respective swerve modules with offsets
@@ -540,6 +549,16 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public void doNothing(){
   }
 
+  public double getAbsoluteAngleEncoder(){
+    return absoluteAngleEncoder.getPosition();
+  }
+
+  public double getDriveVelocity(){
+    return driveEncoder.getVelocity();
+    }
+
+
+
   /**
    * TARGET ACQUISITON FOR AIMING
    */
@@ -571,6 +590,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     }
   }
 
+
+
   @Override
   public void periodic() {
     SmartDashboard.putBoolean("isDriveFieldCentric", getIsDriveFieldCentric());
@@ -582,6 +603,13 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     } catch(RuntimeException e){ 
       System.out.println("not updating");
     } */
+
+    SwerveModuleState frontLeftState = new SwerveModuleState(frontLeftModule.getDriveVelocity(), new Rotation2d(frontLeftModule.getAbsoluteAngleEncoder()));
+    SwerveModuleState frontRightState = new SwerveModuleState(frontRightModule.getDriveVelocity(), new Rotation2d(frontRightModule.getAbsoluteAngleEncoder()));
+    SwerveModuleState backLeftState = new SwerveModuleState(backLeftModule.getDriveVelocity(), new Rotation2d(backLeftModule.getAbsoluteAngleEncoder()));
+    SwerveModuleState backRightState = new SwerveModuleState(backRightModule.getDriveVelocity(),new Rotation2d(backRightModule.getAbsoluteAngleEncoder()));
+
+    odometry.update(getRobotYawInRotation2d(), frontLeftState, frontRightState, backLeftState, backRightState);
 
   //SmartDashboard.putNumber("fl vel", frontLeftModule.getDriveVelocity());
   }

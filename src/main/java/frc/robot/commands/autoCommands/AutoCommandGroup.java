@@ -21,7 +21,6 @@ public class AutoCommandGroup extends SequentialCommandGroup {
   public static final SwerveDriveSubsystem drive = new SwerveDriveSubsystem();
   
 
-
   /**
    * Creates a new AutoCommandGroup.
    */

@@ -36,7 +36,7 @@ public class InchesDrive extends CommandBase {
     addRequirements(drive);
     //drive.drive(ticks, 0.0, 0.0);
     //sets timeout
-    if (drive.getDrivePosition() < ticks) {
+    /*if (drive.getDrivePosition() < ticks) {
       new WaitCommand(5.0)
           .deadlineWith(
             new RunCommand(
@@ -46,8 +46,14 @@ public class InchesDrive extends CommandBase {
     else if (drive.getDrivePosition() >= ticks) {
       System.out.println("I am doing the wrong thing right here but this is okay");
       drive.stop();    
-    }
+    }*/
+    
+    //drive.drive((ticks - drive.getDrivePosition()) + (Math.abs(ticks - drive.getDrivePosition())), 0.0, 0.0);
 
+    new WaitCommand(30)
+      .deadlineWith(
+        new RunCommand(
+      () -> drive.drive((ticks - drive.getDrivePosition()) + (Math.abs(ticks - drive.getDrivePosition())), 0.0, 0.0), drive)); 
     //System.out.print("I have gotten the drive position");
 
     // Use addRequirements() here to declare subsystem dependencies.

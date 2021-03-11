@@ -92,6 +92,7 @@ import frc.robot.commands.autoCommands.AutoCommandGroup;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 
 
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -197,6 +198,9 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     
     CommandScheduler.getInstance().run();
+
+
+    
 
     //jevoisCam.printSystemOut();
 
