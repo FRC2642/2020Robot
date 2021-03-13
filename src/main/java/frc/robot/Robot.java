@@ -254,8 +254,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     
-    //m_autonomousCommand = robotContainer.getAutonomousCommand();
-    m_autonomousCommand = new AutoCommandGroup();
+    m_autonomousCommand = robotContainer.getAutonomousCommand();
+    //m_autonomousCommand = new AutoCommandGroup();
 
     //m_autonomousCommand =  robotContainer.getAutonomousCommand();
     if (m_autonomousCommand != null) {

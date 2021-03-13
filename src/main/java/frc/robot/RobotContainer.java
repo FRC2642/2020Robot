@@ -310,52 +310,40 @@ public class RobotContainer {
    */
 
   public Command getAutonomousCommand() {
-
-Command auto = 
     
-TrajectoryConfig config = new TrajectoryConfig(Constants.kMaxMPS, Constants.kMaxAcceleration).setKinematics(drive.kinematics);
+TrajectoryConfig config =
+      new TrajectoryConfig(Constants.kRealMaxMPS, Constants.kMaxAcceleration)
         // Add kinematics to ensure max speed is actually obeyed
-        
+        .setKinematics(drive.kinematics);
       
       config.setReversed(true);
 
-        Trajectory autonav3 = TrajectoryGenerator.generateTrajectory(
-          new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-          List.of(
-                new Translation2d(1, 4),
-                //new Rotation2d(0.242535625036333, 0.970142500145332),
-                new Translation2d(1.5, -5.5),
-                //new Rotation2d(0.263117405792109, -0.964763821237732),
-                new Translation2d(4, -4.5),
-                //new Rotation2d(0.66436383882992, -0.74740931868366),
-                new Translation2d(2, 10.5),
-                //new Rotation2d(0.187112107889995, 0.982338566422475),
-                new Translation2d(1.5, -9.5),
-                //new Rotation2d(0.155962573473011, -0.987762965329069),
-                new Translation2d(5, -0.5),
-                //new Rotation2d(0.995037190209989, -0.0995037190209989),
-                new Translation2d(1, 9.5),
-               // new Rotation2d(0.104684784518043, 0.994505452921406),
-                new Translation2d(5.5, -5),
-               // new Rotation2d(0.739940073395944, -0.672672793996312),
-                new Pose2d(21.5, -11.5, Rotation2d.fromDegrees(0)),
-          config));
+        
+          Trajectory autonav3 = TrajectoryGenerator.generateTrajectory(
+            new Pose2d(0, 0, new Rotation2d(0)),
+            List.of(              
+              new Translation2d(1,0),
+              new Translation2d(0, 1)),
+              new Pose2d(1, 1, new Rotation2d(0)),             
+                config);
 
-          SwerveControllerCommand swervecontrollercommand = new SwerveControllerCommand(
-            autonav3,
-            drive::getPose, 
-            drive.kinematics,
-            //Position controllers
-            new PIDController(1.0, 0.4, 0),
-            new PIDController(1.0, 0.4, 0),
-            new ProfiledPIDController(1.0, 0.4, 0,
-                                Constants.kThetaControllerConstraints),
-            drive::setModuleStates,
-            drive
-          );
-      return swervecontrollercommand.andThen(() -> drive.drive(0.0,0.0,0.0));
-        return auto; 
-    }
+            
+        SwerveControllerCommand swervecontrollercommand = new SwerveControllerCommand(
+          autonav3,
+          drive::updateOdometry, 
+          drive.kinematics,
+          //Position controllers
+          new PIDController(1.0, 0.4, 0),
+          new PIDController(1.0, 0.4, 0),
+          new ProfiledPIDController(1.0, 0.4, 0,
+                              Constants.kThetaControllerConstraints),
+          drive::setModuleStates,
+          drive
+        );
+    return swervecontrollercommand.andThen(() -> drive.drive(0.0,0.0,0.0));
+      //return auto; 
+  }
+}
 
           //Command auto =
 

@@ -72,6 +72,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public CANAnalog absoluteAngleEncoder;
   public CANSparkMax angleMotor;
 
+  public Pose2d updatedPose;
  
   public boolean isDriveFieldCentric;
   public boolean isAimingMode;
@@ -139,6 +140,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     this.angleMotor = angleMotor;
     absoluteAngleEncoder = angleMotor.getAnalog(CANAnalog.AnalogMode.kAbsolute);
     absoluteAngleEncoder.setPositionConversionFactor(kAnglePositionConversionFactor); //voltage into degrees
+    driveEncoder.setVelocityConversionFactor(kDriveVelocityConversionFactor); //rpm into MPS  
+
 
 
     //assigns drive and angle motors to their respective swerve modules with offsets
@@ -546,6 +549,12 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     odometry.resetPosition(new Pose2d(), getRobotYawInRotation2d());
   }
 
+  public Pose2d updateOdometry(){
+    updatedPose = odometry.update(getRobotYawInRotation2d(), frontLeftModule.getState(), frontRightModule.getState(), backLeftModule.getState(), backRightModule.getState());
+    return updatedPose;
+  }
+
+
   public void doNothing(){
   }
 
@@ -604,13 +613,11 @@ public class SwerveDriveSubsystem extends SubsystemBase {
       System.out.println("not updating");
     } */
 
-    SwerveModuleState frontLeftState = new SwerveModuleState(frontLeftModule.getDriveVelocity(), new Rotation2d(frontLeftModule.getAbsoluteAngleEncoder()));
-    SwerveModuleState frontRightState = new SwerveModuleState(frontRightModule.getDriveVelocity(), new Rotation2d(frontRightModule.getAbsoluteAngleEncoder()));
-    SwerveModuleState backLeftState = new SwerveModuleState(backLeftModule.getDriveVelocity(), new Rotation2d(backLeftModule.getAbsoluteAngleEncoder()));
-    SwerveModuleState backRightState = new SwerveModuleState(backRightModule.getDriveVelocity(),new Rotation2d(backRightModule.getAbsoluteAngleEncoder()));
-
-    odometry.update(getRobotYawInRotation2d(), frontLeftState, frontRightState, backLeftState, backRightState);
+  
+  
+   //odometry.update(getRobotYawInRotation2d(), frontLeftState, frontRightState, backLeftState, backRightState);
 
   //SmartDashboard.putNumber("fl vel", frontLeftModule.getDriveVelocity());
   }
+
 }

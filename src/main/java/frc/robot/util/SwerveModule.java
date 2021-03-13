@@ -92,6 +92,11 @@ public class SwerveModule {
    */
 
   /** */
+
+  public SwerveModuleState getState(){
+    return new SwerveModuleState(driveEncoder.getVelocity(), new Rotation2d(absoluteAngleEncoder.getPosition()));
+  }
+
   public double getTargetVelocity(SwerveModuleState state){
     targetVelocity = state.speedMetersPerSecond;
 
