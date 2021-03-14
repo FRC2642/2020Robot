@@ -53,6 +53,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public SwerveModule backLeftModule;
   public SwerveModule backRightModule;
   public List<SwerveModule> modules;
+
   public SwerveModuleState[] moduleStates;
   public SwerveModuleState state;
 
@@ -69,7 +70,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
   public CANSparkMax driveMotor;
   public CANEncoder driveEncoder;
-  public CANAnalog absoluteAngleEncoder;
+  //public CANAnalog absoluteAngleEncoder;
   public CANSparkMax angleMotor;
 
   public Pose2d updatedPose;
@@ -96,6 +97,12 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     backLeftAngleMotor = new CANSparkMax(ID_BACK_LEFT_ANGLE_MOTOR, MotorType.kBrushless);
     backRightDriveMotor = new CANSparkMax(ID_BACK_RIGHT_DRIVE_MOTOR, MotorType.kBrushless);
     backRightAngleMotor = new CANSparkMax(ID_BACK_RIGHT_ANGLE_MOTOR, MotorType.kBrushless);
+
+    /*angleMotor = new ArrayList<CANSparkMax>();
+      angleMotor.add(frontLeftAngleMotor);
+      angleMotor.add(frontRightAngleMotor);
+      angleMotor.add(backLeftAngleMotor);
+      angleMotor.add(backRightAngleMotor);*/
 
     //sets motor settings in a known state
     frontLeftDriveMotor.restoreFactoryDefaults();
@@ -137,9 +144,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     driveEncoder = frontLeftDriveMotor.getEncoder();
 
     //assigns angle encoder
-    this.angleMotor = angleMotor;
-    absoluteAngleEncoder = angleMotor.getAnalog(CANAnalog.AnalogMode.kAbsolute);
-    absoluteAngleEncoder.setPositionConversionFactor(kAnglePositionConversionFactor); //voltage into degrees
+    //this.angleMotor = angleMotor;
+    //absoluteAngleEncoder = frontLeftAngleMotor.getAnalog(CANAnalog.AnalogMode.kAbsolute);
+    //absoluteAngleEncoder.setPositionConversionFactor(kAnglePositionConversionFactor); //voltage into degrees
     driveEncoder.setVelocityConversionFactor(kDriveVelocityConversionFactor); //rpm into MPS  
 
 
@@ -549,18 +556,18 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     odometry.resetPosition(new Pose2d(), getRobotYawInRotation2d());
   }
 
-  public Pose2d updateOdometry(){
+  public Pose2d updatedPose(){
     updatedPose = odometry.update(getRobotYawInRotation2d(), frontLeftModule.getState(), frontRightModule.getState(), backLeftModule.getState(), backRightModule.getState());
+        driveEncoder.setVelocityConversionFactor(kDriveVelocityConversionFactor); //rpm into MPS  
     return updatedPose;
   }
-
-
+  
   public void doNothing(){
   }
 
-  public double getAbsoluteAngleEncoder(){
+  /*public double getAbsoluteAngleEncoder(){
     return absoluteAngleEncoder.getPosition();
-  }
+  }*/
 
   public double getDriveVelocity(){
     return driveEncoder.getVelocity();
@@ -607,6 +614,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     SmartDashboard.putString("positionOnField", getPose().toString());
     SmartDashboard.putNumber("positionInInches", getPoseXInInches());
 
+    
+
    /*  try{
     odometry.update(getRobotYawInRotation2d(), moduleStates);
     } catch(RuntimeException e){ 
@@ -619,5 +628,4 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
   //SmartDashboard.putNumber("fl vel", frontLeftModule.getDriveVelocity());
   }
-
 }

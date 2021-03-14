@@ -330,7 +330,7 @@ TrajectoryConfig config =
             
         SwerveControllerCommand swervecontrollercommand = new SwerveControllerCommand(
           autonav3,
-          drive::updateOdometry, 
+          drive::updatedPose, 
           drive.kinematics,
           //Position controllers
           new PIDController(1.0, 0.4, 0),

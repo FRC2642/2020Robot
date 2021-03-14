@@ -286,7 +286,6 @@ public class Robot extends TimedRobot {
       camServer.setSource(shooterCam);
     }
 
-    
 
     /* double[] defaultValue = new double[0];
 
