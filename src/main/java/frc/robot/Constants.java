@@ -131,7 +131,7 @@ public final class Constants {
     //gyro offset
     public static final double kGyroOffset = 0.0;//180.0;
     //Dashboard reading offsets (swerve)
-    public static final double kFrontLeftAngleModuleOffset = 65.0;//344.5;
+    public static final double kFrontLeftAngleModuleOffset = 67.0;//344.5;
     public static final double kFrontRightAngleModuleOffset = 68.6;//248.6;//124.0;
     public static final double kBackLeftAngleModuleOffset = 120.2;
     public static final double kBackRightAngleModuleOffset = 272.4;

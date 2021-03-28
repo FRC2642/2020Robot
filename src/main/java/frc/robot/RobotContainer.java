@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import frc.robot.commands.autoCommands.TurnDrive;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -67,11 +68,13 @@ public class RobotContainer {
   public static final ShooterSubsystem shooter = new ShooterSubsystem();
   public static final ColorSpinnerSubsystem spinner = new ColorSpinnerSubsystem();
   public static final ClimberSubsystem climb = new ClimberSubsystem();
-  //public static final InchesDrive inches = new InchesDrive();
+  //public static final TurnDrive turn = new TurnDrive();
 
   //COMMANDS 
   public final Command intakeCommand = new IntakeCommand(intake, magazine);
   public final Command intakeOutCommand = new IntakeOutCommand(intake, magazine);
+
+  //public final Command turnCommand = new TurnDrive(degrees);
 
   public final Command positionControl = new PositionControlCommand(spinner);
   public final Command rotationControl = new RotationControlCommand(spinner);
@@ -310,8 +313,90 @@ public class RobotContainer {
    */
 
   public Command getAutonomousCommand() {
+  
+    /*Command auto = 
+      new WaitCommand(.5)
+        .deadlineWith(
+      new RunCommand(
+        () -> drive.drive(-.3, 0.0, 0.0), drive)
+                  )  
+        .andThen(
+      new RunCommand(
+      () -> drive.drive(0.0, 0.0, 0.0), drive
+      )
+    );*/
+
+    /*Command auto =
+
+            new WaitCommand(5)
+                .deadlineWith(
+                    new RunCommand(
+                          () -> drive.drive(-.3, 0.0, 0.0), drive)
+                             )  
+                      .andThen(
+                    new RunCommand(
+                          () -> drive.drive(0.0, 0.0, 0.0), drive
+                             ).andThen(
+                              new WaitCommand(5)
+                              .deadlineWith(
+                                  new RunCommand(
+                                        () -> drive.drive(.3, 0.0, 0.0), drive)
+                                           )  
+                                    .andThen(
+                                  new RunCommand(
+                                        () -> drive.drive(0.0, 0.0, 0.0), drive
+                                           ))
+                             )
+                              );
+  return auto;
+}*/
+          
+
+  /*new WaitUntilCommand(
+    () -> magazine.isMagReadyToShoot()
+  )
+ .deadlineWith(
+    autoArmInitLineShootPosition,
+    new RunCommand(
+      () -> shooter.setShooterSpeed(1600), shooter
+      )
+).andThen( 
+new WaitCommand(3)
+  .deadlineWith(
+    new RunCommand(
+      () -> magazine.setToShootingStateShortRange(), magazine
+  )
+)
+).andThen(
+new InstantCommand(
+  () -> drive.alignWheels(), drive
+)
+).andThen(*/
+
+// WORKS DO NOT TOUCH CHANGE THE CHALLENGE, FAKE THE VIDEO, THID WILL NOT CHANGE. WE WILL NOT RUIN THIS.
+
+Command auto =
+
+new WaitCommand(2).deadlineWith(new RunCommand(() -> drive.drive(.3, 0.0, 0.0), drive))
+.andThen(
+new RunCommand(() -> drive.drive(.3, 0.0, 0.0), drive))
+.andThen(
+new TurnDrive(45.0))
+.andThen(
+new WaitCommand(2).deadlineWith(new RunCommand(() -> drive.drive(-.3, 0.0, 0.0), drive))
+.andThen(
+new RunCommand(() -> drive.drive(.3, 0.0, 0.0), drive)));
+                   
+/*.andThen(
+autoArmToIntakePosition
+); */
+return auto;
+}
+  
+
+
     
-TrajectoryConfig config =
+/*TrajectoryConfig config =
       new TrajectoryConfig(Constants.kRealMaxMPS, Constants.kMaxAcceleration)
         // Add kinematics to ensure max speed is actually obeyed
         .setKinematics(drive.kinematics);
@@ -322,9 +407,9 @@ TrajectoryConfig config =
           Trajectory autonav3 = TrajectoryGenerator.generateTrajectory(
             new Pose2d(0, 0, new Rotation2d(0)),
             List.of(              
-              new Translation2d(1,0),
-              new Translation2d(0, 1)),
-              new Pose2d(1, 1, new Rotation2d(0)),             
+              new Translation2d(10.8,0),
+              new Translation2d(0, 10.8)),
+              new Pose2d(10.8, 10.8, new Rotation2d(0)),             
                 config);
 
             
@@ -341,13 +426,13 @@ TrajectoryConfig config =
           drive
         );
     return swervecontrollercommand.andThen(() -> drive.drive(0.0,0.0,0.0));
-      //return auto; 
+      //return auto; */
   }
-}
+//}
 
-          //Command auto =
+  /*Command auto =
 
-  /*new WaitUntilCommand(
+  new WaitUntilCommand(
     () -> magazine.isMagReadyToShoot()
   )
  .deadlineWith(

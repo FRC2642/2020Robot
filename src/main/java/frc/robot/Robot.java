@@ -245,6 +245,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     drive.driveEncoder.setPosition(0.0);
+
   }
 
   @Override
@@ -270,6 +271,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+
+
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
